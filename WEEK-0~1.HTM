@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 1 · Data modeling theory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#F7F6F2;--surf:#FFFFFF;--ink:#1A1917;--ink2:#4A4845;--ink3:#908D88;
+  --acc:#1B4FD8;--acc-l:#EEF2FD;--rule:#E2E0DB;
+  --tag-bg:#EEEDFE;--tag-tx:#3C3489;
+  --warn-bg:#FFF8EC;--warn-bd:#F5C842;--warn-tx:#7A5C00;
+  --ok:#0F6E56;--ok-bg:#E1F5EE;--ok-bd:#1D9E75;
+  --err:#A32D2D;--err-bg:#FCEBEB;--err-bd:#E24B4A;
+  --serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.8}
+.topbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.topbar-brand{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.topbar-sep{color:var(--rule)}
+.topbar-week{font-size:13px;font-weight:500;color:var(--ink2)}
+.tp{margin-left:auto;display:flex;gap:4px;align-items:center}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--rule)}
+.pd.done{background:var(--ok-bd)}
+.pd.on{background:var(--acc)}
+.layout{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:210px 1fr;padding:0 2rem}
+.sidebar{padding:2.5rem 1.25rem 2.5rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--rule)}
+.sl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.ni{display:block;padding:5px 10px;border-radius:6px;font-size:12.5px;color:var(--ink2);line-height:1.45;margin-bottom:1px;transition:background .12s,color .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.ni:hover{background:var(--acc-l);color:var(--acc)}
+.ni.on{background:var(--acc-l);color:var(--acc);font-weight:500}
+.ni.qnav{border-top:1px solid var(--rule);margin-top:8px;padding-top:12px;color:var(--acc)}
+.content{padding:3rem 0 5rem 3rem;max-width:730px}
+.mod-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--tag-tx);background:var(--tag-bg);padding:4px 10px;border-radius:4px;margin-bottom:1.25rem}
+.lesson-title{font-family:var(--serif);font-size:2.7rem;line-height:1.12;margin-bottom:1rem;letter-spacing:-.01em}
+.lesson-sub{font-size:1.05rem;color:var(--ink2);font-weight:300;line-height:1.75;max-width:560px;margin-bottom:2rem}
+.meta-row{display:flex;gap:1.5rem;padding:1rem 1.25rem;background:var(--surf);border:1px solid var(--rule);border-radius:10px;margin-bottom:3rem}
+.mi{font-size:13px;color:var(--ink3)}
+.mi strong{color:var(--ink2);font-weight:500;display:block;font-size:10.5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+.ph{display:flex;align-items:baseline;gap:1rem;margin:3.5rem 0 1.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--rule)}
+.pn{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;flex-shrink:0;padding-top:3px}
+.pt{font-family:var(--serif);font-size:1.55rem;color:var(--ink);line-height:1.2}
+h3{font-size:.85rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:2rem 0 .8rem}
+p{margin-bottom:1.1rem;font-size:.975rem;color:var(--ink2);line-height:1.8}
+p strong{color:var(--ink);font-weight:500}
+p em{font-style:italic}
+code{font-family:var(--mono);font-size:.83em;background:var(--rule);padding:2px 5px;border-radius:3px;color:var(--ink)}
+ul.prose{margin:1rem 0 1.5rem;padding-left:1.25rem}
+ul.prose li{font-size:.96rem;color:var(--ink2);margin-bottom:.5rem;line-height:1.7}
+ul.prose li strong{color:var(--ink);font-weight:500}
+.callout{border-left:3px solid var(--warn-bd);background:var(--warn-bg);padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:2rem 0;font-size:.93rem;color:var(--warn-tx);line-height:1.7}
+.callout strong{color:var(--warn-tx)}
+.ci{border-left-color:var(--acc);background:var(--acc-l);color:#1A3A8F}.ci strong{color:#1A3A8F}
+.cg{border-left-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}.cg strong{color:var(--ok)}
+.rb{border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.rbh{background:var(--surf);padding:9px 14px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.rbb{padding:1rem 1.25rem;background:var(--bg)}
+.rbb p{margin-bottom:.5rem;font-size:.93rem}.rbb p:last-child{margin-bottom:0}
+.cl{list-style:none;margin:1rem 0 1.5rem;border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--surf)}
+.cl li{padding:9px 14px 9px 2.5rem;position:relative;font-size:.93rem;color:var(--ink2);border-bottom:1px solid var(--rule)}
+.cl li:last-child{border-bottom:none}
+.cl li::before{content:'';position:absolute;left:14px;top:13px;width:13px;height:13px;border:1.5px solid var(--rule);border-radius:3px}
+table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.9rem}
+th{text-align:left;padding:8px 12px;font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+td{padding:10px 12px;border-bottom:1px solid var(--rule);color:var(--ink2);vertical-align:top;line-height:1.6}
+td:first-child{font-family:var(--mono);font-size:.83rem;color:var(--acc);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg)}
+.dw{margin:2rem 0;background:var(--surf);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.dc{padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule);background:var(--bg)}
+.db{padding:1.5rem;overflow-x:auto}
+.db svg{display:block;margin:0 auto}
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.5rem 0}
+.cmp-card{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1.25rem}
+.cmp-card h4{font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.cmp-card p{font-size:.9rem;margin-bottom:.6rem}.cmp-card p:last-child{margin-bottom:0}
+/* QUIZ */
+.qs{margin-top:4rem;border-top:2px solid var(--ink);padding-top:2.5rem}
+.qh{display:flex;align-items:baseline;gap:1rem;margin-bottom:.5rem}
+.qt{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.qtl{font-family:var(--serif);font-size:1.8rem;color:var(--ink)}
+.qi{font-size:.9rem;color:var(--ink3);margin-bottom:2rem;line-height:1.65}
+.qpb{height:4px;background:var(--rule);border-radius:2px;margin-bottom:2.5rem;overflow:hidden}
+.qpf{height:100%;background:var(--acc);border-radius:2px;transition:width .4s ease;width:0%}
+.qc{background:var(--surf);border:1px solid var(--rule);border-radius:14px;padding:1.75rem;margin-bottom:1.5rem}
+.qm{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.qn{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.qb{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase}
+.bmc{background:var(--tag-bg);color:var(--tag-tx)}.bsc{background:#FFF8EC;color:#7A5C00}.bop{background:var(--ok-bg);color:var(--ok)}
+.qtxt{font-size:1rem;color:var(--ink);line-height:1.6;margin-bottom:1.25rem;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--rule);border-radius:8px;cursor:pointer;transition:all .15s;background:var(--bg);font-size:.92rem;color:var(--ink2);line-height:1.55;text-align:left;width:100%;font-family:var(--sans)}
+.opt:hover:not([disabled]){border-color:var(--acc);background:var(--acc-l);color:var(--acc)}
+.opt.r{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}
+.opt.w{border-color:var(--err-bd);background:var(--err-bg);color:var(--err)}
+.opt.h{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+.ol{width:22px;height:22px;border-radius:50%;background:var(--rule);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:var(--ink3)}
+.opt.r .ol{background:var(--ok-bd);color:#fff}
+.opt.w .ol{background:var(--err-bd);color:#fff}
+.opt.h .ol{background:var(--ok-bd);color:#fff}
+.fb{margin-top:1rem;padding:.875rem 1rem;border-radius:8px;font-size:.9rem;line-height:1.65;display:none}
+.fb.show{display:block}
+.fbok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)}.fbok strong{font-weight:500}
+.fberr{background:var(--err-bg);color:var(--err);border:1px solid var(--err-bd)}.fberr strong{font-weight:500}
+.sctx{background:var(--bg);border:1px solid var(--rule);border-radius:8px;padding:1rem 1.25rem;font-size:.9rem;color:var(--ink2);margin-bottom:1.25rem;font-style:italic;line-height:1.65}
+.ota{width:100%;min-height:110px;border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-family:var(--sans);font-size:.92rem;color:var(--ink);background:var(--bg);resize:vertical;line-height:1.65;transition:border-color .15s;margin-bottom:.75rem}
+.ota:focus{outline:none;border-color:var(--acc);background:var(--surf)}
+.ota:disabled{opacity:.6;cursor:default}
+.cbtn{padding:9px 20px;background:var(--acc);color:#fff;border:none;border-radius:7px;font-size:.9rem;font-weight:500;cursor:pointer;font-family:var(--sans);transition:opacity .15s}
+.cbtn:hover{opacity:.85}.cbtn:disabled{opacity:.4;cursor:default}
+.mans{margin-top:1rem;padding:1rem 1.25rem;background:var(--acc-l);border:1px solid #B5D4F4;border-radius:8px;font-size:.9rem;color:#1A3A8F;display:none;line-height:1.7}
+.mans.show{display:block}
+.mans strong{color:#1A3A8F;display:block;margin-bottom:.4rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.scorecard{margin-top:2.5rem;padding:2rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px;text-align:center;display:none}
+.snum{font-family:var(--serif);font-size:3.5rem;color:var(--acc);line-height:1;margin-bottom:.5rem}
+.slbl{font-size:.9rem;color:var(--ink3);margin-bottom:1.5rem}
+.smsg{font-size:1rem;color:var(--ink2);max-width:420px;margin:0 auto}
+.next{margin-top:2.5rem;padding:1.5rem;border:1px solid var(--rule);border-radius:12px;background:var(--surf);display:flex;align-items:center;gap:1.5rem;text-decoration:none;transition:border-color .15s}
+.next:hover{border-color:var(--acc)}
+.nlbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:4px}
+.ntitle{font-family:var(--serif);font-size:1.1rem;color:var(--ink)}
+.narr{margin-left:auto;font-size:1.4rem;color:var(--ink3)}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:2rem 0 4rem}.lesson-title{font-size:2rem}.cmp-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="topbar-brand">Power BI Analyst Program</span>
+  <span class="topbar-sep">·</span>
+  <span class="topbar-week">Week 1 — Data modeling theory</span>
+  <div class="tp">
+    <div class="pd done"></div>
+    <div class="pd on"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sl">In this lesson</div>
+  <button class="ni on" onclick="nv('p1',this)">1 · Your Excel is already a model</button>
+  <button class="ni" onclick="nv('p2',this)">2 · Tables and relationships</button>
+  <button class="ni" onclick="nv('p3',this)">3 · One-to-many relationships</button>
+  <button class="ni" onclick="nv('p4',this)">4 · Many-to-many — the problem</button>
+  <button class="ni" onclick="nv('p5',this)">5 · The star schema</button>
+  <button class="ni" onclick="nv('p6',this)">6 · Fact vs dimension tables</button>
+  <button class="ni" onclick="nv('p7',this)">7 · From database to warehouse</button>
+  <button class="ni" onclick="nv('p8',this)">8 · Reading an unfamiliar dataset</button>
+  <button class="ni qnav" onclick="nv('quiz',this)">✦ Check your understanding</button>
+</nav>
+
+<main class="content">
+  <div class="mod-tag">Module 1 · Data foundations</div>
+  <h1 class="lesson-title">Data modeling<br><em>theory</em></h1>
+  <p class="lesson-sub">Before you write a single DAX measure, you need to understand how data is structured. Every mistake in the model compounds into every report built on top of it. This week is about getting the foundation right.</p>
+  <div class="meta-row">
+    <div class="mi"><strong>Time</strong>3–4 days</div>
+    <div class="mi"><strong>Dataset</strong>Global Super Store</div>
+    <div class="mi"><strong>Software</strong>Power BI Desktop</div>
+    <div class="mi"><strong>Quiz</strong>5 MC + 2 open-ended</div>
+  </div>
+
+  <!-- ═══ PART 1 ═══ -->
+  <div id="p1" class="ph"><span class="pn">01</span><h2 class="pt">Your Excel is already a model — you just did not call it that</h2></div>
+
+  <p>If you have spent years in audit or FP&A, you have built data models. You called them spreadsheets. The concepts are the same — they just live in different tools and scale very differently.</p>
+  <p>Think about a typical P&L model in Excel. You have a tab for actuals pulled from the GL. Another tab for budget. Another that pulls from both and calculates variances. Each tab has rows and columns. Some columns reference other tabs. There are lookup formulas that match entities across sheets. You are already thinking in tables, references, and relationships.</p>
+  <p>What changes in Power BI is that these relationships become <strong>explicit, named, and governed</strong>. Instead of a VLOOKUP that happens to join two tables by product code, you declare a relationship between them once — and every measure, every visual, every filter in the report uses it automatically. And it works on millions of rows without reformulating every column.</p>
+
+  <div class="dw">
+    <div class="dc">From Excel to Power BI — the same concepts, different tools</div>
+    <div class="db">
+      <svg width="620" height="190" viewBox="0 0 620 190" role="img">
+        <title>Excel vs Power BI data model comparison</title>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#908D88" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <text x="130" y="22" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A4845" letter-spacing=".04em">EXCEL</text>
+        <rect x="20" y="35" width="220" height="38" rx="6" fill="#E8F5E8" stroke="#81C784" stroke-width="1"/>
+        <text x="130" y="59" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#2E7D32">Tab: Actuals (from GL)</text>
+        <rect x="20" y="85" width="220" height="38" rx="6" fill="#E8F5E8" stroke="#81C784" stroke-width="1"/>
+        <text x="130" y="109" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#2E7D32">Tab: Product reference</text>
+        <rect x="20" y="135" width="220" height="38" rx="6" fill="#FFF9C4" stroke="#F9A825" stroke-width="1"/>
+        <text x="130" y="152" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#795548">=VLOOKUP(A2, Products!A:C, 2, FALSE)</text>
+        <text x="130" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#908D88">join repeated in every formula</text>
+        <line x1="262" y1="95" x2="298" y2="95" stroke="#908D88" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <text x="280" y="87" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#908D88">same</text>
+        <text x="280" y="108" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#908D88">idea</text>
+        <text x="480" y="22" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#4A4845" letter-spacing=".04em">POWER BI</text>
+        <rect x="340" y="35" width="180" height="38" rx="6" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="430" y="59" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1B4FD8">Table: Sales (fact)</text>
+        <rect x="340" y="85" width="180" height="38" rx="6" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="430" y="109" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" fill="#1B4FD8">Table: Products (dim)</text>
+        <line x1="430" y1="73" x2="430" y2="85" stroke="#1D9E75" stroke-width="2"/>
+        <circle cx="430" cy="73" r="4" fill="#1D9E75"/>
+        <circle cx="430" cy="85" r="4" fill="none" stroke="#1D9E75" stroke-width="2"/>
+        <rect x="340" y="135" width="180" height="38" rx="6" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="430" y="152" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#0F6E56">Relationship declared once</text>
+        <text x="430" y="167" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56">all visuals use it automatically</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>The key shift is this: in Excel, you hold the model together with formulas. In Power BI, the model holds itself together — and you build measures on top of it. This is not just a tool difference. It is a fundamentally different way of thinking about data.</p>
+
+  <!-- ═══ PART 2 ═══ -->
+  <div id="p2" class="ph"><span class="pn">02</span><h2 class="pt">Tables and relationships</h2></div>
+
+  <h3>What a table is</h3>
+  <p>A table is a structured collection of data where every row represents one observation of the same thing, and every column represents one attribute of that thing. Every row must have the same columns. A cell can only contain one value.</p>
+  <p>This sounds obvious, but it rules out a lot of what people do in Excel: merged cells, header rows mid-sheet, columns that mean different things depending on the row, values like "Q1 / Q2 combined." None of these work in a data model. The table must be <strong>consistent, rectangular, and unambiguous.</strong></p>
+
+  <div class="dw">
+    <div class="dc">What a well-structured table looks like — vs what does not work</div>
+    <div class="db">
+      <svg width="600" height="200" viewBox="0 0 600 200" role="img">
+        <title>Well structured vs poorly structured table</title>
+        <text x="130" y="18" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#0F6E56" letter-spacing=".04em">✓  STRUCTURED TABLE</text>
+        <rect x="10" y="25" width="240" height="26" rx="0" fill="#E1F5EE"/>
+        <line x1="10" y1="25" x2="250" y2="25" stroke="#5DCAA5" stroke-width="1"/>
+        <line x1="10" y1="51" x2="250" y2="51" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="50" y="43" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#0F6E56">OrderID</text>
+        <text x="130" y="43" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#0F6E56">Product</text>
+        <text x="210" y="43" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#0F6E56">Sales</text>
+        <rect x="10" y="51" width="240" height="24" fill="#F7F6F2"/>
+        <text x="50" y="68" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1001</text>
+        <text x="130" y="68" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">Stapler</text>
+        <text x="210" y="68" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">47.50</text>
+        <rect x="10" y="75" width="240" height="24" fill="#FFFFFF"/>
+        <text x="50" y="92" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1002</text>
+        <text x="130" y="92" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">Binder</text>
+        <text x="210" y="92" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">12.00</text>
+        <rect x="10" y="99" width="240" height="24" fill="#F7F6F2"/>
+        <text x="50" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1003</text>
+        <text x="130" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">Stapler</text>
+        <text x="210" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">47.50</text>
+        <line x1="10" y1="25" x2="10" y2="123" stroke="#5DCAA5" stroke-width="1"/>
+        <line x1="90" y1="25" x2="90" y2="123" stroke="#D3D1C7" stroke-width="1"/>
+        <line x1="170" y1="25" x2="170" y2="123" stroke="#D3D1C7" stroke-width="1"/>
+        <line x1="250" y1="25" x2="250" y2="123" stroke="#5DCAA5" stroke-width="1"/>
+        <line x1="10" y1="123" x2="250" y2="123" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="130" y="150" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56">Every row = one order. Every column = one attribute.</text>
+        <text x="130" y="165" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56">Consistent. Rectangular. Unambiguous.</text>
+        <text x="450" y="18" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#A32D2D" letter-spacing=".04em">✗  SPREADSHEET HABITS</text>
+        <rect x="330" y="25" width="240" height="26" rx="0" fill="#FCEBEB"/>
+        <line x1="330" y1="25" x2="570" y2="25" stroke="#E24B4A" stroke-width="1"/>
+        <line x1="330" y1="51" x2="570" y2="51" stroke="#E24B4A" stroke-width="1"/>
+        <text x="450" y="43" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#A32D2D">Q1 Sales</text>
+        <rect x="330" y="51" width="240" height="48" fill="#FFF0F0"/>
+        <text x="370" y="72" font-family="DM Mono,monospace" font-size="10" fill="#A32D2D">Stapler</text>
+        <text x="450" y="72" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#A32D2D">[merged]</text>
+        <text x="450" y="90" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#A32D2D">47.50 / 52.00</text>
+        <rect x="330" y="99" width="240" height="24" fill="#FFF0F0"/>
+        <text x="370" y="116" font-family="DM Mono,monospace" font-size="10" fill="#A32D2D">TOTAL Q1</text>
+        <text x="520" y="116" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#A32D2D">99.50</text>
+        <line x1="330" y1="25" x2="330" y2="123" stroke="#E24B4A" stroke-width="1"/>
+        <line x1="570" y1="25" x2="570" y2="123" stroke="#E24B4A" stroke-width="1"/>
+        <line x1="330" y1="123" x2="570" y2="123" stroke="#E24B4A" stroke-width="1"/>
+        <text x="450" y="150" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#A32D2D">Merged cells, two values in one cell,</text>
+        <text x="450" y="165" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#A32D2D">summary rows mixed with data rows.</text>
+        <text x="450" y="180" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#A32D2D">None of this works in a data model.</text>
+      </svg>
+    </div>
+  </div>
+
+  <h3>What a relationship is</h3>
+  <p>A relationship connects two tables through a shared column — a <strong>key</strong>. One table has the key as its primary identifier (the "one" side). The other table references that key in many rows (the "many" side).</p>
+  <p>Think of it this way: if you have a table of orders and a table of products, every order references a product. Many orders can reference the same product. The product exists once in the products table, and many times in the orders table. That is a relationship — specifically, a <strong>one-to-many</strong> relationship.</p>
+
+  <!-- ═══ PART 3 ═══ -->
+  <div id="p3" class="ph"><span class="pn">03</span><h2 class="pt">One-to-many — the workhorse relationship</h2></div>
+
+  <p>The <strong>one-to-many</strong> relationship is the foundation of almost every data model you will build. One row in table A relates to many rows in table B. The "one" side is always a dimension or reference table. The "many" side is always a fact or transaction table.</p>
+
+  <div class="dw">
+    <div class="dc">One-to-many relationship — how filters flow through the model</div>
+    <div class="db">
+      <svg width="600" height="240" viewBox="0 0 600 240" role="img">
+        <title>One to many relationship diagram</title>
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect x="20" y="20" width="200" height="160" rx="8" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1.5"/>
+        <rect x="20" y="20" width="200" height="32" rx="8" fill="#1B4FD8"/>
+        <rect x="20" y="36" width="200" height="16" fill="#1B4FD8"/>
+        <text x="120" y="41" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#FFFFFF">Products</text>
+        <text x="35" y="41" font-family="DM Mono,monospace" font-size="9" fill="#B5D4F4">ONE</text>
+        <rect x="20" y="52" width="200" height="22" fill="#D6E3FA"/>
+        <text x="80" y="67" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#1B4FD8" font-weight="500">ProductID</text>
+        <text x="170" y="67" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#1B4FD8" font-weight="500">Name</text>
+        <line x1="20" y1="74" x2="220" y2="74" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="80" y="91" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">P-001</text>
+        <text x="170" y="91" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">Stapler</text>
+        <line x1="20" y1="98" x2="220" y2="98" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="80" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">P-002</text>
+        <text x="170" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">Binder</text>
+        <line x1="20" y1="121" x2="220" y2="121" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="80" y="137" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">P-003</text>
+        <text x="170" y="137" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">Pen Set</text>
+        <line x1="130" y1="52" x2="130" y2="180" stroke="#B5D4F4" stroke-width="1"/>
+        <rect x="55" y="152" width="90" height="20" rx="10" fill="#1B4FD8"/>
+        <text x="100" y="165" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#fff">unique values only</text>
+        <line x1="221" y1="100" x2="309" y2="100" stroke="#1D9E75" stroke-width="2" marker-end="url(#a1)"/>
+        <text x="265" y="90" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56" font-weight="500">filter flows →</text>
+        <text x="265" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#908D88">one direction</text>
+        <rect x="310" y="20" width="270" height="195" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1.5"/>
+        <rect x="310" y="20" width="270" height="32" rx="8" fill="#4A4845"/>
+        <rect x="310" y="36" width="270" height="16" fill="#4A4845"/>
+        <text x="445" y="41" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#FFFFFF">Orders</text>
+        <text x="325" y="41" font-family="DM Mono,monospace" font-size="9" fill="#908D88">MANY</text>
+        <rect x="310" y="52" width="270" height="22" fill="#E2E0DB"/>
+        <text x="360" y="67" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" font-weight="500">OrderID</text>
+        <text x="430" y="67" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" font-weight="500">ProductID</text>
+        <text x="530" y="67" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" font-weight="500">Sales</text>
+        <line x1="310" y1="74" x2="580" y2="74" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="360" y="91" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1001</text>
+        <text x="430" y="91" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#1B4FD8" font-weight="500">P-001</text>
+        <text x="530" y="91" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">47.50</text>
+        <line x1="310" y1="98" x2="580" y2="98" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="360" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1002</text>
+        <text x="430" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">P-002</text>
+        <text x="530" y="114" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">12.00</text>
+        <line x1="310" y1="121" x2="580" y2="121" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="360" y="137" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1003</text>
+        <text x="430" y="137" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#1B4FD8" font-weight="500">P-001</text>
+        <text x="530" y="137" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">47.50</text>
+        <line x1="310" y1="144" x2="580" y2="144" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="360" y="160" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1004</text>
+        <text x="430" y="160" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#1B4FD8" font-weight="500">P-001</text>
+        <text x="530" y="160" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">47.50</text>
+        <line x1="310" y1="167" x2="580" y2="167" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="360" y="183" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">1005</text>
+        <text x="430" y="183" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">P-003</text>
+        <text x="530" y="183" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">22.00</text>
+        <line x1="400" y1="52" x2="400" y2="215" stroke="#D3D1C7" stroke-width="1"/>
+        <line x1="490" y1="52" x2="490" y2="215" stroke="#D3D1C7" stroke-width="1"/>
+        <rect x="440" y="78" width="130" height="20" rx="10" fill="#FAEEDA"/>
+        <text x="505" y="91" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#BA7517">P-001 appears 3× — that is fine</text>
+        <text x="120" y="205" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#1B4FD8" font-weight="500">1 unique ProductID per row</text>
+        <text x="445" y="225" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Many orders can share the same ProductID</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>Notice the direction of the arrow: filters flow from the "one" side (Products) to the "many" side (Orders). If you select "Stapler" in a slicer, Power BI finds all rows in Orders where ProductID = P-001. This is how filtering works throughout the model. You declare the relationship once, and it works everywhere.</p>
+  <div class="callout ci"><strong>The "one" side must have unique values.</strong> Products must have exactly one row per ProductID. If it has duplicates, Power BI will not allow the relationship — or will make it many-to-many, which causes different problems (covered next).</div>
+
+  <!-- ═══ PART 4 ═══ -->
+  <div id="p4" class="ph"><span class="pn">04</span><h2 class="pt">Many-to-many — the problem you must avoid</h2></div>
+
+  <p>A many-to-many relationship occurs when the key column has duplicates on <em>both</em> sides of the relationship. Power BI will warn you and either refuse the relationship or downgrade it to many-to-many cardinality — either way, stop and fix the duplicates on the dim side. Do not click through and accept it.</p>
+  <p>The most common cause: you are trying to use a table that is not yet a proper dimension table — it still has duplicate keys on what should be the "one" side.</p>
+
+  <div class="dw">
+    <div class="dc">Why many-to-many produces wrong numbers</div>
+    <div class="db">
+      <svg width="580" height="220" viewBox="0 0 580 220" role="img">
+        <title>Many to many relationship problem</title>
+        <rect x="10" y="20" width="200" height="130" rx="8" fill="#FCEBEB" stroke="#E24B4A" stroke-width="1.5"/>
+        <rect x="10" y="20" width="200" height="30" rx="8" fill="#C62828"/>
+        <rect x="10" y="36" width="200" height="14" fill="#C62828"/>
+        <text x="110" y="39" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">Sales by Region (broken)</text>
+        <rect x="10" y="50" width="200" height="22" fill="#FFCDD2"/>
+        <text x="80" y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#C62828">Region</text>
+        <text x="170" y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#C62828">Sales</text>
+        <line x1="10" y1="72" x2="210" y2="72" stroke="#E24B4A" stroke-width="1"/>
+        <text x="80" y="88" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">East</text>
+        <text x="170" y="88" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">10,000</text>
+        <line x1="10" y1="95" x2="210" y2="95" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="80" y="111" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#A32D2D" font-weight="500">East</text>
+        <text x="170" y="111" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">15,000</text>
+        <line x1="10" y1="118" x2="210" y2="118" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="80" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">West</text>
+        <text x="170" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">8,000</text>
+        <line x1="130" y1="50" x2="130" y2="150" stroke="#E24B4A" stroke-width="1"/>
+        <rect x="60" y="152" width="100" height="22" rx="11" fill="#E24B4A"/>
+        <text x="110" y="166" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#fff">"East" appears twice!</text>
+        <line x1="212" y1="100" x2="258" y2="100" stroke="#908D88" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="235" y="92" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#A32D2D">M:M</text>
+        <text x="235" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#A32D2D">⚠</text>
+        <rect x="260" y="20" width="145" height="130" rx="8" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+        <rect x="260" y="20" width="145" height="30" rx="8" fill="#0F6E56"/>
+        <rect x="260" y="36" width="145" height="14" fill="#0F6E56"/>
+        <text x="332" y="39" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">Regions (fixed dim)</text>
+        <rect x="260" y="50" width="145" height="22" fill="#C8E6C9"/>
+        <text x="332" y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#0F6E56">RegionID</text>
+        <line x1="260" y1="72" x2="405" y2="72" stroke="#1D9E75" stroke-width="1"/>
+        <text x="332" y="88" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">East</text>
+        <line x1="260" y1="95" x2="405" y2="95" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="332" y="111" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">West</text>
+        <line x1="260" y1="118" x2="405" y2="118" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="332" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">North</text>
+        <rect x="275" y="152" width="115" height="22" rx="11" fill="#1D9E75"/>
+        <text x="332" y="166" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#fff">unique — 1:M works ✓</text>
+        <line x1="406" y1="100" x2="432" y2="100" stroke="#1D9E75" stroke-width="2"/>
+        <text x="419" y="92" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#0F6E56">1:M</text>
+        <rect x="433" y="20" width="135" height="130" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1.5"/>
+        <rect x="433" y="20" width="135" height="30" rx="8" fill="#4A4845"/>
+        <rect x="433" y="36" width="135" height="14" fill="#4A4845"/>
+        <text x="500" y="39" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">Sales (fact)</text>
+        <rect x="433" y="50" width="135" height="22" fill="#E2E0DB"/>
+        <text x="480" y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">RegionID</text>
+        <text x="545" y="65" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">Amount</text>
+        <line x1="433" y1="72" x2="568" y2="72" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="480" y="88" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">East</text>
+        <text x="545" y="88" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">10,000</text>
+        <line x1="433" y1="95" x2="568" y2="95" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="480" y="111" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">East</text>
+        <text x="545" y="111" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">15,000</text>
+        <line x1="433" y1="118" x2="568" y2="118" stroke="#E2E0DB" stroke-width="1"/>
+        <text x="480" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">West</text>
+        <text x="545" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="10" fill="#4A4845">8,000</text>
+        <line x1="515" y1="50" x2="515" y2="150" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="290" y="200" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#0F6E56">Fix: deduplicate the dimension first, then join.</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>The fix is always the same: <strong>deduplicate the "one" side.</strong> Create a proper dimension table that has exactly one row per unique key value. Your fact table can then reference it many times. This is what Power Query is for — building clean, unique dimension tables from messy source data.</p>
+  <div class="callout"><strong>If Power BI warns you about a many-to-many relationship — stop.</strong> Do not click through and accept it. Go back and find the duplicate keys on your dimension side. The warning is telling you that your model will produce wrong numbers.</div>
+
+  <!-- ═══ PART 5 ═══ -->
+  <div id="p5" class="ph"><span class="pn">05</span><h2 class="pt">The star schema</h2></div>
+
+  <p>The <strong>star schema</strong> is the most widely used data modeling pattern in business intelligence. It gets its name from its shape: a central fact table surrounded by dimension tables, each connected by a one-to-many relationship. When you draw it out, it looks like a star.</p>
+  <p>It was developed as the solution to a specific problem: analytical queries on relational databases were slow and complex when data was normalised across many tables. The star schema trades storage efficiency for query speed and simplicity. For Power BI, it is essentially the only model structure that performs well at scale.</p>
+
+  <div class="dw">
+    <div class="dc">Star schema — Global Super Store example</div>
+    <div class="db">
+      <svg width="620" height="360" viewBox="0 0 620 360" role="img">
+        <title>Star schema diagram for Global Super Store</title>
+        <defs>
+          <marker id="as" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect x="200" y="130" width="220" height="130" rx="10" fill="#1A1917" stroke="#1A1917" stroke-width="1.5"/>
+        <text x="310" y="155" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="500" fill="#FFFFFF">fact_Orders</text>
+        <text x="310" y="172" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#908D88">OrderKey · CustomerKey</text>
+        <text x="310" y="186" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#B5D4F4">ProductKey · DateKey</text>
+        <text x="310" y="200" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#B5D4F4">GeographyKey</text>
+        <line x1="210" y1="240" x2="410" y2="240" stroke="#333" stroke-width="1"/>
+        <text x="310" y="254" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#FAC775">Sales, Profit, Qty</text>
+        <rect x="20" y="20" width="170" height="90" rx="8" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <rect x="20" y="20" width="170" height="26" rx="8" fill="#1B4FD8"/>
+        <rect x="20" y="34" width="170" height="12" fill="#1B4FD8"/>
+        <text x="105" y="37" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">dim_Customers</text>
+        <text x="105" y="60" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">CustomerID (PK) · Name</text>
+        <text x="105" y="76" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">Segment</text>
+        <line x1="190" y1="65" x2="200" y2="175" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#as)"/>
+        <text x="188" y="127" font-family="DM Sans,sans-serif" font-size="9" fill="#0F6E56">1:M</text>
+        <rect x="430" y="20" width="170" height="90" rx="8" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <rect x="430" y="20" width="170" height="26" rx="8" fill="#1B4FD8"/>
+        <rect x="430" y="34" width="170" height="12" fill="#1B4FD8"/>
+        <text x="515" y="37" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">dim_Products</text>
+        <text x="515" y="60" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">ProductID (PK) · Name</text>
+        <text x="515" y="76" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">Category · SubCategory</text>
+        <line x1="430" y1="65" x2="420" y2="175" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#as)"/>
+        <text x="437" y="127" font-family="DM Sans,sans-serif" font-size="9" fill="#0F6E56">1:M</text>
+        <rect x="20" y="255" width="170" height="90" rx="8" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <rect x="20" y="255" width="170" height="26" rx="8" fill="#1B4FD8"/>
+        <rect x="20" y="269" width="170" height="12" fill="#1B4FD8"/>
+        <text x="105" y="272" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">dim_Date</text>
+        <text x="105" y="294" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">DateKey (PK)</text>
+        <text x="105" y="310" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">Year, Quarter, Month</text>
+        <text x="105" y="326" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">WeekDay, IsWeekend</text>
+        <line x1="190" y1="300" x2="200" y2="250" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#as)"/>
+        <text x="188" y="275" font-family="DM Sans,sans-serif" font-size="9" fill="#0F6E56">1:M</text>
+        <rect x="430" y="255" width="170" height="90" rx="8" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <rect x="430" y="255" width="170" height="26" rx="8" fill="#1B4FD8"/>
+        <rect x="430" y="269" width="170" height="12" fill="#1B4FD8"/>
+        <text x="515" y="272" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#fff">dim_Geography</text>
+        <text x="515" y="294" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">GeographyID (PK)</text>
+        <text x="515" y="310" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">Region, Country</text>
+        <text x="515" y="326" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845">City, Postal Code</text>
+        <line x1="430" y1="300" x2="420" y2="250" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#as)"/>
+        <text x="437" y="278" font-family="DM Sans,sans-serif" font-size="9" fill="#0F6E56">1:M</text>
+        <rect x="210" y="328" width="200" height="24" rx="6" fill="#F1EFE8"/>
+        <text x="310" y="344" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#4A4845">All arrows point TO the fact table · filters flow inward</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>Every dimension table connects to the fact table. Filters flow inward from dimensions to facts — never the other way (in a basic star schema). This single-direction filter flow is what makes the model predictable and performant.</p>
+  <p>The Global Super Store dataset you will use this week already follows this structure. Part of Week 2 is building it — which means you will understand exactly why each table exists and what role it plays.</p>
+
+  <!-- ═══ PART 6 ═══ -->
+  <div id="p6" class="ph"><span class="pn">06</span><h2 class="pt">Fact vs dimension tables — what goes where</h2></div>
+
+  <p>This distinction is the single most important concept in data modeling. If you put something in the wrong type of table, the model produces wrong numbers or becomes impossible to maintain.</p>
+
+  <div class="cmp-grid">
+    <div class="cmp-card">
+      <h4>Fact table</h4>
+      <p><strong>Contains:</strong> measurements, quantities, amounts — things you add up.</p>
+      <p><strong>Rows represent:</strong> one transaction or event (one order line, one payment, one daily balance).</p>
+      <p><strong>Typical columns:</strong> foreign keys to dimensions + numeric measures.</p>
+      <p><strong>Grows constantly:</strong> every new transaction adds a row. Millions of rows is normal.</p>
+      <p><strong>Examples:</strong> Orders, Payments, LCR inflows, LCR outflows</p>
+    </div>
+    <div class="cmp-card">
+      <h4>Dimension table</h4>
+      <p><strong>Contains:</strong> descriptive attributes — things you filter and group by.</p>
+      <p><strong>Rows represent:</strong> one entity (one product, one customer, one date).</p>
+      <p><strong>Typical columns:</strong> primary key + text/category attributes.</p>
+      <p><strong>Stable:</strong> grows slowly. Often thousands of rows, but in finance contexts dims can be hundreds of thousands or even millions — DimCustomer at a retail bank, DimSecurity at an asset manager.</p>
+      <p><strong>Examples:</strong> Products, Customers, Date, Geography, Counterparty</p>
+    </div>
+  </div>
+
+  <div class="callout ci"><strong>Size is not what defines a dimension.</strong> What defines it is the role: dimensions are used for filtering and grouping, facts for aggregation. A dim with three million rows is still a dim. What matters is that it grows slowly and has one row per entity.</div>
+
+  <div class="dw">
+    <div class="dc">How to identify fact vs dimension in practice</div>
+    <div class="db">
+      <svg width="580" height="160" viewBox="0 0 580 160" role="img">
+        <title>Fact vs dimension identification</title>
+        <defs>
+          <marker id="af" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#908D88" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect x="10" y="15" width="260" height="40" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="140" y="32" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Does a row represent a transaction or event?</text>
+        <text x="140" y="48" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#908D88">(order, payment, inflow, daily position)</text>
+        <line x1="270" y1="35" x2="300" y2="35" stroke="#908D88" stroke-width="1" marker-end="url(#af)"/>
+        <text x="285" y="28" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56">yes</text>
+        <rect x="300" y="15" width="100" height="40" rx="8" fill="#1A1917"/>
+        <text x="350" y="39" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#fff">FACT</text>
+        <rect x="10" y="75" width="260" height="40" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="140" y="92" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Does a row describe an entity?</text>
+        <text x="140" y="108" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#908D88">(product, customer, geography, date)</text>
+        <line x1="270" y1="95" x2="300" y2="95" stroke="#908D88" stroke-width="1" marker-end="url(#af)"/>
+        <text x="285" y="88" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56">yes</text>
+        <rect x="300" y="75" width="100" height="40" rx="8" fill="#1B4FD8"/>
+        <text x="350" y="99" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#fff">DIM</text>
+        <rect x="10" y="135" width="260" height="20" rx="6" fill="#FCEBEB" stroke="#E24B4A" stroke-width="1"/>
+        <text x="140" y="149" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#A32D2D">Contains text AND numbers AND no clear primary key?</text>
+        <line x1="270" y1="145" x2="300" y2="145" stroke="#908D88" stroke-width="1" marker-end="url(#af)"/>
+        <rect x="300" y="135" width="260" height="20" rx="6" fill="#FFF8EC" stroke="#F5C842" stroke-width="1"/>
+        <text x="430" y="149" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#7A5C00">Needs restructuring before modeling</text>
+      </svg>
+    </div>
+  </div>
+
+  <h3>A practical test: can you SUM it meaningfully?</h3>
+  <p>Fact table columns should be things you can sum and get a meaningful answer: total sales, total quantity, total outflows. If summing a column produces nonsense — like summing customer ID numbers — it belongs in a dimension.</p>
+  <p>There is one exception: <strong>foreign keys</strong> in the fact table are numbers that look like they could be summed but should not be. They are identifiers, not measures. A well-built model hides foreign key columns from report view so users cannot accidentally drag them into visuals.</p>
+
+  <!-- ═══ PART 7 ═══ -->
+  <div id="p7" class="ph"><span class="pn">07</span><h2 class="pt">From relational database to data warehouse</h2></div>
+
+  <p>Understanding where the star schema came from helps you understand why it is designed the way it is — and why data engineers structure source systems differently from analytical models.</p>
+
+  <div class="dw">
+    <div class="dc">How data modeling evolved — and where Power BI fits</div>
+    <div class="db">
+      <svg width="600" height="200" viewBox="0 0 600 200" role="img">
+        <title>Evolution from relational database to data warehouse to Power BI</title>
+        <defs>
+          <marker id="aev" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#908D88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect x="10" y="30" width="140" height="110" rx="10" fill="#E8F5E8" stroke="#81C784" stroke-width="1.5"/>
+        <text x="80" y="52" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#2E7D32">Relational DB</text>
+        <text x="80" y="68" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Many small tables</text>
+        <text x="80" y="83" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Normalised (3NF)</text>
+        <text x="80" y="98" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">No duplication</text>
+        <text x="80" y="113" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Fast writes</text>
+        <text x="80" y="128" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#2E7D32">Purpose: run the business</text>
+        <line x1="150" y1="85" x2="178" y2="85" stroke="#908D88" stroke-width="2" marker-end="url(#aev)"/>
+        <text x="164" y="75" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88">ETL</text>
+        <text x="164" y="99" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88">nightly</text>
+        <rect x="180" y="30" width="140" height="110" rx="10" fill="#FFF8EC" stroke="#F5C842" stroke-width="1.5"/>
+        <text x="250" y="52" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#7A5C00">Data Warehouse</text>
+        <text x="250" y="68" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Star / snowflake schema</text>
+        <text x="250" y="83" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Denormalised</text>
+        <text x="250" y="98" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Historical data</text>
+        <text x="250" y="113" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Fast analytical reads</text>
+        <text x="250" y="128" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#7A5C00">Purpose: analyse the business</text>
+        <line x1="320" y1="85" x2="348" y2="85" stroke="#908D88" stroke-width="2" marker-end="url(#aev)"/>
+        <text x="334" y="75" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88">semantic</text>
+        <text x="334" y="99" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88">layer</text>
+        <rect x="350" y="30" width="140" height="110" rx="10" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <text x="420" y="52" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#1B4FD8">Power BI Semantic</text>
+        <text x="420" y="68" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Star schema (in-memory)</text>
+        <text x="420" y="83" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">DAX measures on top</text>
+        <text x="420" y="98" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Single source of truth</text>
+        <text x="420" y="113" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Shared across reports</text>
+        <text x="420" y="128" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#1B4FD8">Purpose: govern &amp; present</text>
+        <rect x="500" y="30" width="90" height="110" rx="10" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1.5"/>
+        <text x="545" y="52" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#4A4845">Modern</text>
+        <text x="545" y="68" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">Snowflake</text>
+        <text x="545" y="83" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">Databricks</text>
+        <text x="545" y="98" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">Fabric</text>
+        <text x="545" y="114" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#908D88">lakehouse = DW + lake</text>
+        <text x="300" y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10.5" fill="#4A4845">You work at the Power BI layer. Data engineers own everything to the left.</text>
+        <text x="300" y="188" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10.5" fill="#4A4845">Understanding the pipeline helps you ask better questions about the data.</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>The key insight from this diagram: <strong>you work at the Power BI layer.</strong> The data that arrives at your model has already been through a relational database and usually a data warehouse or lakehouse (Snowflake, Databricks, Fabric). By the time it reaches you, it should already be structured for analytics. If it is not — if you are getting a flat dump of a transactional table — your first job is to shape it into a star schema using Power Query.</p>
+  <p>In Week 2 you will do exactly this — take a flat CSV from Global Super Store, identify which columns are fact and which are dimension, and build the star schema yourself in Power Query.</p>
+
+  <!-- ═══ PART 8 ═══ -->
+  <div id="p8" class="ph"><span class="pn">08</span><h2 class="pt">Reading an unfamiliar dataset</h2></div>
+
+  <p>Every engagement starts with a dataset you have not seen before. Knowing how to quickly orient yourself — identify fact tables, find dimension candidates, understand the grain — saves hours of confusion.</p>
+
+  <h3>The grain: the most important question about any table</h3>
+  <p>The <strong>grain</strong> of a table is what one row represents. It is the most fundamental thing to establish about any table. Before you do anything else with a dataset, answer this question for every table in it.</p>
+  <div class="rb">
+    <div class="rbh">Grain examples — Global Super Store</div>
+    <div class="rbb">
+      <p><strong>Orders table:</strong> one row = one order line item (one product in one order)</p>
+      <p><strong>Products table:</strong> one row = one product</p>
+      <p><strong>Date table:</strong> one row = one calendar day</p>
+      <p><strong>LCR inflows:</strong> one row = one inflow category for one legal entity on one reporting date</p>
+    </div>
+  </div>
+  <p>If you cannot state the grain in one clear sentence, the table is not ready to model. Either it mixes different grains (bad source data), or you do not yet understand it (talk to the data engineer).</p>
+
+  <h3>A four-step process for reading a new dataset</h3>
+  <ul class="prose">
+    <li><strong>Step 1 — Count the rows.</strong> A table with 5 million rows is almost certainly a fact table. A table with 500 rows is almost certainly a dimension.</li>
+    <li><strong>Step 2 — Find the primary key.</strong> Which column (or combination of columns) uniquely identifies each row? That column is the key. If no column is unique, the table probably needs transformation.</li>
+    <li><strong>Step 3 — Identify the numeric columns.</strong> These are your measures. Are they additive (you can sum them)? Semi-additive (sometimes)? Non-additive (never)? This determines how you will build measures later.</li>
+    <li><strong>Step 4 — Look for foreign keys.</strong> Columns with IDs that appear to reference another table are foreign keys. These are where relationships will connect.</li>
+  </ul>
+  <div class="callout cg"><strong>When in doubt, ask the data engineer.</strong> They built the pipeline that produced this data. They know what a row represents, what the keys mean, and where the data came from originally. A 20-minute conversation at the start of a project saves days of reverse-engineering later.</div>
+
+  <!-- ═══ QUIZ ═══ -->
+  <div id="quiz" class="qs">
+    <div class="qh"><span class="qt">After reading</span><h2 class="qtl">Check your understanding</h2></div>
+    <p class="qi">5 multiple choice questions scored automatically. 2 open-ended: write your answer first, then reveal the model answer to compare.</p>
+    <div class="qpb"><div class="qpf" id="qpf"></div></div>
+
+    <!-- Q1 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">01 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">In a star schema, which table should always have unique values in its primary key column — and why?</div>
+      <div class="opts" id="o1">
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">A</span>The fact table — because it records every transaction and must never have duplicates.</button>
+        <button class="opt" onclick="pick(this,'o1','c')"><span class="ol">B</span>The dimension table — because it is the "one" side of every one-to-many relationship, and duplicate keys cause many-to-many problems.</button>
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">C</span>Both tables must have unique primary keys.</button>
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">D</span>Neither — uniqueness is enforced automatically by Power BI.</button>
+      </div>
+      <div class="fb fbok" id="fb1c"><strong>Correct.</strong> The dimension table is the "one" side of the relationship. If its key column has duplicates, Power BI cannot create a valid one-to-many relationship — it either refuses the relationship or creates a many-to-many, which produces incorrect totals. The fact table's primary key (OrderID, etc.) is also unique per row, but the critical constraint for relationships is on the dimension side.</div>
+      <div class="fb fberr" id="fb1w"><strong>Not quite.</strong> The answer is B. The dimension table is the "one" side of every relationship. Its primary key must be unique. If it is not, Power BI creates a many-to-many relationship and your aggregations will produce wrong numbers.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">02 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">You receive a table from the data engineer called "ProductSales" with columns: ProductID, ProductName, Category, SalesAmount, Quantity, OrderDate. What is wrong with this table from a modeling perspective?</div>
+      <div class="opts" id="o2">
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">A</span>Nothing — this is a well-structured table ready to use as a fact.</button>
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">B</span>The table has too many columns.</button>
+        <button class="opt" onclick="pick(this,'o2','c')"><span class="ol">C</span>It mixes fact data (SalesAmount, Quantity, OrderDate) with dimension attributes (ProductName, Category). These should be in separate tables.</button>
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">D</span>OrderDate should not be in this table — dates are always in a separate database.</button>
+      </div>
+      <div class="fb fbok" id="fb2c"><strong>Correct.</strong> ProductName and Category describe the product — they belong in a dim_Products table. SalesAmount, Quantity, and OrderDate relate to the transaction — they belong in a fact table. Mixing them creates a denormalised flat table. You can use it, but you lose the ability to filter products independently, manage product attributes in one place, or build a proper date table relationship. Split them.</div>
+      <div class="fb fberr" id="fb2w"><strong>Not quite.</strong> The answer is C. Fact attributes (amounts, quantities, transaction dates) and dimension attributes (product name, category) are mixed in the same table. This should be split into a fact table (OrderID, ProductID, SalesAmount, Quantity, OrderDate) and a dimension table (ProductID, ProductName, Category).</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">03 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">In your Power BI model, filters flow from a dimension table to a fact table. A user selects "East" in a Region slicer. What happens?</div>
+      <div class="opts" id="o3">
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">A</span>The dim_Geography table filters to show only the "East" row, but the fact table is unaffected.</button>
+        <button class="opt" onclick="pick(this,'o3','c')"><span class="ol">B</span>The "East" selection flows through the relationship to the fact table, which then only shows rows where GeographyID = East. All measures recalculate on this filtered set.</button>
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">C</span>The filter applies to all tables in the model simultaneously.</button>
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">D</span>The filter only works if the fact table has a "Region" column directly.</button>
+      </div>
+      <div class="fb fbok" id="fb3c"><strong>Correct.</strong> This is exactly how relationships work. The slicer filters the dimension table to "East." That filter propagates through the one-to-many relationship to the fact table, restricting it to rows where GeographyID matches East. Every measure — SUM(Sales), COUNT(Orders), etc. — recalculates on that filtered set. This is the engine behind every slicer and filter in Power BI.</div>
+      <div class="fb fberr" id="fb3w"><strong>Not quite.</strong> The answer is B. The filter flows from the dimension (one side) through the relationship to the fact table (many side). The fact table is filtered to rows that match the selected value, and all measures recalculate accordingly. This is how every slicer in Power BI works.</div>
+    </div>
+
+    <!-- Q4 scenario -->
+    <div class="qc">
+      <div class="qm"><span class="qn">04 / 07</span><span class="qb bsc">Scenario</span></div>
+      <div class="qtxt">You are given the Global Super Store dataset as a single flat CSV file with all columns in one table. What should you do before building any measures or visuals?</div>
+      <div class="opts" id="o4">
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">A</span>Start building visuals immediately — the flat table works fine, you can always restructure later.</button>
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">B</span>Add calculated columns for every attribute you need — this avoids having to split the table.</button>
+        <button class="opt" onclick="pick(this,'o4','c')"><span class="ol">C</span>Use Power Query to split the flat file into a fact table and separate dimension tables, then define relationships between them.</button>
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">D</span>Ask the data engineer to restructure the source data before you can begin.</button>
+      </div>
+      <div class="fb fbok" id="fb4c"><strong>Correct.</strong> A flat file loaded as a single table is not a data model — it is a flat table with no relationships. Every measure you write on it will be working against an unstructured blob of data. Use Power Query to extract unique dimension tables (one row per product, one row per customer, one row per date) and a clean fact table with foreign keys. Then define the relationships. This is Week 2's exercise.</div>
+      <div class="fb fberr" id="fb4w"><strong>Not quite.</strong> The answer is C. A flat file needs to be restructured into a star schema before modeling. Power Query lets you extract unique dimension tables and create a clean fact table with foreign keys. Building on a flat table without relationships will cause incorrect results as soon as you try to filter across entities.</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">05 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">You are looking at a table with 8 million rows. Column A contains dates, Column B contains product codes, Column C contains decimal amounts. What is this table most likely, and what should you check first?</div>
+      <div class="opts" id="o5">
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">A</span>A dimension table. Check that Column A has unique values.</button>
+        <button class="opt" onclick="pick(this,'o5','c')"><span class="ol">B</span>A fact table. Check the grain — what does one row represent — and identify which column is the primary key.</button>
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">C</span>A dimension table. Check that Column C can be summed to give total sales.</button>
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">D</span>Impossible to tell without more information.</button>
+      </div>
+      <div class="fb fbok" id="fb5c"><strong>Correct.</strong> 8 million rows almost certainly means a fact table — most dimensions are much smaller (though customer or security dims in finance can also be large). The first question is always the grain: what does one row represent? Is it one transaction? One daily position per product? Once you know the grain, you can identify the primary key (the combination of columns that uniquely identifies each row) and start thinking about which dimensions it connects to.</div>
+      <div class="fb fberr" id="fb5w"><strong>Not quite.</strong> The answer is B. 8 million rows strongly suggests a fact table. The first thing to establish about any table is its grain: what does one row represent? From there, you identify the primary key and plan the relationships.</div>
+    </div>
+
+    <!-- Q6 open -->
+    <div class="qc">
+      <div class="qm"><span class="qn">06 / 07</span><span class="qb bop">Open-ended</span></div>
+      <div class="qtxt">Draw or describe in words the star schema you would build for the LCR dataset. What would the fact table contain? What dimension tables would surround it? What would be the grain of the fact table?</div>
+      <textarea class="ota" id="ta6" placeholder="Describe or sketch your star schema here..."></textarea>
+      <button class="cbtn" id="btn6" onclick="showModel('ta6','m6','btn6')">See model answer</button>
+      <div class="mans" id="m6">
+        <strong>Model answer</strong>
+        <strong style="font-size:.9rem;text-transform:none;letter-spacing:0;display:block;margin-top:.5rem">Fact table: fact_LCR_Flows</strong>
+        Grain: one row = one flow category for one legal entity on one reporting date. Columns: DateID (FK), EntityID (FK), ProductTypeID (FK), CounterpartyID (FK), FlowAmount, WeightedAmount, MaturityBucket.
+        <strong style="font-size:.9rem;text-transform:none;letter-spacing:0;display:block;margin-top:.75rem">Dimension tables:</strong>
+        dim_Date (DateID, Date, Year, Quarter, Month) · dim_Entity (EntityID, LegalEntityName, Jurisdiction) · dim_ProductType (ProductTypeID, Category, RegulatoryCode, FlowDirection: inflow/outflow) · dim_Counterparty (CounterpartyID, CounterpartyName, CounterpartyType: retail/wholesale/financial).
+        The star schema keeps regulatory codes in dim_ProductType so you can filter by them without cluttering the fact table. All four dimensions connect to the fact table via one-to-many relationships.
+      </div>
+    </div>
+
+    <!-- Q7 open -->
+    <div class="qc">
+      <div class="qm"><span class="qn">07 / 07</span><span class="qb bop">Open-ended</span></div>
+      <div class="qtxt">Your colleague says: "I just loaded the Global Super Store CSV as one table and built my whole report on it. It works fine!" What would you tell them — and what specific problems might appear later?</div>
+      <textarea class="ota" id="ta7" placeholder="Write your response here..."></textarea>
+      <button class="cbtn" id="btn7" onclick="showModel('ta7','m7','btn7')">See model answer</button>
+      <div class="mans" id="m7">
+        <strong>Model answer</strong>
+        It works fine — until it does not. Three specific problems that will appear: (1) <strong>Duplicate dimension data.</strong> The product name, category, and subcategory are repeated on every order row. If someone fixes a typo in a product name, they must update every row. In a dimension table, they update one row. (2) <strong>Incorrect totals when filtering across entities.</strong> Without proper relationships, a slicer on Category may not correctly filter a measure calculated on a different aspect of the same flat table — the model has no way to understand the relationship between attributes. (3) <strong>Performance.</strong> A flat 10,000-row table works. A flat 10 million-row table with repeated text strings for every attribute will be slow. The star schema compresses fact tables because they only store IDs, not repeated text. The flat file approach delays these problems — it does not solve them.
+      </div>
+    </div>
+
+    <div class="scorecard" id="sc">
+      <div class="snum" id="snum"></div>
+      <div class="slbl">multiple choice correct</div>
+      <div class="smsg" id="smsg"></div>
+    </div>
+
+    <a class="next" href="#">
+      <div>
+        <div class="nlbl">Up next</div>
+        <div class="ntitle">Week 2 · Power Query &amp; semantic model</div>
+      </div>
+      <div class="narr">→</div>
+    </a>
+  </div>
+
+</main>
+</div>
+
+<script>
+const sc={};let mcD=0,opD=0;const MCT=5;
+function pick(btn,gid,res){
+  const g=document.getElementById(gid);
+  if(g.querySelector('.r,.w'))return;
+  g.querySelectorAll('.opt').forEach(b=>b.disabled=true);
+  const n=gid.replace('o','');
+  if(res==='c'){
+    btn.classList.add('r');btn.querySelector('.ol').textContent='✓';
+    document.getElementById('fb'+n+'c').classList.add('show');sc[gid]=1;
+  }else{
+    btn.classList.add('w');btn.querySelector('.ol').textContent='✗';
+    document.getElementById('fb'+n+'w').classList.add('show');sc[gid]=0;
+    g.querySelectorAll('.opt').forEach(b=>{
+      if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'c'")){
+        b.classList.add('h');b.querySelector('.ol').textContent='✓';
+      }
+    });
+  }
+  mcD++;upBar();if(mcD===MCT)showScore();
+}
+function showModel(ta,mid,bid){
+  document.getElementById(ta).disabled=true;
+  document.getElementById(bid).disabled=true;
+  document.getElementById(mid).classList.add('show');
+  opD++;upBar();
+}
+function upBar(){document.getElementById('qpf').style.width=((mcD+opD)/7*100)+'%'}
+function showScore(){
+  const n=Object.values(sc).reduce((a,b)=>a+b,0);
+  document.getElementById('snum').textContent=n+' / '+MCT;
+  const msgs=['Go back through parts 3–6 before moving on.','Review the questions you missed.','Good foundation — you are ready for Week 2.','Strong. On to Week 2.','Perfect. On to Week 2.'];
+  document.getElementById('smsg').textContent=msgs[n];
+  const c=document.getElementById('sc');c.style.display='block';
+  c.scrollIntoView({behavior:'smooth',block:'center'});
+}
+function nv(id,btn){
+  document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  btn.classList.add('on');
+}
+window.addEventListener('scroll',()=>{
+  const ids=['p1','p2','p3','p4','p5','p6','p7','p8','quiz'];
+  const navs=document.querySelectorAll('.ni');
+  let cur=0;
+  ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<130)cur=i;});
+  navs.forEach(n=>n.classList.remove('on'));if(navs[cur])navs[cur].classList.add('on');
+});
+</script>
+</body>
+</html>

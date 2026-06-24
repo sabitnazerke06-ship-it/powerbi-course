@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1 · Exercise — Model analysis &amp; design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F2;--surf:#FFFFFF;--ink:#1A1917;--ink2:#4A4845;--ink3:#908D88;--acc:#1B4FD8;--acc-l:#EEF2FD;--rule:#E2E0DB;--tag-bg:#EEEDFE;--tag-tx:#3C3489;--ok:#0F6E56;--ok-bg:#E1F5EE;--ok-bd:#1D9E75;--warn-bg:#FFF8EC;--warn-bd:#F5C842;--warn-tx:#7A5C00;--err:#A32D2D;--err-bg:#FCEBEB;--err-bd:#E24B4A;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.8}
+.topbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.tb{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.ts{color:var(--rule)}.tw{font-size:13px;font-weight:500;color:var(--ink2)}
+.tp{margin-left:auto;display:flex;align-items:center;gap:10px}
+.progress-count{font-size:13px;font-weight:500;color:var(--acc)}
+.layout{max-width:960px;margin:0 auto;padding:0 2rem}
+.content{padding:3rem 0 6rem}
+.ex-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#BA7517;background:#FAEEDA;padding:4px 12px;border-radius:4px;margin-bottom:1.25rem}
+.lesson-title{font-family:var(--serif);font-size:2.5rem;line-height:1.12;margin-bottom:1rem}
+.lesson-sub{font-size:1rem;color:var(--ink2);font-weight:300;line-height:1.75;max-width:600px;margin-bottom:2rem}
+.meta-row{display:flex;gap:0;background:var(--surf);border:1px solid var(--rule);border-radius:10px;margin-bottom:1.5rem;overflow:hidden;flex-wrap:wrap}
+.mi{font-size:13px;color:var(--ink3);padding:1rem 1.25rem;border-right:1px solid var(--rule);flex:1;min-width:160px}.mi:last-child{border-right:none}
+.mi strong{color:var(--ink2);font-weight:500;display:block;font-size:10.5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+/* Dataset download */
+.dataset-card{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1.1rem 1.4rem;margin-bottom:2.5rem;display:flex;align-items:center;gap:1rem;justify-content:space-between;flex-wrap:wrap}
+.dc-left{flex:1;min-width:220px}
+.dc-label{font-size:10.5px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:3px}
+.dc-text{font-size:13.5px;color:var(--ink2);line-height:1.55}
+.dc-text a{color:var(--acc);text-decoration:none;font-weight:500;border-bottom:1px dashed var(--acc)}
+.dc-text a:hover{border-bottom-style:solid}
+.csv-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;background:var(--ink);color:#fff;border-radius:7px;font-size:.88rem;font-weight:500;text-decoration:none;transition:opacity .15s}
+.csv-btn:hover{opacity:.85}
+.csv-btn .csv-icon{font-size:1.1rem;line-height:1}
+.overall-prog{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:2.5rem}
+.op-label{font-size:12px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.op-bar{height:8px;background:var(--rule);border-radius:4px;overflow:hidden}
+.op-fill{height:100%;background:var(--ok-bd);border-radius:4px;width:0%;transition:width .4s ease}
+.op-counts{display:flex;justify-content:space-between;margin-top:.5rem;font-size:12px;color:var(--ink3)}
+.phase{margin:2.5rem 0 1rem}
+.phase-header{display:flex;align-items:center;gap:.75rem;padding:.875rem 1.25rem;background:var(--ink);border-radius:10px;margin-bottom:1rem}
+.phase-num{font-family:var(--mono);font-size:10px;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase}
+.phase-title{font-family:var(--serif);font-size:1.25rem;color:#FFFFFF;flex:1}
+.phase-count{font-size:11px;color:var(--ink3);background:rgba(255,255,255,.1);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.phase-desc{font-size:.9rem;color:var(--ink2);margin-bottom:1.25rem;line-height:1.7;padding:0 .25rem}
+.task-card{background:var(--surf);border:1px solid var(--rule);border-radius:12px;margin-bottom:.75rem;overflow:hidden;transition:border-color .2s}
+.task-card.done{border-color:var(--ok-bd);background:#FAFFFE}
+.task-header{display:flex;align-items:flex-start;gap:.875rem;padding:1.1rem 1.25rem;cursor:pointer;user-select:none}
+.task-checkbox{width:22px;height:22px;border:2px solid var(--rule);border-radius:6px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;background:var(--bg)}
+.task-card.done .task-checkbox{background:var(--ok-bd);border-color:var(--ok-bd)}
+.task-check-icon{color:#fff;font-size:13px;display:none}
+.task-card.done .task-check-icon{display:block}
+.task-main{flex:1}
+.task-title{font-size:.95rem;font-weight:500;color:var(--ink);line-height:1.4;margin-bottom:.2rem}
+.task-card.done .task-title{color:var(--ok);text-decoration:line-through;text-decoration-color:var(--ok-bd)}
+.task-hint{font-size:.84rem;color:var(--ink3);line-height:1.5}
+.task-expand{font-size:1.1rem;color:var(--ink3);transition:transform .2s;margin-top:1px;flex-shrink:0;line-height:1}
+.task-card.open .task-expand{transform:rotate(180deg)}
+.task-body{display:none;padding:0 1.25rem 1.25rem 3.5rem;border-top:1px solid var(--rule)}
+.task-card.open .task-body{display:block}
+.task-body p{font-size:.9rem;color:var(--ink2);margin-bottom:.75rem;line-height:1.7}
+.task-body p:last-child{margin-bottom:0}
+.task-body strong{color:var(--ink);font-weight:500}
+/* Legend / mini-callout inside a task */
+.task-legend{background:var(--acc-l);border:1px solid #B5D4F4;border-radius:8px;padding:.7rem .95rem;margin:.5rem 0 1rem;font-size:.83rem;color:#1A3A8F;line-height:1.6}
+.task-legend strong{color:#1A3A8F;font-weight:500}
+.expected{background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:8px;padding:.875rem 1rem;margin:.75rem 0}
+.expected strong{font-size:.8rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--ok);display:block;margin-bottom:.4rem}
+.expected p{font-size:.88rem;color:var(--ok);margin-bottom:0;line-height:1.6}
+.warn{background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:.875rem 1rem;margin:.75rem 0}
+.warn strong{font-size:.8rem;font-weight:500;letter-spacing:.04em;text-transform:uppercase;color:var(--warn-tx);display:block;margin-bottom:.3rem}
+.warn p{font-size:.88rem;color:var(--warn-tx);margin-bottom:0;line-height:1.6}
+/* ANALYSIS TABLE — interactive */
+.analysis-table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.88rem}
+.analysis-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.analysis-table td{padding:8px 12px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.analysis-table tr:last-child td{border-bottom:none}
+/* Classify dropdown */
+.classify-select{font-family:var(--sans);font-size:.84rem;padding:5px 8px;border:1px solid var(--rule);border-radius:6px;background:var(--bg);color:var(--ink2);cursor:pointer;width:100%;max-width:200px;transition:all .15s}
+.classify-select:focus{outline:none;border-color:var(--acc);background:var(--surf)}
+.classify-select.chosen{border-color:var(--acc);background:var(--acc-l);color:var(--acc);font-weight:500}
+.reason-input{font-family:var(--sans);font-size:.84rem;padding:6px 9px;border:1px solid var(--rule);border-radius:6px;background:var(--bg);color:var(--ink);width:100%;min-width:180px;transition:all .15s}
+.reason-input:focus{outline:none;border-color:var(--acc);background:var(--surf)}
+.badge{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px}
+.badge-fact{background:var(--ink);color:#fff}
+.badge-dim{background:var(--acc-l);color:var(--acc)}
+.badge-unclear{background:var(--warn-bg);color:var(--warn-tx)}
+/* ANSWER REVEAL */
+.answer-btn{display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border:1.5px solid var(--acc);border-radius:8px;font-size:.92rem;font-weight:500;color:var(--acc);background:var(--acc-l);cursor:pointer;font-family:var(--sans);margin-top:.75rem;transition:all .15s}
+.answer-btn:hover{background:var(--acc);color:#fff}
+.answer-btn .ans-arrow{display:inline-block;font-size:1.4rem;line-height:1;transition:transform .25s ease}
+.answer-btn.open .ans-arrow{transform:rotate(180deg)}
+.answer-reveal{margin-top:.75rem;padding:1rem 1.25rem;background:var(--acc-l);border:1px solid #B5D4F4;border-radius:8px;font-size:.88rem;color:#1A3A8F;display:none;line-height:1.7}
+.answer-reveal.show{display:block}
+.answer-reveal strong{color:#1A3A8F;font-weight:500}
+/* OPEN ANSWER BOX */
+.open-ans{width:100%;min-height:100px;border:1px solid var(--rule);border-radius:8px;padding:10px 12px;font-family:var(--sans);font-size:.88rem;color:var(--ink);background:var(--bg);resize:vertical;line-height:1.6;margin:.75rem 0}
+.open-ans:focus{outline:none;border-color:var(--acc);background:var(--surf)}
+.ic{font-family:var(--mono);font-size:.82em;background:#1A1917;color:#FAC775;padding:2px 6px;border-radius:4px}
+.validation{background:var(--surf);border:2px solid var(--ink);border-radius:12px;padding:1.5rem;margin:3rem 0}
+.val-title{font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin-bottom:1rem}
+.val-item{display:flex;align-items:flex-start;gap:.875rem;padding:.875rem 0;border-bottom:1px solid var(--rule)}
+.val-item:last-child{border-bottom:none}
+.val-cb{width:20px;height:20px;border:2px solid var(--rule);border-radius:5px;flex-shrink:0;margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;background:var(--bg);transition:all .2s}
+.val-cb.checked{background:var(--ok-bd);border-color:var(--ok-bd)}
+.val-cb.checked::after{content:'✓';color:#fff;font-size:11px}
+.val-text{font-size:.9rem;color:var(--ink2);line-height:1.6}
+.val-text strong{color:var(--ink);font-weight:500}
+.completion{margin-top:3rem;padding:2rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px;text-align:center;display:none}
+.comp-emoji{font-size:2.5rem;margin-bottom:.75rem}
+.comp-title{font-family:var(--serif);font-size:1.6rem;color:var(--ink);margin-bottom:.5rem}
+.comp-text{font-size:.95rem;color:var(--ink2);max-width:480px;margin:0 auto 1.5rem}
+/* UP NEXT card */
+.up-next{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1.5rem 1.75rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px;margin-top:2.5rem;text-decoration:none;color:inherit;transition:border-color .15s,box-shadow .15s,transform .15s}
+.up-next:hover{border-color:var(--ink);box-shadow:0 4px 16px rgba(26,25,23,0.08);transform:translateY(-1px)}
+.un-text{flex:1;min-width:0}
+.un-label{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.un-title{font-family:var(--serif);font-size:1.4rem;color:var(--ink);line-height:1.25}
+.un-arrow{font-size:1.6rem;color:var(--ink);flex-shrink:0;transition:transform .2s}
+.up-next:hover .un-arrow{transform:translateX(4px)}
+p{margin-bottom:.8rem;font-size:.975rem;color:var(--ink2);line-height:1.8}
+p strong{color:var(--ink);font-weight:500}
+ul.prose{margin:.75rem 0 1rem;padding-left:1.25rem}
+ul.prose li{font-size:.92rem;color:var(--ink2);margin-bottom:.4rem;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="tb">Power BI Analyst Program</span>
+  <span class="ts">·</span>
+  <span class="tw">Module 1 · Exercise</span>
+  <div class="tp">
+    <span style="font-size:12px;color:var(--ink3)">Tasks complete:</span>
+    <span class="progress-count" id="prog-label">0 / 8</span>
+  </div>
+</div>
+<div class="layout">
+<div class="content">
+  <div class="ex-tag">⚒ Hands-on exercise</div>
+  <h1 class="lesson-title">Model analysis<br><em>&amp; design</em></h1>
+  <p class="lesson-sub">Module 1 is theory — but theory is only useful when you can apply it to real data. This exercise gives you the Global Super Store column list and several real-world scenarios to reason through before you start building in Module 2.</p>
+
+  <div class="meta-row">
+    <div class="mi"><strong>Dataset</strong>Global Super Store · 21 columns</div>
+    <div class="mi"><strong>Format</strong>Analysis + written answers</div>
+    <div class="mi"><strong>Time</strong>~1.5 hours</div>
+    <div class="mi"><strong>Goal</strong>Design the star schema before building it</div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="dc-left">
+      <div class="dc-label">Download the data</div>
+      <div class="dc-text">Global Super Store CSV — the canonical Sample Superstore dataset (originally from Tableau, hosted on <a href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final" target="_blank" rel="noopener">Kaggle</a>). You won't need it open for this exercise — it's for Module 2.</div>
+    </div>
+    <a class="csv-btn" href="https://www.kaggle.com/datasets/vivek468/superstore-dataset-final" target="_blank" rel="noopener"><span class="csv-icon">⬇</span> Download CSV</a>
+  </div>
+
+  <div class="overall-prog">
+    <div class="op-label">Your progress</div>
+    <div class="op-bar"><div class="op-fill" id="op-fill"></div></div>
+    <div class="op-counts"><span id="op-done">0 tasks done</span><span id="op-left">8 remaining</span></div>
+  </div>
+
+  <!-- PHASE 1 -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">Phase 01</span>
+      <span class="phase-title">Classify the Global Super Store columns</span>
+      <span class="phase-count">3 tasks</span>
+    </div>
+    <p class="phase-desc">Below are the 21 columns from the Global Super Store CSV. Before you open Power BI, you need to know where each column belongs. Classify them — then check your answers.</p>
+
+    <div class="task-card open" id="t1">
+      <div class="task-header" onclick="toggleTask('t1')">
+        <div class="task-checkbox" onclick="checkTask(event,'t1')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Classify each column as: Fact, Dimension, or Discard</div>
+          <div class="task-hint">Fact = measures you sum. Dimension = attributes you filter/group by. Discard = not needed in a star schema.</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>Here are all 21 columns. For each, decide: does it belong in the fact table, a dimension table, or does it get discarded? Pick a classification in the dropdown, then reveal the answers.</p>
+        <div class="task-legend"><strong>Glossary:</strong> <strong>PK</strong> = Primary Key (the unique identifier of each row in a table). <strong>FK</strong> = Foreign Key (a column in one table that references the PK of another — the link between fact and dimension tables). You'll see these abbreviations in the model answer below and in Phase 3.</div>
+        <table class="analysis-table">
+          <tr><th>Column</th><th>Sample values</th><th>Your classification</th></tr>
+          <tr><td>Row ID</td><td>1, 2, 3, 4…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Order ID</td><td>CA-2019-152156</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Order Date</td><td>2019-11-08</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Ship Date</td><td>2019-11-11</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Ship Mode</td><td>Second Class, First Class</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Customer ID</td><td>CG-12520</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Customer Name</td><td>Claire Gute</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Segment</td><td>Consumer, Corporate, Home Office</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Country</td><td>United States</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>City</td><td>Henderson, Louisville…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>State</td><td>Kentucky, California…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Postal Code</td><td>42420, 90036…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Region</td><td>South, West, East, Central</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Product ID</td><td>FUR-BO-10001798</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Category</td><td>Furniture, Office Supplies, Technology</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Sub-Category</td><td>Bookcases, Chairs, Labels…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Product Name</td><td>Bush Somerset…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Sales</td><td>261.96, 731.94…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Quantity</td><td>2, 3, 5…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Discount</td><td>0, 0.2, 0.5…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+          <tr><td>Profit</td><td>41.91, 219.58, -383.03…</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Fact</option><option>Dimension</option><option>Discard</option></select></td></tr>
+        </table>
+        <button class="answer-btn" id="b1" onclick="toggleAnswer('a1','b1')"><span class="ans-arrow">⌄</span> Reveal answers</button>
+        <div class="answer-reveal" id="a1">
+          <strong>Fact table columns</strong> (go in fact_Orders): Row ID, Order ID, Order Date, Ship Date, Customer ID, Product ID, Sales, Quantity, Discount, Profit.<br><br>
+          <strong>Dimension table columns:</strong><br>
+          • <strong>dim_Customers:</strong> Customer ID, Customer Name, Segment<br>
+          • <strong>dim_Products:</strong> Product ID, Category, Sub-Category, Product Name<br>
+          • <strong>dim_Region:</strong> Country, City, State, Postal Code, Region<br><br>
+          <strong>Tricky ones:</strong><br>
+          • <strong>Ship Mode</strong> — dimension attribute (describes the shipment method). It could be its own dim_ShipMode or added to the fact table as a category column. For this course we keep it in the fact table as a categorical column since it describes the order, not a separate entity.<br>
+          • <strong>Row ID</strong> — fact table primary key (PK) — surrogate identifier for each row, not meaningful beyond that.<br>
+          • <strong>Order ID</strong> — technically a degenerate dimension (it lives in the fact, not a separate dimension table). Multiple rows can share the same Order ID (one order, multiple line items).
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card open" id="t2">
+      <div class="task-header" onclick="toggleTask('t2')">
+        <div class="task-checkbox" onclick="checkTask(event,'t2')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Identify the grain of the fact table</div>
+          <div class="task-hint">What does one row represent? Be as specific as possible in one sentence.</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>Write your grain statement below. This is the most important sentence you will write about this dataset.</p>
+        <textarea class="open-ans" placeholder="One row in fact_Orders represents..."></textarea>
+        <button class="answer-btn" id="b2" onclick="toggleAnswer('a2','b2')"><span class="ans-arrow">⌄</span> Reveal answer</button>
+        <div class="answer-reveal" id="a2">
+          <strong>Grain:</strong> One row in fact_Orders represents one line item within one order — meaning one product in one shipment to one customer on one date. A single order (Order ID) can have multiple rows if it contains multiple products.
+          <br><br>Why this matters: the grain tells you what Sales means in context. Sales is the revenue for <em>that product in that order</em>, not the total order value. When you sum Sales across multiple rows with the same Order ID, you get the full order value. Getting the grain wrong leads to double-counting errors.
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card open" id="t3">
+      <div class="task-header" onclick="toggleTask('t3')">
+        <div class="task-checkbox" onclick="checkTask(event,'t3')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Classify each numeric column: additive, semi-additive, or non-additive</div>
+          <div class="task-hint">Additive = safe to SUM in all directions. Semi-additive = sum across some dimensions but not all. Non-additive = never sum.</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>This matters for DAX. If you SUM a non-additive measure, you get a wrong number with no error message. Pick a classification and write a short reason for each.</p>
+        <table class="analysis-table">
+          <tr><th style="width:18%">Column</th><th style="width:32%">Your classification</th><th style="width:50%">Reason</th></tr>
+          <tr><td>Sales</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Additive</option><option>Semi-additive</option><option>Non-additive</option></select></td><td><input type="text" class="reason-input" placeholder="Your reason…"></td></tr>
+          <tr><td>Profit</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Additive</option><option>Semi-additive</option><option>Non-additive</option></select></td><td><input type="text" class="reason-input" placeholder="Your reason…"></td></tr>
+          <tr><td>Quantity</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Additive</option><option>Semi-additive</option><option>Non-additive</option></select></td><td><input type="text" class="reason-input" placeholder="Your reason…"></td></tr>
+          <tr><td>Discount</td><td><select class="classify-select" onchange="markChosen(this)"><option value="">Choose…</option><option>Additive</option><option>Semi-additive</option><option>Non-additive</option></select></td><td><input type="text" class="reason-input" placeholder="Your reason…"></td></tr>
+        </table>
+        <button class="answer-btn" id="b3" onclick="toggleAnswer('a3','b3')"><span class="ans-arrow">⌄</span> Reveal answers</button>
+        <div class="answer-reveal" id="a3">
+          <strong>Sales:</strong> Additive. You can sum it across products, time, regions, customers — any combination. Total sales for the East region in Q3 is just a SUM.<br><br>
+          <strong>Profit:</strong> Additive. Same as Sales — summing profit across any dimension gives a meaningful total.<br><br>
+          <strong>Quantity:</strong> Additive. Total units sold is a valid aggregation in any direction.<br><br>
+          <strong>Discount:</strong> <em>Non-additive.</em> This is the tricky one. Discount is a rate (0 to 1). Summing discounts across rows gives a meaningless number. A 20% discount on a $100 order and a 20% discount on a $10 order are not "40% discount combined." You calculate average discount with AVERAGE() or weighted average — never SUM. This is a critical pattern you will apply in DAX from Module 3 onward.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">Phase 02</span>
+      <span class="phase-title">Spot the modeling errors</span>
+      <span class="phase-count">3 tasks</span>
+    </div>
+    <p class="phase-desc">Recognising a bad model before you build it — or when reviewing a colleague's work — is one of the most valuable skills you can develop. These scenarios are all based on real mistakes.</p>
+
+    <div class="task-card open" id="t4">
+      <div class="task-header" onclick="toggleTask('t4')">
+        <div class="task-checkbox" onclick="checkTask(event,'t4')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Scenario A — The flat table report</div>
+          <div class="task-hint">Read the scenario and identify all the modeling problems.</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>A colleague built a Power BI report on a single flat table with all 21 columns loaded directly — no Power Query transformations, no dimension tables, no relationships. They show you the report: "It works! I can see sales by category."</p>
+        <p>List at least three problems that will appear when this report is used in production:</p>
+        <textarea class="open-ans" placeholder="Problem 1: ...&#10;Problem 2: ...&#10;Problem 3: ..."></textarea>
+        <button class="answer-btn" id="b4" onclick="toggleAnswer('a4','b4')"><span class="ans-arrow">⌄</span> Reveal answer</button>
+        <div class="answer-reveal" id="a4">
+          <strong>Problems that will appear:</strong><br><br>
+          1. <strong>Incorrect cross-table filters.</strong> When a user adds a slicer from what should be a dimension (e.g., Region) and a measure from what should be a fact (e.g., Sales), the filter works — but it is working on a flat table. There is no relationship model, so DAX measures cannot correctly handle complex filtering across "entity" boundaries.<br><br>
+          2. <strong>Redundant data in memory.</strong> "Furniture" is repeated ~5,000 times in the Category column. In a proper dim_Products table, it appears once. The flat table wastes significant memory on repeated text strings. At enterprise scale this causes slow refresh and slow queries.<br><br>
+          3. <strong>No single source of truth for product attributes.</strong> If Product Name needs to be corrected (a typo, a rebranding), you must update every row that contains it — potentially thousands. In a dimension table you update one row.<br><br>
+          4. <strong>Cannot relate to other data sources.</strong> You cannot join this flat table to another dataset (a budget table, a returns table) without recreating the flat structure. A star schema joins via keys.
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card open" id="t5">
+      <div class="task-header" onclick="toggleTask('t5')">
+        <div class="task-checkbox" onclick="checkTask(event,'t5')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Scenario B — The many-to-many trap</div>
+          <div class="task-hint">Spot why this model is wrong and what the fix is.</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>A colleague tries to create a relationship between fact_Orders[Region] (text: "East", "West", etc.) and a new dim_Region table that also has a Region column. Power BI warns about a many-to-many relationship.</p>
+        <p>Explain why this warning appears, and what the correct fix is:</p>
+        <textarea class="open-ans" placeholder="The warning appears because...&#10;The fix is..."></textarea>
+        <button class="answer-btn" id="b5" onclick="toggleAnswer('a5','b5')"><span class="ans-arrow">⌄</span> Reveal answer</button>
+        <div class="answer-reveal" id="a5">
+          <strong>Why the warning appears:</strong> "East" appears many times in fact_Orders[Region] (thousands of orders are in the East region). If dim_Region also has a Region column used as the key, "East" appears there too — potentially once, but Power BI checks the "one" side for uniqueness. If dim_Region was built by just deduplicating the Region column from the flat file, it has 4 rows (East, West, Central, South) — Region is unique there. The warning may appear because the column used to join is text, not an ID — Power BI may detect ambiguity.<br><br>
+          <strong>The correct fix:</strong> Create a proper surrogate key (RegionID — an integer) in dim_Region using an Index column. Then add RegionID to fact_Orders via a merge. Now the relationship joins on an integer key that is unique on the dim side (each RegionID = one region) and appears many times on the fact side. Clean 1:M relationship, no warning.
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card open" id="t6">
+      <div class="task-header" onclick="toggleTask('t6')">
+        <div class="task-checkbox" onclick="checkTask(event,'t6')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Scenario C — Wrong filter direction</div>
+          <div class="task-hint">A slicer on products is not filtering sales. Why?</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>An analyst creates a relationship between fact_Orders and dim_Products, but accidentally sets the cross-filter direction to <strong>Both</strong> (bidirectional). Everything appears to work — the slicer filters the fact table correctly. But they notice that slicing fact_Orders by Category also affects a completely unrelated dim_Customers table, showing only customers who bought that category.</p>
+        <p>Is this a problem? When would bidirectional filtering cause incorrect totals?</p>
+        <textarea class="open-ans" placeholder="Bidirectional filtering causes problems when..."></textarea>
+        <button class="answer-btn" id="b6" onclick="toggleAnswer('a6','b6')"><span class="ans-arrow">⌄</span> Reveal answer</button>
+        <div class="answer-reveal" id="a6">
+          <strong>Yes, this is a problem.</strong> Bidirectional filtering allows the fact table to filter dimension tables — the opposite of the intended direction. This creates two issues:<br><br>
+          1. <strong>Unexpected filtering of unrelated dimensions.</strong> As described — filtering by product category now shows only customers who bought that category. This is rarely the intended behaviour and can confuse report users who see customer counts change when they filter products.<br><br>
+          2. <strong>Incorrect totals in models with multiple fact tables.</strong> If a second fact table (e.g., fact_Returns) also joins to dim_Products, bidirectional filtering can cause the dim to simultaneously filter both fact tables through each other, producing circular filter issues and wrong aggregations.<br><br>
+          <strong>Rule:</strong> Always use single-direction filtering (from dim → fact) unless you have a specific, documented reason for bidirectional. The default should always be Single.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase">
+    <div class="phase-header">
+      <span class="phase-num">Phase 03</span>
+      <span class="phase-title">Design the schema on paper</span>
+      <span class="phase-count">2 tasks</span>
+    </div>
+    <p class="phase-desc">Before you open Power BI in Module 2, sketch the exact schema you are going to build. Analysts who design before building make far fewer mistakes.</p>
+
+    <div class="task-card open" id="t7">
+      <div class="task-header" onclick="toggleTask('t7')">
+        <div class="task-checkbox" onclick="checkTask(event,'t7')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Write out your complete star schema design</div>
+          <div class="task-hint">List every table, every column it contains, the primary key (PK), and which table each foreign key (FK) in the fact table points to.</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>Write your schema design below. Format: table name → columns (mark PK and FK). This becomes your build specification for Module 2.</p>
+        <textarea class="open-ans" style="min-height:200px" placeholder="fact_Orders&#10;  PK: RowID&#10;  FK: CustomerID → dim_Customers&#10;  FK: ProductID → dim_Products&#10;  FK: RegionID → dim_Region&#10;  OrderID, OrderDate, ShipDate, Sales, Quantity, Discount, Profit&#10;&#10;dim_Products&#10;  PK: ProductID&#10;  ProductName, Category, SubCategory&#10;&#10;(continue for all tables...)"></textarea>
+        <button class="answer-btn" id="b7" onclick="toggleAnswer('a7','b7')"><span class="ans-arrow">⌄</span> Reveal model answer</button>
+        <div class="answer-reveal" id="a7">
+          <strong>fact_Orders</strong> — ~51,290 rows, grain: one order line item<br>
+          RowID (PK) · OrderID · OrderDate · ShipDate · ShipMode<br>
+          CustomerID (FK → dim_Customers) · ProductID (FK → dim_Products) · RegionID (FK → dim_Region)<br>
+          Sales · Quantity · Discount · Profit<br><br>
+          <strong>dim_Products</strong> — ~1,850 rows<br>
+          ProductID (PK) · ProductName · Category · SubCategory<br><br>
+          <strong>dim_Customers</strong> — ~793 rows<br>
+          CustomerID (PK) · CustomerName · Segment<br><br>
+          <strong>dim_Region</strong> — ~631 rows (generated PK)<br>
+          RegionID (PK, surrogate integer) · Region · Country · City · State · PostalCode<br><br>
+          <strong>Relationships:</strong><br>
+          dim_Products[ProductID] → fact_Orders[ProductID] · 1:M · Single direction<br>
+          dim_Customers[CustomerID] → fact_Orders[CustomerID] · 1:M · Single direction<br>
+          dim_Region[RegionID] → fact_Orders[RegionID] · 1:M · Single direction
+        </div>
+      </div>
+    </div>
+
+    <div class="task-card open" id="t8">
+      <div class="task-header" onclick="toggleTask('t8')">
+        <div class="task-checkbox" onclick="checkTask(event,'t8')"><span class="task-check-icon">✓</span></div>
+        <div class="task-main">
+          <div class="task-title">Write three questions this model can answer — and one it cannot</div>
+          <div class="task-hint">Think about what filters, groups, and measures users will need. What is outside scope?</div>
+        </div>
+        <div class="task-expand">⌄</div>
+      </div>
+      <div class="task-body">
+        <p>This exercise forces you to think like the report consumer, not the model builder.</p>
+        <textarea class="open-ans" style="min-height:160px" placeholder="This model CAN answer:&#10;1. ...&#10;2. ...&#10;3. ...&#10;&#10;This model CANNOT answer:&#10;1. ..."></textarea>
+        <button class="answer-btn" id="b8" onclick="toggleAnswer('a8','b8')"><span class="ans-arrow">⌄</span> Reveal examples</button>
+        <div class="answer-reveal" id="a8">
+          <strong>This model CAN answer:</strong><br>
+          1. What are total sales and profit by product category for the West region in 2020?<br>
+          2. Which customer segment generates the highest profit margin?<br>
+          3. What are the top 10 products by revenue in the Technology category?<br><br>
+          <strong>This model CANNOT answer (yet):</strong><br>
+          1. How does this year's sales compare to the same period last year? (No date dimension → no time intelligence. Module 5 fixes this.)<br>
+          2. What is the return rate by product? (No returns fact table in this model.)<br>
+          3. What is the budget vs actual variance? (No budget table.)<br><br>
+          Notice: the model defines the boundary of questions you can ask. Before building any dashboard, check that the questions the stakeholder needs are answerable with the data in the model.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VALIDATION -->
+  <div class="validation">
+    <div class="val-title">Ready for Module 2?</div>
+    <p style="font-size:.9rem;color:var(--ink3);margin-bottom:1.25rem">Confirm these before moving to the hands-on build:</p>
+    <div class="val-item">
+      <div class="val-cb" onclick="this.classList.toggle('checked')"></div>
+      <div class="val-text">I can classify any column as fact, dimension, or discard — and explain why.</div>
+    </div>
+    <div class="val-item">
+      <div class="val-cb" onclick="this.classList.toggle('checked')"></div>
+      <div class="val-text">I know the grain of fact_Orders and can state it in one sentence.</div>
+    </div>
+    <div class="val-item">
+      <div class="val-cb" onclick="this.classList.toggle('checked')"></div>
+      <div class="val-text">I know why Discount should never be summed — and what to do instead.</div>
+    </div>
+    <div class="val-item">
+      <div class="val-cb" onclick="this.classList.toggle('checked')"></div>
+      <div class="val-text">I can explain what a many-to-many relationship warning means and how to fix it.</div>
+    </div>
+    <div class="val-item">
+      <div class="val-cb" onclick="this.classList.toggle('checked')"></div>
+      <div class="val-text">I have written out the complete star schema I will build in Module 2 — tables, columns, keys, and relationships.</div>
+    </div>
+  </div>
+
+  <div class="completion" id="completion">
+    <div class="comp-emoji">📐</div>
+    <div class="comp-title">Schema designed</div>
+    <div class="comp-text">You have analysed the dataset, spotted the modeling traps, and designed the star schema before touching Power BI. In Module 2 you build exactly what you designed here.</div>
+  </div>
+
+  <!-- UP NEXT card -->
+  <a class="up-next" href="module-02-lesson.html">
+    <div class="un-text">
+      <div class="un-label">Up next</div>
+      <div class="un-title">Module 2 · Power Query &amp; semantic model</div>
+    </div>
+    <div class="un-arrow">→</div>
+  </a>
+</div>
+</div>
+<script>
+const TOTAL=8;let done=new Set();
+function checkTask(e,id){
+  e.stopPropagation();
+  const c=document.getElementById(id);
+  if(done.has(id)){done.delete(id);c.classList.remove('done');}
+  else{done.add(id);c.classList.add('done');c.classList.remove('open');}
+  updateProgress();
+}
+function toggleTask(id){
+  const c=document.getElementById(id);
+  if(c.classList.contains('done'))return;
+  c.classList.toggle('open');
+}
+function toggleAnswer(id,btnId){
+  const el=document.getElementById(id);
+  el.classList.toggle('show');
+  if(btnId){document.getElementById(btnId).classList.toggle('open');}
+}
+function markChosen(sel){
+  if(sel.value){sel.classList.add('chosen');}else{sel.classList.remove('chosen');}
+}
+function updateProgress(){
+  const n=done.size;
+  const pct=(n/TOTAL)*100;
+  document.getElementById('prog-label').textContent=n+' / '+TOTAL;
+  document.getElementById('op-fill').style.width=pct+'%';
+  document.getElementById('op-done').textContent=n+' task'+(n!==1?'s':'')+' done';
+  document.getElementById('op-left').textContent=(TOTAL-n)+' remaining';
+  if(n===TOTAL){
+    document.getElementById('completion').style.display='block';
+    document.getElementById('completion').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+}
+</script>
+</body>
+</html>

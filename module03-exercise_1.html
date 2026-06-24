@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 3 · Exercise — First Measures &amp; Visuals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F2;--surf:#FFFFFF;--ink:#1A1917;--ink2:#4A4845;--ink3:#908D88;--acc:#1B4FD8;--acc-l:#EEF2FD;--rule:#E2E0DB;--tag-bg:#EEEDFE;--tag-tx:#3C3489;--ok:#0F6E56;--ok-bg:#E1F5EE;--ok-bd:#1D9E75;--warn-bg:#FFF8EC;--warn-bd:#F5C842;--warn-tx:#7A5C00;--err:#A32D2D;--err-bg:#FCEBEB;--err-bd:#E24B4A;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.8}
+
+/* TOPBAR */
+.topbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.tb{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.ts{color:var(--rule)}.tw{font-size:13px;font-weight:500;color:var(--ink2)}
+.tp{margin-left:auto;display:flex;gap:4px;align-items:center}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--rule)}.pd.done{background:var(--ok-bd)}.pd.on{background:var(--acc)}
+
+/* LAYOUT */
+.layout{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:210px 1fr;padding:0 2rem}
+.sidebar{padding:2.5rem 1.25rem 2.5rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--rule)}
+.sl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.ni{display:block;padding:5px 10px;border-radius:6px;font-size:12.5px;color:var(--ink2);line-height:1.45;margin-bottom:1px;transition:background .12s,color .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.ni:hover{background:var(--acc-l);color:var(--acc)}.ni.on{background:var(--acc-l);color:var(--acc);font-weight:500}
+.ni.sep{border-top:1px solid var(--rule);margin-top:8px;padding-top:10px}
+.ni.bonus-nav{color:var(--warn-tx)}
+.content{padding:3rem 0 5rem 3rem;max-width:730px}
+
+/* HEADER */
+.mod-label{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#7A3B00;background:#FFF0E0;border:1px solid #F5C090;padding:4px 12px;border-radius:4px;margin-bottom:1rem}
+.ex-number{font-family:var(--mono);font-size:.85rem;color:var(--ink3);margin-bottom:.35rem}
+.ex-title{font-family:var(--serif);font-size:2.4rem;line-height:1.15;margin-bottom:1.25rem;letter-spacing:-.01em}
+.meta-row{display:flex;gap:1.5rem;padding:1rem 1.25rem;background:var(--surf);border:1px solid var(--rule);border-radius:10px;margin-bottom:2.5rem;flex-wrap:wrap}
+.mi{font-size:13px;color:var(--ink3)}.mi strong{color:var(--ink2);font-weight:500;display:block;font-size:10.5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+
+/* SECTION HEADERS */
+.sec-h{font-family:var(--serif);font-size:1.5rem;color:var(--ink);margin:3rem 0 1rem;padding-bottom:.6rem;border-bottom:2px solid var(--ink)}
+.sec-h.sub{font-size:1.15rem;margin:2rem 0 .75rem;border-bottom:1px solid var(--rule);font-family:var(--sans);font-weight:500;letter-spacing:0;color:var(--ink2)}
+
+p{margin-bottom:1rem;font-size:.975rem;color:var(--ink2);line-height:1.8}
+p strong{color:var(--ink);font-weight:500}
+code{font-family:var(--mono);font-size:.83em;background:var(--rule);padding:2px 5px;border-radius:3px;color:var(--ink)}
+ul.prose{margin:.75rem 0 1.25rem;padding-left:1.25rem}
+ul.prose li{font-size:.96rem;color:var(--ink2);margin-bottom:.45rem;line-height:1.7}
+ul.prose li strong{color:var(--ink);font-weight:500}
+
+/* SETUP BOX */
+.setup-box{background:var(--ink);color:#E2E0DB;border-radius:12px;padding:1.75rem;margin-bottom:2.5rem}
+.setup-title{font-size:.78rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#FAC775;margin-bottom:1rem}
+.setup-step{display:flex;gap:12px;margin-bottom:.875rem;align-items:flex-start}
+.setup-step:last-child{margin-bottom:0}
+.ss-num{width:22px;height:22px;border-radius:50%;background:#FAC775;color:#1A1917;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ss-text{font-size:.88rem;color:#C8C5BE;line-height:1.65}
+.ss-text strong{color:#fff;font-weight:500}
+.ss-text code{font-family:var(--mono);font-size:.82em;background:rgba(255,255,255,.1);padding:2px 6px;border-radius:3px;color:#FAC775}
+
+/* EXPECTED RESULTS TABLE */
+.result-wrap{border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:1.25rem 0}
+.result-wrap-header{background:var(--bg);padding:9px 14px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.result-table{width:100%;border-collapse:collapse;font-size:.87rem}
+.result-table th{background:var(--ink);color:#fff;padding:9px 14px;text-align:left;font-size:.75rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.result-table td{padding:8px 14px;border-bottom:1px solid var(--rule);color:var(--ink2)}
+.result-table tr:last-child td{border-bottom:none}
+.result-table tr.total-row td{font-weight:600;color:var(--ink);background:var(--bg)}
+.result-table td.num{text-align:right;font-family:var(--mono);font-size:.83rem}
+.result-table td.hl{color:var(--ok);font-weight:500}
+
+/* PREREQUISITES */
+.prereq-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.75rem 0}
+.prereq-table th{background:var(--bg);color:var(--ink3);font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid var(--rule)}
+.prereq-table td{padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+.prereq-table tr:last-child td{border-bottom:none}
+.prereq-table td:first-child{font-family:var(--mono);font-size:.82rem;color:var(--acc);white-space:nowrap}
+.prereq-table td:nth-child(2){color:var(--ink3);font-size:.83rem}
+.prereq-table td:nth-child(3){color:var(--ink2);font-size:.85rem}
+
+/* EXERCISE BLOCKS */
+.ex-block{border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:1.75rem 0}
+.ex-block-header{background:var(--surf);padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px}
+.ex-num{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#FAC775;font-family:var(--mono);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ex-block-title{font-size:1rem;font-weight:500;color:var(--ink)}
+.ex-block-body{padding:1.25rem 1.5rem;background:var(--bg)}
+.ex-block-body p{font-size:.93rem}
+.ex-block-body ul.prose li{font-size:.93rem}
+
+/* HINT */
+.hint{background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;font-size:.87rem;color:var(--warn-tx);line-height:1.65}
+.hint strong{color:var(--warn-tx);font-size:.78rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:3px}
+
+/* SOLUTION */
+.sol-wrap{border:1px solid var(--ok-bd);border-radius:12px;overflow:hidden;margin:2.5rem 0}
+.sol-header{background:var(--ok-bd);padding:11px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.sol-header-text{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#fff;flex:1}
+.sol-arrow{color:#fff;font-size:14px;transition:transform .2s}
+.sol-arrow.open{transform:rotate(180deg)}
+.sol-body{display:none;background:var(--ok-bg)}
+.sol-body.show{display:block}
+.sol-section{padding:1.25rem 1.5rem;border-bottom:1px solid rgba(29,158,117,.2)}
+.sol-section:last-child{border-bottom:none}
+.sol-section-label{font-size:.75rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ok);margin-bottom:.5rem}
+.sol-section p{font-size:.9rem;color:var(--ok);margin-bottom:.5rem}
+.sol-section p:last-child{margin-bottom:0}
+
+/* CODE BLOCK */
+.code-block{background:#1A1917;border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0;overflow-x:auto}
+.code-block pre{font-family:var(--mono);font-size:.82rem;line-height:1.9;color:#E2E0DB;white-space:pre}
+.fn{color:#FAC775}.cm{color:#636059;font-style:italic}.str{color:#A5D6A7}.num{color:#CE93D8}
+
+/* CALLOUT */
+.callout{border-left:3px solid var(--warn-bd);background:var(--warn-bg);padding:.875rem 1.1rem;border-radius:0 8px 8px 0;margin:1.25rem 0;font-size:.91rem;color:var(--warn-tx);line-height:1.7}
+.callout strong{color:var(--warn-tx)}
+.ci{border-left-color:var(--acc);background:var(--acc-l);color:#1A3A8F}.ci strong{color:#1A3A8F}
+.cg{border-left-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}.cg strong{color:var(--ok)}
+
+/* BONUS */
+.bonus-wrap{background:#FFF8EC;border:1px solid #F5C842;border-radius:12px;padding:1.5rem;margin-top:3rem}
+.bonus-tag{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#7A5C00;background:#F5C842;padding:3px 10px;border-radius:20px;margin-bottom:.75rem}
+.bonus-title{font-family:var(--serif);font-size:1.2rem;color:var(--ink);margin-bottom:.75rem}
+
+/* CHECKLIST */
+.checklist-wrap{margin-top:3.5rem;padding:1.75rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px}
+.checklist-title{font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin-bottom:.4rem}
+.checklist-sub{font-size:.88rem;color:var(--ink3);margin-bottom:1.25rem}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:1.5rem}
+.cl-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--ink2);cursor:pointer;padding:6px 8px;border-radius:6px;transition:background .12s}
+.cl-item:hover{background:var(--bg)}
+.cl-box{width:18px;height:18px;border:2px solid var(--rule);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:11px}
+.cl-item.checked .cl-box{background:var(--ok-bd);border-color:var(--ok-bd);color:#fff}
+.next-btn{display:inline-flex;align-items:center;gap:.75rem;padding:11px 22px;background:var(--acc);color:#fff;border-radius:8px;text-decoration:none;font-size:.92rem;font-weight:500;transition:opacity .15s}
+.next-btn:hover{opacity:.85}
+
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:2rem 0 4rem}.ex-title{font-size:1.9rem}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="tb">Power BI Analyst Program</span>
+  <span class="ts">·</span>
+  <span class="tw">Module 3 Exercise — First Measures &amp; Visuals</span>
+  <div class="tp">
+    <div class="pd done"></div><div class="pd done"></div><div class="pd done"></div>
+    <div class="pd on"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div><div class="pd"></div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sl">Contents</div>
+  <button class="ni on" onclick="nv('setup',this)">Setup</button>
+  <button class="ni sep" onclick="nv('ex01',this)">03.01 · Foundation measures</button>
+  <button class="ni" onclick="nv('ex02',this)">03.02 · KPI card row</button>
+  <button class="ni" onclick="nv('ex03',this)">03.03 · Category analysis</button>
+  <button class="ni" onclick="nv('ex04',this)">03.04 · Working backwards</button>
+  <button class="ni sep bonus-nav" onclick="nv('bonus',this)">★ Bonus — spot the bug</button>
+</nav>
+
+<main class="content">
+
+  <div class="mod-label">Module 3 · Exercise Book</div>
+  <div class="ex-number">Power BI Analyst Program</div>
+  <h1 class="ex-title">First Measures<br><em>&amp; Visuals</em></h1>
+
+  <div class="meta-row">
+    <div class="mi"><strong>Dataset</strong>ContosoRetailDW (.pbix)</div>
+    <div class="mi"><strong>Estimated time</strong>45 – 60 min</div>
+    <div class="mi"><strong>Tables used</strong>Sales, ProductCategory, ProductSubcategory, Calendar</div>
+    <div class="mi"><strong>New measures</strong>5 required + 1 bonus</div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setup" class="setup-box">
+    <div class="setup-title">Before you start — get the file</div>
+    <div class="setup-step">
+      <div class="ss-num">1</div>
+      <div class="ss-text">Download the Contoso sample from Microsoft:<br>
+        <strong>microsoft.com/en-us/download/details.aspx?id=46801</strong><br>
+        Click Download → select <code>ContosoRetailDW.pbix</code> → save to your working folder.
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="ss-num">2</div>
+      <div class="ss-text">Open in <strong>Power BI Desktop</strong>. Confirm these tables are connected in Model view: <code>Sales</code>, <code>Product</code>, <code>ProductCategory</code>, <code>ProductSubcategory</code>, <code>Calendar</code>.</div>
+    </div>
+    <div class="setup-step">
+      <div class="ss-num">3</div>
+      <div class="ss-text">Create a measures table: <strong>Modeling → New Table</strong> → paste <code>_Measures = DATATABLE("x", INTEGER, {{0}})</code> → Enter. Right-click <code>x</code> column → <strong>Hide in report view</strong>.</div>
+    </div>
+    <div class="setup-step">
+      <div class="ss-num">4</div>
+      <div class="ss-text">Add a new report page and rename it <strong>"Module 3 Exercise"</strong>. All visuals go here.</div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 03.01 ═══ -->
+  <div id="ex01">
+    <h2 class="sec-h">Exercise 03.01 — Foundation measures</h2>
+
+    <p>The finance team needs a set of base measures before any dashboard can be built. Every financial report at Contoso starts with the same five numbers: total revenue, total cost, gross profit, gross margin percentage, and transaction count. You will create all five as explicit measures stored in the <code>_Measures</code> table.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>Place each measure in a Card visual with no filters active. You should see exactly the following values:</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Card visuals — no filters active</div>
+      <table class="result-table">
+        <thead><tr><th>Measure</th><th>Expected value</th><th>Full precision</th></tr></thead>
+        <tbody>
+          <tr><td>Total Revenue</td><td class="num">$8.34B</td><td class="num">8,341,224,364.83</td></tr>
+          <tr><td>Total Cost</td><td class="num">$3.55B</td><td class="num">3,552,407,480.39</td></tr>
+          <tr><td>Gross Profit</td><td class="num">$4.79B</td><td class="num">4,788,816,884.44</td></tr>
+          <tr><td>Gross Margin %</td><td class="num hl">57.4%</td><td class="num">formatted as %</td></tr>
+          <tr><td>Total Transactions</td><td class="num">2,282,482</td><td class="num">row count</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <p>The following columns already exist in the model and may be referenced in your solution:</p>
+
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Sales[SalesAmount]</td><td>Column</td><td>Total revenue value per transaction row</td></tr>
+          <tr><td>Sales[TotalCost]</td><td>Column</td><td>Total cost value per transaction row</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Create a measure named <strong>Total Revenue</strong> in the <code>_Measures</code> table that sums all sales amounts.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Use the aggregation function that sums a numeric column. The measure should respond to whatever filter context is active in the report.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Create a measure named <strong>Total Cost</strong> using the same pattern.</div></div>
+      <div class="ex-block-body">
+        <p>Write it as a separate measure — you will reference it in the next task. A measure that references another measure updates automatically if the underlying logic changes.</p>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">3</div><div class="ex-block-title">Create a measure named <strong>Gross Profit</strong> by subtracting Total Cost from Total Revenue.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Reference the two measures you already created — do not reference the raw columns directly. Use square brackets: <code>[Total Revenue] - [Total Cost]</code>.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">4</div><div class="ex-block-title">Create a measure named <strong>Gross Margin %</strong> expressing gross profit as a percentage of total revenue. Format it as a percentage with 1 decimal place.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Division in DAX can return errors when the denominator is blank or zero. Use the DAX function designed to handle this safely — not the / operator.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">5</div><div class="ex-block-title">Create a measure named <strong>Total Transactions</strong> that counts the number of rows in the Sales table.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Use COUNTROWS rather than COUNT on a column. COUNT skips rows where the column value is blank, which can silently understate your transaction count if any rows have data quality issues.</div>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s01')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr01">▼</span>
+      </div>
+      <div class="sol-body" id="s01">
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: Total Revenue — in _Measures table</div>
+          <div class="code-block"><pre>Total Revenue = <span class="fn">SUM</span>(Sales[SalesAmount])</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: Total Cost — in _Measures table</div>
+          <div class="code-block"><pre>Total Cost = <span class="fn">SUM</span>(Sales[TotalCost])</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: Gross Profit — in _Measures table</div>
+          <div class="code-block"><pre>Gross Profit = [Total Revenue] - [Total Cost]</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: Gross Margin % — in _Measures table</div>
+          <div class="code-block"><pre>Gross Margin % = <span class="fn">DIVIDE</span>([Gross Profit], [Total Revenue])</pre></div>
+          <p>Format: select the measure in Fields panel → Column Tools → Format → Percentage → 1 decimal place.</p>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: Total Transactions — in _Measures table</div>
+          <div class="code-block"><pre>Total Transactions = <span class="fn">COUNTROWS</span>(Sales)</pre></div>
+          <p>COUNTROWS counts every row regardless of column values. COUNT(Sales[SalesAmount]) would skip rows where SalesAmount is blank — which can happen with data quality issues — silently understating the transaction count.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 03.02 ═══ -->
+  <div id="ex02">
+    <h2 class="sec-h">Exercise 03.02 — KPI card row</h2>
+
+    <p>The Finance Director wants the dashboard to open with the four most important headline numbers immediately visible at the top of the page — before any charts or breakdowns. These numbers give the executive a complete picture of business health in one glance.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>A horizontal row of four Card visuals at the top of the report page, showing:</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Card row — left to right</div>
+      <table class="result-table">
+        <thead><tr><th>Position</th><th>Measure</th><th>Display format</th><th>Value shown</th></tr></thead>
+        <tbody>
+          <tr><td>Card 1</td><td>Total Revenue</td><td>Billions, 2 decimal</td><td class="num">$8.3bn</td></tr>
+          <tr><td>Card 2</td><td>Gross Profit</td><td>Billions, 2 decimal</td><td class="num">$4.8bn</td></tr>
+          <tr><td>Card 3</td><td>Gross Margin %</td><td>Percentage, 2 decimal</td><td class="num hl">57.41%</td></tr>
+          <tr><td>Card 4</td><td>Total Transactions</td><td>Millions, 1 decimal</td><td class="num">2.3M</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Visual preview — how it should look on the report page</div>
+      <div style="padding:1.25rem;background:#fff;overflow-x:auto">
+        <svg viewBox="0 0 680 110" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:680px;display:block;margin:0 auto">
+          <!-- Card 1 -->
+          <rect x="4" y="4" width="158" height="102" rx="4" fill="#fff" stroke="#D0CECA" stroke-width="1"/>
+          <text x="16" y="28" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Total Revenue</text>
+          <text x="16" y="72" font-family="DM Sans,sans-serif" font-size="26" font-weight="700" fill="#1A1917">$8.3bn</text>
+          <!-- Card 2 -->
+          <rect x="172" y="4" width="158" height="102" rx="4" fill="#fff" stroke="#D0CECA" stroke-width="1"/>
+          <text x="184" y="28" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Gross Profit</text>
+          <text x="184" y="72" font-family="DM Sans,sans-serif" font-size="26" font-weight="700" fill="#1A1917">$4.8bn</text>
+          <!-- Card 3 -->
+          <rect x="340" y="4" width="158" height="102" rx="4" fill="#fff" stroke="#1D9E75" stroke-width="1.5"/>
+          <text x="352" y="28" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Gross Margin %</text>
+          <text x="352" y="72" font-family="DM Sans,sans-serif" font-size="26" font-weight="700" fill="#0F6E56">57.41%</text>
+          <!-- Card 4 -->
+          <rect x="508" y="4" width="168" height="102" rx="4" fill="#fff" stroke="#D0CECA" stroke-width="1"/>
+          <text x="520" y="28" font-family="DM Sans,sans-serif" font-size="11" fill="#4A4845">Total Transactions</text>
+          <text x="520" y="72" font-family="DM Sans,sans-serif" font-size="26" font-weight="700" fill="#1A1917">2.3M</text>
+        </svg>
+      </div>
+    </div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <p>The five measures from Exercise 03.01 must exist in <code>_Measures</code> before starting this task.</p>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Add four <strong>Card visuals</strong> in a horizontal row at the top of the report page.</div></div>
+      <div class="ex-block-body">
+        <p>Assign one measure to each card in the order shown in the table above. Use equal widths so the row reads cleanly across the full page width.</p>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Set display units so large numbers are readable at a glance.</div></div>
+      <div class="ex-block-body">
+        <p>For revenue and profit cards: Format pane → Callout value → Display units → <strong>Billions</strong>. For Gross Margin %: confirm it shows as a percentage. For Transactions: leave as-is or set to Millions.</p>
+        <div class="hint"><strong>Hint</strong>In the <strong>new Card visual</strong> (default in current Power BI Desktop), the measure name shows automatically as a label — no action needed. If you are using the older Card visual, go to Format pane → Category label → toggle On. You can tell which you have by the Format pane: the new Card shows "Callout value" and "Category header" sections; the old Card has a simpler layout.</div>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s02')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr02">▼</span>
+      </div>
+      <div class="sol-body" id="s02">
+        <div class="sol-section">
+          <div class="sol-section-label">No DAX required for this exercise</div>
+          <p>This exercise is about visual configuration, not DAX. The correct answer is four Card visuals using the measures from 03.01, formatted as described. The key points to verify:</p>
+          <ul style="margin:.5rem 0 0 1rem;font-size:.88rem;color:var(--ok);line-height:1.8">
+            <li>All four cards show the expected values listed in the table above</li>
+            <li>Revenue and Profit display in Billions (not raw 8-digit numbers)</li>
+            <li>Gross Margin % shows as a percentage — not 0.574</li>
+            <li>Each card has a readable label matching the measure name</li>
+            <li>No implicit measures — all values come from the explicit measures in _Measures</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 03.03 ═══ -->
+  <div id="ex03">
+    <h2 class="sec-h">Exercise 03.03 — Category analysis</h2>
+
+    <p>The Category Manager wants to see product profitability broken down by category — both the absolute gross profit and the margin efficiency. The visual should answer two questions at once: which categories generate the most profit, and which are the most efficient?</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>A <strong>Line and clustered column chart</strong> with <code>ProductCategory[ProductCategory]</code> on the X-axis, Gross Profit as bars, Gross Margin % as a line. Sorted by Gross Profit descending — Computers on the left.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Visual preview — Line and clustered column chart</div>
+      <div style="padding:1.25rem;background:#fff;overflow-x:auto">
+        <svg viewBox="0 0 660 240" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;display:block;margin:0 auto">
+          <!-- axes -->
+          <line x1="52" y1="20" x2="52" y2="185" stroke="#D0CECA" stroke-width="1"/>
+          <line x1="52" y1="185" x2="650" y2="185" stroke="#D0CECA" stroke-width="1"/>
+          <!-- right axis label -->
+          <text x="650" y="60" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">60%</text>
+          <text x="650" y="105" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">58%</text>
+          <text x="650" y="150" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">56%</text>
+          <!-- left axis labels -->
+          <text x="48" y="60" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">$2.0bn</text>
+          <text x="48" y="105" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">$1.0bn</text>
+          <text x="48" y="150" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">$0.5bn</text>
+          <!-- grid lines -->
+          <line x1="52" y1="60" x2="640" y2="60" stroke="#F0EEE8" stroke-width="1"/>
+          <line x1="52" y1="105" x2="640" y2="105" stroke="#F0EEE8" stroke-width="1"/>
+          <line x1="52" y1="150" x2="640" y2="150" stroke="#F0EEE8" stroke-width="1"/>
+          <!-- bars: heights proportional to gross profit -->
+          <!-- Computers: $1.825B → height ~110 -->
+          <rect x="68" y="75" width="68" height="110" fill="#1D9E75" rx="2"/>
+          <!-- Cameras: $1.537B → height ~93 -->
+          <rect x="162" y="92" width="68" height="93" fill="#1D9E75" rx="2"/>
+          <!-- TV: $742M → height ~45 -->
+          <rect x="256" y="140" width="68" height="45" fill="#1D9E75" rx="2"/>
+          <!-- Cell phones: $497M → height ~30 -->
+          <rect x="350" y="155" width="68" height="30" fill="#1D9E75" rx="2"/>
+          <!-- Music: $101M → height ~6 -->
+          <rect x="444" y="179" width="68" height="6" fill="#1D9E75" rx="2"/>
+          <!-- Audio: $87M → height ~5 -->
+          <rect x="538" y="180" width="68" height="5" fill="#1D9E75" rx="2"/>
+          <!-- line: Gross Margin % — connect category midpoints -->
+          <!-- Computers 56.9% → ~148, Cameras 60.0% → ~108, TV 54.6% → ~163, Cell 55.7% → ~154, Music 60.8% → ~101, Audio 57.2% → ~145 -->
+          <polyline points="102,148 196,108 290,163 384,154 478,101 572,145" fill="none" stroke="#1A1917" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="102" cy="148" r="3" fill="#1A1917"/>
+          <circle cx="196" cy="108" r="3" fill="#1A1917"/>
+          <circle cx="290" cy="163" r="3" fill="#1A1917"/>
+          <circle cx="384" cy="154" r="3" fill="#1A1917"/>
+          <circle cx="478" cy="101" r="3" fill="#1A1917"/>
+          <circle cx="572" cy="145" r="3" fill="#1A1917"/>
+          <!-- x-axis labels -->
+          <text x="102" y="200" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">Computers</text>
+          <text x="196" y="200" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">Cameras and</text>
+          <text x="196" y="210" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">camcorders</text>
+          <text x="290" y="200" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">TV and Video</text>
+          <text x="384" y="200" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">Cell phones</text>
+          <text x="478" y="200" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">Music, Movies</text>
+          <text x="478" y="210" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">&amp; Audio Books</text>
+          <text x="572" y="200" font-family="DM Sans,sans-serif" font-size="8.5" fill="#4A4845" text-anchor="middle">Audio</text>
+          <!-- legend -->
+          <rect x="56" y="225" width="10" height="10" fill="#1D9E75" rx="2"/>
+          <text x="70" y="234" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">Gross Profit</text>
+          <circle cx="136" cy="230" r="4" fill="#1A1917"/>
+          <text x="144" y="234" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">Gross Margin %</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Exact numbers — sorted by Gross Profit descending</div>
+      <table class="result-table">
+        <thead><tr><th>ProductCategory</th><th class="num">Gross Profit</th><th class="num">Gross Margin %</th></tr></thead>
+        <tbody>
+          <tr><td>Computers</td><td class="num">1,825,159,907.96</td><td class="num">56.9%</td></tr>
+          <tr><td>Cameras and camcorders</td><td class="num">1,536,955,209.75</td><td class="num hl">60.0%</td></tr>
+          <tr><td>TV and Video</td><td class="num">742,436,049.33</td><td class="num">54.6%</td></tr>
+          <tr><td>Cell phones</td><td class="num">496,656,066.83</td><td class="num">55.7%</td></tr>
+          <tr><td>Music, Movies and Audio Books</td><td class="num">100,870,823.27</td><td class="num hl">60.8%</td></tr>
+          <tr><td>Audio</td><td class="num">86,738,827.30</td><td class="num">57.2%</td></tr>
+          <tr class="total-row"><td>Total</td><td class="num">4,788,816,884.44</td><td class="num hl">57.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout cg"><strong>Insight to notice:</strong> Cameras and camcorders have a higher margin % (60.0%) than Computers (56.9%) despite lower absolute profit. Music, Movies and Audio Books has the highest margin % (60.8%) but the smallest profit in absolute terms. This tension between volume and efficiency is exactly what this visual is designed to surface.</div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Gross Profit]</td><td>Measure</td><td>Created in Exercise 03.01</td></tr>
+          <tr><td>[Gross Margin %]</td><td>Measure</td><td>Created in Exercise 03.01</td></tr>
+          <tr><td>ProductCategory[ProductCategory]</td><td>Column</td><td>Product category dimension — axis for the chart</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Add a <strong>Line and clustered column chart</strong> with <code>ProductCategory[ProductCategory]</code> on the X-axis and <code>Gross Profit</code> as the column value. Sort descending by Gross Profit.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Use the "Line and clustered column chart" visual — not the standard bar or column chart. Only this visual type has both "Column y-axis" and "Line y-axis" fields. To sort: click the three dots (…) on the visual → Sort by → Gross Profit → Sort descending. Computers should appear on the left.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Add <strong>Gross Margin %</strong> as a line overlay on the same visual.</div></div>
+      <div class="ex-block-body">
+        <p>In the Visualizations pane, drag <code>Gross Margin %</code> into the <strong>Line y-axis</strong> field. This adds a secondary axis showing margin efficiency as a line alongside the profit bars.</p>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s03')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr03">▼</span>
+      </div>
+      <div class="sol-body" id="s03">
+        <div class="sol-section">
+          <div class="sol-section-label">No new DAX required</div>
+          <p>This exercise uses the measures created in 03.01. No new measures are needed. The solution is a visual configuration task:</p>
+          <ul style="margin:.5rem 0 0 1rem;font-size:.88rem;color:var(--ok);line-height:1.8">
+            <li>Visual type: <strong>Line and clustered column chart</strong> — not a standard bar or column chart</li>
+            <li>X-axis: ProductCategory[ProductCategory]</li>
+            <li>Column y-axis: Gross Profit</li>
+            <li>Line y-axis: Gross Margin %</li>
+            <li>Sort: Gross Profit, descending — Computers on the left</li>
+            <li>Verify numbers match the Expected Results table above</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 03.04 ═══ -->
+  <div id="ex04">
+    <h2 class="sec-h">Exercise 03.04 — Working backwards from a requirement</h2>
+
+    <p>The CFO asks: <em>"I want to see how our gross margin percentage has changed month by month. I need to understand whether we are getting more or less efficient over time."</em></p>
+    <p>This exercise does not give you a step-by-step guide. You must decompose the requirement yourself — identify what measure, dimension, filter and visual type are needed — and then build it.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>A line chart showing <strong>Gross Margin %</strong> on the Y-axis across all months of the year, with each year displayed as a separate coloured line. Values fall in the <strong>56% – 59%</strong> range with visible seasonal variation.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Visual preview — Gross Margin % by Month and Year</div>
+      <div style="padding:1.25rem;background:#fff;overflow-x:auto">
+        <svg viewBox="0 0 660 220" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;display:block;margin:0 auto">
+          <!-- axes -->
+          <line x1="44" y1="15" x2="44" y2="170" stroke="#D0CECA" stroke-width="1"/>
+          <line x1="44" y1="170" x2="645" y2="170" stroke="#D0CECA" stroke-width="1"/>
+          <!-- y-axis labels -->
+          <text x="40" y="40" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">58%</text>
+          <text x="40" y="80" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">57%</text>
+          <text x="40" y="125" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88" text-anchor="end">57%</text>
+          <!-- grid lines -->
+          <line x1="44" y1="40" x2="638" y2="40" stroke="#F0EEE8" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="44" y1="80" x2="638" y2="80" stroke="#F0EEE8" stroke-width="1" stroke-dasharray="3,3"/>
+          <line x1="44" y1="125" x2="638" y2="125" stroke="#F0EEE8" stroke-width="1" stroke-dasharray="3,3"/>
+          <!-- 2011 line (teal) — simulating seasonal pattern -->
+          <polyline points="54,57 104,72 154,65 204,68 254,62 304,80 354,82 404,75 454,58 504,55 554,60 604,73" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linejoin="round"/>
+          <!-- 2012 line (dark) -->
+          <polyline points="54,85 104,92 154,87 204,88 254,84 304,95 354,98 404,90 454,88 504,82 554,78 604,83" fill="none" stroke="#1A1917" stroke-width="2" stroke-linejoin="round"/>
+          <!-- 2013 line (red/orange) -->
+          <polyline points="54,118 104,128 154,122 204,124 254,118 304,130 354,85 404,120 454,118 504,115 554,55 604,148" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linejoin="round"/>
+          <!-- x-axis labels — month names -->
+          <text x="54" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Jan</text>
+          <text x="104" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Feb</text>
+          <text x="154" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Mar</text>
+          <text x="204" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Apr</text>
+          <text x="254" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">May</text>
+          <text x="304" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Jun</text>
+          <text x="354" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Jul</text>
+          <text x="404" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Aug</text>
+          <text x="454" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Sep</text>
+          <text x="504" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Oct</text>
+          <text x="554" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Nov</text>
+          <text x="604" y="185" font-family="DM Sans,sans-serif" font-size="7.5" fill="#4A4845" text-anchor="middle">Dec</text>
+          <!-- legend -->
+          <circle cx="56" cy="205" r="5" fill="#1D9E75"/>
+          <text x="65" y="209" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">2011</text>
+          <circle cx="102" cy="205" r="5" fill="#1A1917"/>
+          <text x="111" y="209" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">2012</text>
+          <circle cx="148" cy="205" r="5" fill="#E24B4A"/>
+          <text x="157" y="209" font-family="DM Sans,sans-serif" font-size="9" fill="#4A4845">2013</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Visual configuration — what to set in each field well</div>
+      <table class="result-table">
+        <thead><tr><th>Field well</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>X-axis</td><td>Calendar[MonthName] — sorted by MonthOfYear (see hint)</td></tr>
+          <tr><td>Y-axis</td><td>[Gross Margin %]</td></tr>
+          <tr><td>Legend</td><td>Calendar[Year] — one line per year</td></tr>
+          <tr><td>Expected Y range</td><td class="hl">56% – 59% with seasonal variation</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Gross Margin %]</td><td>Measure</td><td>Created in Exercise 03.01</td></tr>
+          <tr><td>Calendar[MonthOfYear]</td><td>Column</td><td>Month as integer 1–12</td></tr>
+          <tr><td>Calendar[MonthName]</td><td>Column</td><td>Month as text — must be sorted by MonthOfYear</td></tr>
+          <tr><td>Calendar[Year]</td><td>Column</td><td>Calendar year — used as legend</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Decompose the CFO's requirement into four components before opening any Power BI panel: measure, dimension, filter, visual type.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Write your answers on paper first. Measure = what number is tracked. Dimension = what drives the X-axis. Filter = is there a restriction on the data? Visual type = what chart type best shows change over time?</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Build the line chart. Configure X-axis, Y-axis, and Legend fields. Make sure months appear in numeric order (1–12), not alphabetically.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>If months appear alphabetically (April, August…): in the Fields panel, find <code>Calendar[MonthName]</code> → Column Tools → Sort by Column → select <code>Calendar[MonthOfYear]</code>. This fixes the sort order without changing what is displayed.</div>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s04')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr04">▼</span>
+      </div>
+      <div class="sol-body" id="s04">
+        <div class="sol-section">
+          <div class="sol-section-label">Step 1 — Decomposition</div>
+          <p><strong>Measure:</strong> Gross Margin % — already exists from 03.01, no new DAX needed.</p>
+          <p><strong>Dimension:</strong> Calendar[MonthOfYear] on X-axis, Calendar[Year] as legend so each year is a separate line.</p>
+          <p><strong>Filter:</strong> None required — show all years and all months.</p>
+          <p><strong>Visual type:</strong> Line chart — always the correct choice when the question is "how does X change over time?"</p>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Step 2 — Visual configuration</div>
+          <ul style="margin:.25rem 0 0 1rem;font-size:.88rem;color:var(--ok);line-height:1.8">
+            <li>Visual type: Line chart</li>
+            <li>X-axis: Calendar[MonthOfYear]</li>
+            <li>Y-axis: [Gross Margin %]</li>
+            <li>Legend: Calendar[Year]</li>
+            <li>Sort fix: Calendar[MonthName] → Sort by Column → Calendar[MonthOfYear]</li>
+          </ul>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">No DAX required — key insight</div>
+          <p>Gross Margin % already responds to whatever filter context is active. When the visual puts Year in the Legend and MonthOfYear on the X-axis, each cell of the visual has a unique filter context (e.g. Year=2008, Month=3). The measure evaluates in that context automatically — no modifications needed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BONUS -->
+  <div id="bonus" class="bonus-wrap">
+    <div class="bonus-tag">★ Bonus</div>
+    <div class="bonus-title">Spot and fix the implicit measure</div>
+
+    <p>A colleague built a quick visual during a stakeholder meeting by dragging <code>Sales[SalesAmount]</code> directly into a bar chart — no measure was created. The visual shows correct numbers, but it is wrong for a production report.</p>
+
+    <h2 class="sec-h sub" style="margin-top:1.25rem">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Reproduce the problem: add a bar chart, drag <code>Sales[SalesAmount]</code> directly into Values (do not use your Total Revenue measure). Set axis to <code>ProductCategory[ProductCategory]</code>. Observe what appears in the Values field.</div></div>
+      <div class="ex-block-body">
+        <p>The field shows <strong>"Sum of SalesAmount"</strong> — this is Power BI auto-generating an implicit measure. It is not stored in the model, it has no name you chose, and it cannot be reused.</p>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Fix it: replace the implicit measure with your <code>Total Revenue</code> explicit measure. Verify the numbers are identical.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Remove the column from the Values field, then drag in [Total Revenue] from the _Measures table. Numbers will match — but now the label reads "Total Revenue" and the logic is stored in the model permanently.</div>
+      </div>
+    </div>
+
+    <div class="sol-wrap" style="border-color:var(--warn-bd);margin-top:1.25rem">
+      <div class="sol-header" style="background:var(--warn-bd)" onclick="toggleSol('sbonus')">
+        <span class="sol-header-text">Why this matters — click to reveal</span>
+        <span class="sol-arrow" id="sarrsbonus">▼</span>
+      </div>
+      <div class="sol-body" id="sbonus" style="background:var(--warn-bg)">
+        <div class="sol-section" style="border-color:rgba(245,200,66,.3)">
+          <div class="sol-section-label" style="color:var(--warn-tx)">The three problems with implicit measures</div>
+          <p style="color:var(--warn-tx)"><strong>1. Not reusable.</strong> An implicit measure lives inside one visual only. Every new visual requires you to recreate it. An explicit measure can be dragged into any visual on any page.</p>
+          <p style="color:var(--warn-tx)"><strong>2. Not auditable.</strong> If a client asks "how is Total Revenue calculated?", you cannot show them. The logic is buried in a visual, not visible in the Fields panel.</p>
+          <p style="color:var(--warn-tx)"><strong>3. Name is auto-generated.</strong> "Sum of SalesAmount" is not a business name. It exposes internal column names to report users. "Total Revenue" communicates what the number means.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="checklist-wrap">
+    <div class="checklist-title">Before you finish</div>
+    <div class="checklist-sub">Check off each item. All should be complete before moving to Module 4.</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>5 explicit measures in _Measures table with correct values</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Card row shows correct headline numbers (no filters active)</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Bar + line combo chart sorted by Gross Profit descending</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Line chart shows Gross Margin % by month with correct year legend</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>No implicit measures anywhere on the page</div>
+    </div>
+    <a class="next-btn" href="module04-lesson.html">Continue to Module 4 →</a>
+  </div>
+
+</main>
+</div>
+
+<script>
+function toggleSol(id){const body=document.getElementById(id);const arrId='sarr'+id;const arr=document.getElementById(arrId);body.classList.toggle('show');arr.classList.toggle('open');}
+function toggleCheck(el){el.classList.toggle('checked');const box=el.querySelector('.cl-box');box.textContent=el.classList.contains('checked')?'✓':'';}
+function nv(id,btn){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on');}
+window.addEventListener('scroll',()=>{const ids=['setup','ex01','ex02','ex03','ex04','bonus'];const navs=document.querySelectorAll('.ni');let cur=0;ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<130)cur=i;});navs.forEach(n=>n.classList.remove('on'));if(navs[cur])navs[cur].classList.add('on');});
+</script>
+</body>
+</html>

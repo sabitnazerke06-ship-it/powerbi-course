@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 · First Measures & Visuals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F2;--surf:#FFFFFF;--ink:#1A1917;--ink2:#4A4845;--ink3:#908D88;--acc:#1B4FD8;--acc-l:#EEF2FD;--rule:#E2E0DB;--tag-bg:#EEEDFE;--tag-tx:#3C3489;--ok:#0F6E56;--ok-bg:#E1F5EE;--ok-bd:#1D9E75;--warn-bg:#FFF8EC;--warn-bd:#F5C842;--warn-tx:#7A5C00;--err:#A32D2D;--err-bg:#FCEBEB;--err-bd:#E24B4A;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.8}
+.topbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.tb{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.ts{color:var(--rule)}.tw{font-size:13px;font-weight:500;color:var(--ink2)}
+.tp{margin-left:auto;display:flex;gap:4px;align-items:center}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--rule)}
+.pd.done{background:var(--ok-bd)}.pd.on{background:var(--acc)}
+.layout{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:210px 1fr;padding:0 2rem}
+.sidebar{padding:2.5rem 1.25rem 2.5rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--rule)}
+.sl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.ni{display:block;padding:5px 10px;border-radius:6px;font-size:12.5px;color:var(--ink2);line-height:1.45;margin-bottom:1px;transition:background .12s,color .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.ni:hover{background:var(--acc-l);color:var(--acc)}.ni.on{background:var(--acc-l);color:var(--acc);font-weight:500}
+.ni.qnav{border-top:1px solid var(--rule);margin-top:8px;padding-top:12px;color:var(--acc)}
+.content{padding:3rem 0 5rem 3rem;max-width:730px}
+.mod-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--tag-tx);background:var(--tag-bg);padding:4px 10px;border-radius:4px;margin-bottom:1.25rem}
+.lesson-title{font-family:var(--serif);font-size:2.7rem;line-height:1.12;margin-bottom:1rem;letter-spacing:-.01em}
+.lesson-sub{font-size:1.05rem;color:var(--ink2);font-weight:300;line-height:1.75;max-width:560px;margin-bottom:2rem}
+.meta-row{display:flex;gap:1.5rem;padding:1rem 1.25rem;background:var(--surf);border:1px solid var(--rule);border-radius:10px;margin-bottom:3rem;flex-wrap:wrap}
+.mi{font-size:13px;color:var(--ink3)}.mi strong{color:var(--ink2);font-weight:500;display:block;font-size:10.5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+.ph{display:flex;align-items:baseline;gap:1rem;margin:3.5rem 0 1.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--rule)}
+.pn{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;flex-shrink:0;padding-top:3px}
+.pt{font-family:var(--serif);font-size:1.55rem;color:var(--ink);line-height:1.2}
+h3{font-size:.85rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:2rem 0 .8rem}
+p{margin-bottom:1.1rem;font-size:.975rem;color:var(--ink2);line-height:1.8}
+p strong{color:var(--ink);font-weight:500}
+code{font-family:var(--mono);font-size:.83em;background:var(--rule);padding:2px 5px;border-radius:3px;color:var(--ink)}
+ul.prose{margin:1rem 0 1.5rem;padding-left:1.25rem}
+ul.prose li{font-size:.96rem;color:var(--ink2);margin-bottom:.5rem;line-height:1.7}
+ul.prose li strong{color:var(--ink);font-weight:500}
+.callout{border-left:3px solid var(--warn-bd);background:var(--warn-bg);padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:2rem 0;font-size:.93rem;color:var(--warn-tx);line-height:1.7}
+.callout strong{color:var(--warn-tx)}
+.ci{border-left-color:var(--acc);background:var(--acc-l);color:#1A3A8F}.ci strong{color:#1A3A8F}
+.cg{border-left-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}.cg strong{color:var(--ok)}
+.ce{border-left-color:var(--err-bd);background:var(--err-bg);color:var(--err)}.ce strong{color:var(--err)}
+.rb{border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.rbh{background:var(--surf);padding:9px 14px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.rbb{padding:1rem 1.25rem;background:var(--bg)}
+.rbb p{margin-bottom:.5rem;font-size:.93rem}.rbb p:last-child{margin-bottom:0}
+.dw{margin:2rem 0;background:var(--surf);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.dc{padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule);background:var(--bg)}
+.db{padding:1.5rem;overflow-x:auto}.db svg{display:block;margin:0 auto}
+.code-block{background:#1A1917;border-radius:10px;padding:1.25rem 1.5rem;margin:1.5rem 0;overflow-x:auto}
+.code-block pre{font-family:var(--mono);font-size:.82rem;line-height:1.85;color:#E2E0DB;white-space:pre}
+.kw{color:#B5D4F4}.fn{color:#FAC775}.str{color:#A5D6A7}.cm{color:#636059;font-style:italic}.op{color:#F0997B}.num{color:#CE93D8}
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.5rem 0}
+.cmp-card{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1.25rem}
+.cmp-card h4{font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.cmp-card p{font-size:.9rem;margin-bottom:.6rem}.cmp-card p:last-child{margin-bottom:0}
+/* GROUP CARDS */
+.group-header{font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:.5rem 0 .5rem;margin-top:1.5rem;margin-bottom:.75rem;border-bottom:1px solid var(--rule)}
+/* MEASURE CARDS */
+.measure-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:1rem 0}
+.measure-card{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1rem}
+.measure-card.full{grid-column:1/-1}
+.measure-name{font-family:var(--mono);font-size:.8rem;color:var(--acc);margin-bottom:.4rem;font-weight:500}
+.measure-dax{font-family:var(--mono);font-size:.78rem;color:var(--ink);background:var(--bg);padding:.5rem .75rem;border-radius:6px;margin-bottom:.4rem;line-height:1.55}
+.measure-why{font-size:.82rem;color:var(--ink3);line-height:1.5}
+/* VISUAL GUIDE */
+.viz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:1.5rem 0}
+.viz-card{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1rem;text-align:center}
+.viz-icon{font-size:1.75rem;margin-bottom:.5rem}
+.viz-name{font-size:.85rem;font-weight:500;color:var(--ink);margin-bottom:.3rem}
+.viz-use{font-size:.78rem;color:var(--ink3);line-height:1.45}
+.viz-avoid{font-size:.75rem;color:var(--err);margin-top:.3rem}
+/* BLANK TABLE */
+.mini-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.8rem;margin:.75rem 0}
+.mini-table th{background:var(--bg);color:var(--ink3);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;text-align:left;border-bottom:1px solid var(--rule)}
+.mini-table td{padding:6px 12px;border-bottom:1px solid var(--rule);color:var(--ink2)}
+.mini-table tr:last-child td{border-bottom:none}
+.mini-table .hl{color:var(--ok);font-weight:500}
+.mini-table .blank-row td{background:var(--warn-bg);font-style:italic;color:var(--warn-tx)}
+/* ERRORS */
+.error-list{margin:1.5rem 0;display:flex;flex-direction:column;gap:10px}
+.error-item{display:flex;gap:14px;padding:1rem 1.25rem;background:var(--err-bg);border:1px solid var(--err-bd);border-radius:10px}
+.error-num{font-family:var(--serif);font-size:1.75rem;color:var(--err);opacity:.5;line-height:1;flex-shrink:0;width:28px}
+.error-body strong{color:var(--err);display:block;margin-bottom:3px;font-size:.88rem}
+.error-body p{color:var(--ink3);font-size:.85rem;margin:0}
+/* QUIZ */
+.qs{margin-top:4rem;border-top:2px solid var(--ink);padding-top:2.5rem}
+.qh{display:flex;align-items:baseline;gap:1rem;margin-bottom:.5rem}
+.qt{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.qtl{font-family:var(--serif);font-size:1.8rem;color:var(--ink)}
+.qi{font-size:.9rem;color:var(--ink3);margin-bottom:2rem;line-height:1.65}
+.qpb{height:4px;background:var(--rule);border-radius:2px;margin-bottom:2.5rem;overflow:hidden}
+.qpf{height:100%;background:var(--acc);border-radius:2px;transition:width .4s ease;width:0%}
+.qc{background:var(--surf);border:1px solid var(--rule);border-radius:14px;padding:1.75rem;margin-bottom:1.5rem}
+.qm{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.qn{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.qb{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase}
+.bmc{background:var(--tag-bg);color:var(--tag-tx)}.bsc{background:#FFF8EC;color:#7A5C00}.bop{background:var(--ok-bg);color:var(--ok)}
+.qtxt{font-size:1rem;color:var(--ink);line-height:1.6;margin-bottom:1.25rem;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--rule);border-radius:8px;cursor:pointer;transition:all .15s;background:var(--bg);font-size:.92rem;color:var(--ink2);line-height:1.55;text-align:left;width:100%;font-family:var(--sans)}
+.opt:hover:not([disabled]){border-color:var(--acc);background:var(--acc-l);color:var(--acc)}
+.opt.r{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}
+.opt.w{border-color:var(--err-bd);background:var(--err-bg);color:var(--err)}
+.opt.h{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+.ol{width:22px;height:22px;border-radius:50%;background:var(--rule);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:var(--ink3)}
+.opt.r .ol{background:var(--ok-bd);color:#fff}.opt.w .ol{background:var(--err-bd);color:#fff}.opt.h .ol{background:var(--ok-bd);color:#fff}
+.fb{margin-top:1rem;padding:.875rem 1rem;border-radius:8px;font-size:.9rem;line-height:1.65;display:none}
+.fb.show{display:block}
+.fbok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)}.fbok strong{font-weight:500}
+.fberr{background:var(--err-bg);color:var(--err);border:1px solid var(--err-bd)}.fberr strong{font-weight:500}
+.ota{width:100%;min-height:100px;border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-family:var(--sans);font-size:.92rem;color:var(--ink);background:var(--bg);resize:vertical;line-height:1.65;transition:border-color .15s;margin-bottom:.75rem}
+.ota:focus{outline:none;border-color:var(--acc);background:var(--surf)}.ota:disabled{opacity:.6;cursor:default}
+.cbtn{padding:9px 20px;background:var(--acc);color:#fff;border:none;border-radius:7px;font-size:.9rem;font-weight:500;cursor:pointer;font-family:var(--sans);transition:opacity .15s}
+.cbtn:hover{opacity:.85}.cbtn:disabled{opacity:.4;cursor:default}
+.mans{margin-top:1rem;padding:1rem 1.25rem;background:var(--acc-l);border:1px solid #B5D4F4;border-radius:8px;font-size:.9rem;color:#1A3A8F;display:none;line-height:1.7}
+.mans.show{display:block}
+.mans strong{color:#1A3A8F;display:block;margin-bottom:.4rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.scorecard{margin-top:2.5rem;padding:2rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px;text-align:center;display:none}
+.snum{font-family:var(--serif);font-size:3.5rem;color:var(--acc);line-height:1;margin-bottom:.5rem}
+.slbl{font-size:.9rem;color:var(--ink3);margin-bottom:1.5rem}
+.smsg{font-size:1rem;color:var(--ink2);max-width:420px;margin:0 auto}
+.next{margin-top:2.5rem;padding:1.5rem;border:1px solid var(--rule);border-radius:12px;background:var(--surf);display:flex;align-items:center;gap:1.5rem;text-decoration:none;transition:border-color .15s}
+.next:hover{border-color:var(--acc)}
+.nlbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:4px}
+.ntitle{font-family:var(--serif);font-size:1.1rem;color:var(--ink)}
+.narr{margin-left:auto;font-size:1.4rem;color:var(--ink3)}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:2rem 0 4rem}.lesson-title{font-size:2rem}.cmp-grid,.measure-grid,.viz-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="tb">Power BI Analyst Program</span>
+  <span class="ts">·</span>
+  <span class="tw">Week 3 — First Measures &amp; Visuals</span>
+  <div class="tp">
+    <div class="pd done"></div><div class="pd done"></div><div class="pd done"></div>
+    <div class="pd on"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div><div class="pd"></div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sl">In this lesson</div>
+  <button class="ni on" onclick="nv('p1',this)">1 · Implicit vs explicit</button>
+  <button class="ni" onclick="nv('p2',this)">2 · DAX functions by group</button>
+  <button class="ni" onclick="nv('p3',this)">3 · Why DIVIDE, not slash</button>
+  <button class="ni" onclick="nv('p4',this)">4 · Working backwards from a visual</button>
+  <button class="ni" onclick="nv('p5',this)">5 · Choosing the right visual</button>
+  <button class="ni" onclick="nv('p6',this)">6 · The measure table pattern</button>
+  <button class="ni" onclick="nv('p7',this)">7 · BLANK — not zero</button>
+  <button class="ni" onclick="nv('p8',this)">8 · Three mistakes to avoid</button>
+  <button class="ni qnav" onclick="nv('quiz',this)">✦ Check your understanding</button>
+</nav>
+
+<main class="content">
+  <div class="mod-tag">Module 2 · Power BI Core</div>
+  <h1 class="lesson-title">First measures<br><em>&amp; visuals</em></h1>
+  <p class="lesson-sub">DAX is the calculation language of Power BI. This week you build your first measures using the functions that appear in 80% of all reports, learn why the way you write them matters, and practise reading a business requirement backwards into the measure it needs.</p>
+  <div class="meta-row">
+    <div class="mi"><strong>Prerequisite</strong>Week2_StarSchema.pbix</div>
+    <div class="mi"><strong>Dataset</strong>Contoso Sales</div>
+    <div class="mi"><strong>New DAX</strong>SUM, AVERAGE, COUNT, COUNTROWS, DISTINCTCOUNT, DIVIDE</div>
+    <div class="mi"><strong>Quiz</strong>5 MC + 2 open-ended</div>
+  </div>
+
+  <!-- ═══ PART 1 ═══ -->
+  <div id="p1" class="ph"><span class="pn">01</span><h2 class="pt">Implicit vs explicit measures — always choose explicit</h2></div>
+
+  <p>When you drag a numeric column from the Fields panel into a visual, Power BI automatically aggregates it — usually as a SUM. This is called an <strong>implicit measure</strong>. It is convenient for quick exploration and functionally correct for simple cases. It is also something you should stop relying on immediately.</p>
+  <p>An <strong>explicit measure</strong> is a DAX expression you write yourself, stored in the model, with a name you chose. It lives in the model permanently, can be reused across any visual or report page, and its logic is visible to anyone who opens the file.</p>
+
+  <div class="cmp-grid">
+    <div class="cmp-card">
+      <h4>Implicit measure (drag &amp; drop)</h4>
+      <p><strong>Name:</strong> "Sum of SalesAmount" — auto-generated</p>
+      <p><strong>Location:</strong> exists only in that one visual</p>
+      <p><strong>Reusability:</strong> none — you recreate it in every new visual</p>
+      <p><strong>Logic visible?</strong> No — just "SUM" applied to a column</p>
+      <p><strong>Use when:</strong> quick exploration only, never in a client report</p>
+    </div>
+    <div class="cmp-card">
+      <h4>Explicit measure (DAX)</h4>
+      <p><strong>Name:</strong> "Total Revenue" — you chose it</p>
+      <p><strong>Location:</strong> stored in the model, available everywhere</p>
+      <p><strong>Reusability:</strong> drag into any visual, any report page</p>
+      <p><strong>Logic visible?</strong> Yes — click it to see the full DAX expression</p>
+      <p><strong>Use when:</strong> always, for any number shown to a client</p>
+    </div>
+  </div>
+
+  <p>The practical rule: <strong>every number that appears in a client report should be an explicit measure with a name a business user can read.</strong> "Sum of SalesAmount" is not a measure name. "Total Revenue" is. "Net Margin % (excl. promotions)" is even better — it tells you exactly what it represents and removes ambiguity.</p>
+
+  <div class="callout ci"><strong>How to create a measure in Power BI Desktop:</strong> Click on any table in the Fields panel, then go to Home → New Measure. The formula bar opens. Type your DAX there. The measure appears in that table with a calculator icon (∑). You can then drag it to a different table — typically a dedicated <code>_Measures</code> table (covered in Part 6).</div>
+
+  <!-- ═══ PART 2 ═══ -->
+  <div id="p2" class="ph"><span class="pn">02</span><h2 class="pt">DAX functions — organised by what they do</h2></div>
+
+  <p>Rather than presenting functions as a flat list, it helps to see them grouped by purpose. Every function below belongs to one of three jobs: aggregating numbers, counting things, or dividing safely.</p>
+
+  <div class="callout ci"><strong>Before writing any measure, think in Excel terms first.</strong> You already know how to sum a column in Excel (<code>=SUM(B:B)</code>) and how to count unique values (<code>=COUNTIF</code>). DAX works on the same logic — the key difference is that instead of a cell range, you provide a table column, and DAX automatically respects whatever filter is currently active on the report. The measure does not change; the filter context around it changes.</div>
+
+  <div class="group-header">Group 1 — Aggregation</div>
+  <div class="measure-grid">
+    <div class="measure-card">
+      <div class="measure-name">Total Revenue</div>
+      <div class="measure-dax">Total Revenue =
+SUM(FactSales[SalesAmount])</div>
+      <div class="measure-why">Sums SalesAmount across every row that survives the current filter. The most common measure you will write.</div>
+    </div>
+    <div class="measure-card">
+      <div class="measure-name">Total Cost</div>
+      <div class="measure-dax">Total Cost =
+SUM(FactSales[TotalCost])</div>
+      <div class="measure-why">Same pattern. Write this as a separate measure so you can reuse it in Gross Profit and Gross Margin %.</div>
+    </div>
+    <div class="measure-card">
+      <div class="measure-name">Gross Profit</div>
+      <div class="measure-dax">Gross Profit =
+[Total Revenue] - [Total Cost]</div>
+      <div class="measure-why">References other measures — not columns. Keeps logic centralised: if Total Revenue changes, Gross Profit updates automatically.</div>
+    </div>
+    <div class="measure-card">
+      <div class="measure-name">Avg Unit Price</div>
+      <div class="measure-dax">Avg Unit Price =
+AVERAGE(DimProduct[UnitPrice])</div>
+      <div class="measure-why">AVERAGE over a column. Useful for product pricing analysis — respects whatever product filter is active.</div>
+    </div>
+  </div>
+
+  <div class="group-header">Group 2 — Counting</div>
+  <div class="measure-grid">
+    <div class="measure-card">
+      <div class="measure-name">Total Transactions</div>
+      <div class="measure-dax">Total Transactions =
+COUNTROWS(FactSales)</div>
+      <div class="measure-why">Counts every row in the filtered fact table. Use COUNTROWS for transaction counts — it is explicit and skips nothing.</div>
+    </div>
+    <div class="measure-card">
+      <div class="measure-name">Unique Customers</div>
+      <div class="measure-dax">Unique Customers =
+DISTINCTCOUNT(FactSales[CustomerKey])</div>
+      <div class="measure-why">Counts unique values — one customer who bought 10 times counts as 1. Use when "how many" means unique entities, not row count.</div>
+    </div>
+  </div>
+
+  <div class="rb">
+    <div class="rbh">COUNTROWS vs COUNT — why it matters</div>
+    <div class="rbb">
+      <p><strong>COUNTROWS(FactSales)</strong> counts every row in the table, regardless of column values. It cannot skip rows.</p>
+      <p><strong>COUNT(FactSales[OrderNumber])</strong> counts only rows where OrderNumber is non-blank. If any rows have a blank OrderNumber — due to a data quality issue — COUNT gives a lower result than expected, silently understating your transaction volume.</p>
+      <p><em>Rule: use COUNTROWS for reliable row counts. Use COUNT only when you specifically want to count non-blank values in a column.</em></p>
+    </div>
+  </div>
+
+  <div class="group-header">Group 3 — Safe Division (DIVIDE)</div>
+  <div class="measure-grid">
+    <div class="measure-card">
+      <div class="measure-name">Gross Margin %</div>
+      <div class="measure-dax">Gross Margin % =
+DIVIDE([Gross Profit], [Total Revenue])</div>
+      <div class="measure-why">Always use DIVIDE for ratios. Handles division-by-zero gracefully. References measures, not raw columns.</div>
+    </div>
+    <div class="measure-card">
+      <div class="measure-name">Avg Revenue per Transaction</div>
+      <div class="measure-dax">Avg Rev per Transaction =
+DIVIDE([Total Revenue], [Total Transactions])</div>
+      <div class="measure-why">Divides two measures. Gives average revenue per transaction line — adapts to whatever filter context is active.</div>
+    </div>
+  </div>
+
+  <div class="dw">
+    <div class="dc">How SUM responds to filter context — the core concept</div>
+    <div class="db">
+      <svg width="600" height="220" viewBox="0 0 600 220" role="img">
+        <title>SUM filter context diagram</title>
+        <defs>
+          <marker id="af2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#1B4FD8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <rect x="10" y="10" width="170" height="165" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="95" y="30" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#4A4845">FactSales (all rows)</text>
+        <rect x="10" y="36" width="170" height="20" fill="#E2E0DB"/>
+        <text x="55" y="50" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">Channel</text>
+        <text x="148" y="50" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">SalesAmount</text>
+        <text x="55" y="68" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">Online</text><text x="168" y="68" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">500</text>
+        <text x="55" y="83" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">Store</text><text x="168" y="83" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">300</text>
+        <text x="55" y="98" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8" font-weight="500">Online</text><text x="168" y="98" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8" font-weight="500">750</text>
+        <text x="55" y="113" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">Reseller</text><text x="168" y="113" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">220</text>
+        <text x="55" y="128" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8" font-weight="500">Online</text><text x="168" y="128" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8" font-weight="500">480</text>
+        <text x="55" y="143" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">Store</text><text x="168" y="143" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">90</text>
+        <text x="55" y="158" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">Store</text><text x="168" y="158" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#4A4845">410</text>
+        <text x="95" y="184" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56" font-weight="500">SUM = 2,750 (no filter)</text>
+        <rect x="193" y="60" width="108" height="30" rx="6" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <text x="247" y="79" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#1B4FD8">Filter: Online</text>
+        <line x1="301" y1="75" x2="335" y2="75" stroke="#1B4FD8" stroke-width="1.5" marker-end="url(#af2)"/>
+        <rect x="337" y="10" width="170" height="165" rx="8" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <text x="422" y="30" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#1B4FD8">Filtered rows only</text>
+        <rect x="337" y="36" width="170" height="20" fill="#D6E3FA"/>
+        <text x="382" y="50" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">Channel</text>
+        <text x="495" y="50" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">SalesAmount</text>
+        <text x="382" y="72" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">Online</text><text x="498" y="72" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">500</text>
+        <text x="382" y="92" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">Online</text><text x="498" y="92" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">750</text>
+        <text x="382" y="112" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">Online</text><text x="498" y="112" text-anchor="end" font-family="DM Mono,monospace" font-size="9" fill="#1B4FD8">480</text>
+        <text x="422" y="152" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88">other rows hidden by filter</text>
+        <rect x="352" y="158" width="140" height="12" rx="3" fill="#E2E0DB" opacity=".5"/>
+        <text x="422" y="184" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56" font-weight="500">SUM = 1,730 (Online only)</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>This is the entire concept of filter context in one diagram. <code>SUM(FactSales[SalesAmount])</code> always sums whatever rows are currently visible. When a slicer selects "Online," the filter reduces the visible rows — and SUM recalculates. <strong>The measure does not change. The context around it changes.</strong> This understanding is the foundation of everything that follows in DAX.</p>
+
+  <!-- ═══ PART 3 ═══ -->
+  <div id="p3" class="ph"><span class="pn">03</span><h2 class="pt">Why DIVIDE — not the slash operator</h2></div>
+
+  <p>Both of the following expressions produce a gross margin percentage. Only one is safe to use in a production model:</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- Dangerous: the / operator</span>
+Gross Margin % = [Gross Profit] <span class="op">/</span> [Total Revenue]
+
+<span class="cm">-- Safe: DIVIDE</span>
+Gross Margin % = <span class="fn">DIVIDE</span>([Gross Profit], [Total Revenue])</pre>
+  </div>
+
+  <p>What happens when a filter produces zero revenue — a product that was returned, a future date with no transactions, a new store not yet open? The <code>/</code> operator returns a division-by-zero error. That error propagates into every visual using the measure, breaking the report for the client.</p>
+  <p><code>DIVIDE</code> handles this case gracefully. When the denominator is zero or blank, it returns blank by default — the cell shows empty rather than an error. You can also provide a custom fallback value as a third argument:</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- Returns blank when no revenue (default behaviour)</span>
+Gross Margin % = <span class="fn">DIVIDE</span>([Gross Profit], [Total Revenue])
+
+<span class="cm">-- Returns 0 instead of blank — use when blank would confuse stakeholders</span>
+Gross Margin % = <span class="fn">DIVIDE</span>([Gross Profit], [Total Revenue], <span class="num">0</span>)</pre>
+  </div>
+
+  <div class="callout"><strong>Always reference measures, not columns, in calculations.</strong> <code>DIVIDE([Gross Profit], [Total Revenue])</code> divides the aggregated totals and respects filter context. <code>DIVIDE(FactSales[SalesAmount], FactSales[TotalCost])</code> attempts to divide column by column in row context — which is not how measures evaluate. Reference the measures you have already built.</div>
+
+  <!-- ═══ PART 4 ═══ -->
+  <div id="p4" class="ph"><span class="pn">04</span><h2 class="pt">Working backwards from a visual to the measure</h2></div>
+
+  <p>A stakeholder rarely says "I need a DIVIDE measure with a CALCULATE in the denominator." They say things like "show me gross margin by category" or "I want to see how online revenue compares to store revenue over time." Your job is to decompose that requirement into its parts.</p>
+
+  <p>Use this four-part decomposition every time:</p>
+  <ul class="prose">
+    <li><strong>Measure:</strong> What number goes on the axis? What is being quantified?</li>
+    <li><strong>Dimension:</strong> What dimension drives the rows or the X-axis?</li>
+    <li><strong>Filter:</strong> Is there a restriction — a specific segment, a time period, a channel?</li>
+    <li><strong>Visual type:</strong> Does this show comparison, trend, composition, or a single value?</li>
+  </ul>
+
+  <div class="dw">
+    <div class="dc">Example decomposition — "Gross margin by product category for Contoso"</div>
+    <div class="db">
+      <svg width="580" height="205" viewBox="0 0 580 205" role="img">
+        <title>Visual decomposition example</title>
+        <rect x="10" y="10" width="560" height="40" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="290" y="27" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#908D88" font-weight="500" letter-spacing=".05em" text-transform="uppercase">REQUIREMENT</text>
+        <text x="290" y="42" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#1A1917">"Show gross margin % and total revenue by product category"</text>
+        <rect x="10" y="68" width="130" height="80" rx="8" fill="#1A1917" stroke="#1A1917"/>
+        <text x="75" y="88" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#FAC775" font-weight="500">MEASURES</text>
+        <text x="75" y="105" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#E2E0DB">Total Revenue</text>
+        <text x="75" y="119" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#E2E0DB">Gross Profit</text>
+        <text x="75" y="133" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#E2E0DB">Gross Margin %</text>
+        <rect x="152" y="68" width="120" height="80" rx="8" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="212" y="88" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#1B4FD8" font-weight="500">AXIS / ROWS</text>
+        <text x="212" y="110" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#378ADD">DimProductCategory</text>
+        <text x="212" y="124" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#378ADD">[ProductCategoryName]</text>
+        <rect x="284" y="68" width="140" height="80" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/>
+        <text x="354" y="88" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#BA7517" font-weight="500">FILTER (optional)</text>
+        <text x="354" y="106" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#BA7517">none required here —</text>
+        <text x="354" y="120" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#BA7517">add Year slicer for</text>
+        <text x="354" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="8.5" fill="#BA7517">time filtering</text>
+        <rect x="436" y="68" width="134" height="80" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="503" y="88" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#0F6E56" font-weight="500">VISUAL TYPE</text>
+        <text x="503" y="106" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="#0F6E56">Clustered bar chart</text>
+        <text x="503" y="120" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="#0F6E56">Revenue = bar height</text>
+        <text x="503" y="134" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8.5" fill="#0F6E56">Margin % = line axis</text>
+        <rect x="10" y="162" width="560" height="30" rx="6" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1"/>
+        <text x="290" y="181" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#0F6E56" font-weight="500">DAX needed: Total Revenue, Gross Profit, Gross Margin % = DIVIDE([Gross Profit],[Total Revenue])</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>Practice this decomposition on every requirement before opening Power BI. Once you can name the measure, the dimension, the filter, and the visual type, writing the DAX is straightforward.</p>
+
+  <!-- ═══ PART 5 ═══ -->
+  <div id="p5" class="ph"><span class="pn">05</span><h2 class="pt">Choosing the right visual</h2></div>
+
+  <p>Visual choice is not aesthetic preference — it is a communication decision. The wrong visual type obscures the insight even when the underlying measure is correct.</p>
+
+  <div class="viz-grid">
+    <div class="viz-card">
+      <div class="viz-icon">📊</div>
+      <div class="viz-name">Bar / Column chart</div>
+      <div class="viz-use">Comparing values across categories. Use when the question is "which is bigger?"</div>
+      <div class="viz-avoid">Avoid: more than ~12 categories, or when showing trend over time.</div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-icon">📈</div>
+      <div class="viz-name">Line chart</div>
+      <div class="viz-use">Trends over time. Use when the X-axis is a continuous time dimension.</div>
+      <div class="viz-avoid">Avoid: non-time X-axis, categorical comparisons.</div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-icon">🔢</div>
+      <div class="viz-name">Card / KPI</div>
+      <div class="viz-use">Single summary number. Use for Total Revenue, Gross Margin %, or any headline KPI.</div>
+      <div class="viz-avoid">Avoid: when context matters — a number without dimension is often misleading.</div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-icon">🥧</div>
+      <div class="viz-name">Pie / Donut chart</div>
+      <div class="viz-use">Part-to-whole at a glance with very few slices (2–4).</div>
+      <div class="viz-avoid">Avoid: more than 4 slices, time series, negative values.</div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-icon">📋</div>
+      <div class="viz-name">Table / Matrix</div>
+      <div class="viz-use">Exact values with multiple dimensions. Use when the audience needs to look up specific numbers.</div>
+      <div class="viz-avoid">Avoid: as a default — tables hide patterns that charts reveal.</div>
+    </div>
+    <div class="viz-card">
+      <div class="viz-icon">🗺️</div>
+      <div class="viz-name">Map visual</div>
+      <div class="viz-use">Geographic distribution. Use when location is the key dimension.</div>
+      <div class="viz-avoid">Avoid: when geography is not meaningful to the analysis.</div>
+    </div>
+  </div>
+
+  <div class="callout ci"><strong>Financial audiences love Cards.</strong> Before building any dashboard for a finance team, add a row of Card visuals at the top — Total Revenue, Gross Profit, Gross Margin %, and one KPI relevant to the client's business. These are the numbers an executive reads first. Everything else on the page provides context to those cards.</div>
+
+  <!-- ═══ PART 6 ═══ -->
+  <div id="p6" class="ph"><span class="pn">06</span><h2 class="pt">The measure table pattern</h2></div>
+
+  <p>By default, when you create a measure, Power BI stores it in whichever table you had selected. In a model with 50 measures spread across 8 tables, finding any particular measure becomes a search exercise. The solution is a dedicated measures table.</p>
+
+  <h3>Creating the _Measures table</h3>
+  <p>In Power BI Desktop: go to the Modeling tab → click "New Table" → type the following DAX, then press Enter:</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- Create an empty placeholder table</span>
+_Measures = <span class="fn">DATATABLE</span>(<span class="str">"x"</span>, <span class="fn">INTEGER</span>, {{<span class="num">0</span>}})
+<span class="cm">-- Hide the "x" column by right-clicking → Hide in report view</span></pre>
+  </div>
+
+  <p>Now move all your measures into this table by right-clicking each measure → Edit → change the Home Table dropdown to <code>_Measures</code>. The underscore prefix causes it to sort to the top of the Fields panel.</p>
+
+  <h3>Display folders — organising within the table</h3>
+  <p>Once you have more than ~10 measures, use display folders to group them. Select a measure → Properties pane → type a folder name in the Display Folder field. Examples: <code>Revenue</code>, <code>Cost &amp; Margin</code>, <code>Counts</code>, <code>Ratios</code>. Measures in the same folder name are automatically grouped in the Fields panel.</p>
+
+  <div class="callout cg"><strong>Self-documenting models.</strong> A _Measures table with display folders is one of the clearest signals to a client or colleague that a model was built professionally. When they open the file, every calculation is in one place, clearly named and organised. It reduces onboarding time from hours to minutes.</div>
+
+  <!-- ═══ PART 7 ═══ -->
+  <div id="p7" class="ph"><span class="pn">07</span><h2 class="pt">BLANK — not zero, not an error</h2></div>
+
+  <p>Power BI distinguishes between three different states for a measure cell: a number (including zero), an error, and <strong>blank</strong>. Blank is its own value — it means "there is no result for this combination." Understanding blank is essential because it behaves differently from zero in calculations and visuals.</p>
+
+  <h3>Where blank comes from</h3>
+  <p>The most common source: filter combinations that produce no matching rows. If you ask for "Online channel sales in a category that has never had an online sale," the result is blank — not zero. There were no transactions, so there is no sum to display.</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- DIVIDE returns blank when denominator is zero or blank</span>
+Gross Margin % = <span class="fn">DIVIDE</span>([Gross Profit], [Total Revenue])
+<span class="cm">-- If Total Revenue = 0 or blank → result = blank (not an error)</span>
+
+<span class="cm">-- You can test for blank explicitly</span>
+Margin Display =
+  <span class="fn">IF</span>(
+    <span class="fn">ISBLANK</span>([Total Revenue]),
+    <span class="str">"No sales"</span>,
+    <span class="fn">DIVIDE</span>([Gross Profit], [Total Revenue])
+  )</pre>
+  </div>
+
+  <h3>Blank ≠ zero in arithmetic</h3>
+  <p>In DAX, blank propagates through arithmetic in a specific way: <code>BLANK() + 0 = 0</code>, but <code>BLANK() * anything = BLANK()</code>. This asymmetry surprises people. The safe pattern: always use DIVIDE (which returns blank safely) and use ISBLANK() when you need to distinguish "no data" from "data that equals zero."</p>
+
+  <div class="callout"><strong>A blank cell in a visual is not a bug.</strong> When a client asks "why is this cell empty?", the answer is usually: there were no transactions for that combination of filters. Blank is the correct representation of "no data" — it is preferable to showing zero, which would imply that something happened and resulted in a zero, which is a different business situation entirely.</div>
+
+  <!-- ═══ PART 8 ═══ -->
+  <div id="p8" class="ph"><span class="pn">08</span><h2 class="pt">Three mistakes to avoid from day one</h2></div>
+
+  <p>These are the most common errors in early-stage DAX work. Each one produces results that look correct but are subtly wrong — the kind that only get discovered when a client checks the numbers against their source system.</p>
+
+  <div class="error-list">
+    <div class="error-item">
+      <div class="error-num">1</div>
+      <div class="error-body">
+        <strong>Using / instead of DIVIDE</strong>
+        <p><code>[Gross Profit] / [Total Revenue]</code> will return an error when Revenue is zero or blank in any filter context — a new product, a future date, a filtered-out channel. That single error cell breaks every visual using the measure. Always use DIVIDE.</p>
+      </div>
+    </div>
+    <div class="error-item">
+      <div class="error-num">2</div>
+      <div class="error-body">
+        <strong>Using COUNT instead of COUNTROWS for row counts</strong>
+        <p><code>COUNT(FactSales[OrderNumber])</code> silently skips rows where OrderNumber is blank. If your source data has any blank keys — which is common in imported datasets — you are understating your transaction count. COUNTROWS counts every row with no exceptions.</p>
+      </div>
+    </div>
+    <div class="error-item">
+      <div class="error-num">3</div>
+      <div class="error-body">
+        <strong>Dividing columns directly instead of measures</strong>
+        <p><code>DIVIDE(FactSales[SalesAmount], FactSales[TotalCost])</code> in a measure body is a compilation error — measures have no row context, so column references without an aggregator are invalid. Write <code>DIVIDE([Total Revenue], [Total Cost])</code> — reference the explicit measures you already built.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ QUIZ ═══ -->
+  <div id="quiz" class="qs">
+    <div class="qh"><span class="qt">After reading</span><h2 class="qtl">Check your understanding</h2></div>
+    <p class="qi">5 multiple choice scored automatically. 2 open-ended: write your answer, then reveal the model answer. All examples use Contoso dataset columns.</p>
+    <div class="qpb"><div class="qpf" id="qpf"></div></div>
+
+    <!-- Q1 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">01 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">What is the difference between <code>COUNTROWS(FactSales)</code> and <code>COUNT(FactSales[OrderNumber])</code>?</div>
+      <div class="opts" id="o1">
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">A</span>They are identical — both count all rows in the table.</button>
+        <button class="opt" onclick="pick(this,'o1','c')"><span class="ol">B</span>COUNTROWS counts every row including those with blank OrderNumbers. COUNT skips rows where OrderNumber is blank.</button>
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">C</span>COUNT is always faster than COUNTROWS because it uses an index.</button>
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">D</span>COUNTROWS counts unique values. COUNT counts all values including duplicates.</button>
+      </div>
+      <div class="fb fbok" id="fb1c"><strong>Correct.</strong> COUNTROWS counts every row in the table regardless of column values — nothing is skipped. COUNT(column) only counts rows where that column is non-blank. If any rows have a blank OrderNumber due to a data quality issue, COUNT gives a lower result than the actual row count, silently understating your transaction volume. For reliable transaction counts, always use COUNTROWS.</div>
+      <div class="fb fberr" id="fb1w"><strong>Not quite.</strong> The answer is B. COUNTROWS counts every row; COUNT(column) skips rows where that column is blank. For reliable row counts, use COUNTROWS.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">02 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">A stakeholder asks for "the number of customers who made a purchase in each product category." Which measure is correct?</div>
+      <div class="opts" id="o2">
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">A</span><code>COUNT(FactSales[CustomerKey])</code> — counts CustomerKey values per category.</button>
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">B</span><code>COUNTROWS(DimCustomer)</code> — counts all customers in the dimension table.</button>
+        <button class="opt" onclick="pick(this,'o2','c')"><span class="ol">C</span><code>DISTINCTCOUNT(FactSales[CustomerKey])</code> — counts unique customers who appear in filtered sales.</button>
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">D</span><code>COUNTROWS(FactSales)</code> — counts total transaction rows per category.</button>
+      </div>
+      <div class="fb fbok" id="fb2c"><strong>Correct.</strong> The stakeholder wants unique customers — one customer who bought 10 times in a category should count as 1, not 10. DISTINCTCOUNT eliminates duplicates. COUNT would return 10 for that customer. COUNTROWS(DimCustomer) returns all customers regardless of whether they purchased in that category. COUNTROWS(FactSales) counts transaction lines, not customers.</div>
+      <div class="fb fberr" id="fb2w"><strong>Not quite.</strong> The answer is C. The stakeholder wants unique customers. DISTINCTCOUNT counts each CustomerKey once regardless of how many transactions that customer made.</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">03 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">You write: <code>Gross Margin % = [Gross Profit] / [Total Revenue]</code>. A colleague says this is wrong. Are they right?</div>
+      <div class="opts" id="o3">
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">A</span>No — dividing two measures with / is perfectly safe.</button>
+        <button class="opt" onclick="pick(this,'o3','c')"><span class="ol">B</span>Yes — when Total Revenue is zero or blank in any filter context, this returns a division error. Use DIVIDE instead.</button>
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">C</span>Yes — you should reference columns directly, not measures, in division.</button>
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">D</span>No — the / operator is correct for measures. DIVIDE is only for dividing column values.</button>
+      </div>
+      <div class="fb fbok" id="fb3c"><strong>Correct.</strong> When a filter context produces no revenue — a new product with no sales yet, a region with only returns, a future date — Total Revenue evaluates to blank. The / operator treats blank as zero and throws a division-by-zero error, which propagates into every visual using the measure. DIVIDE([Gross Profit], [Total Revenue]) returns blank gracefully instead. Always use DIVIDE.</div>
+      <div class="fb fberr" id="fb3w"><strong>Not quite.</strong> The answer is B. The / operator errors when the denominator is blank or zero. DIVIDE handles this safely by returning blank or a custom fallback value.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">04 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">A measure cell in your report shows blank instead of a number. A stakeholder asks why. What is the most likely correct explanation?</div>
+      <div class="opts" id="o4">
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">A</span>The measure has a syntax error that needs to be fixed.</button>
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">B</span>Blank always means zero — the measure evaluated to zero and Power BI is hiding it.</button>
+        <button class="opt" onclick="pick(this,'o4','c')"><span class="ol">C</span>The current filter context produces no matching rows — there are no transactions for that combination of filters, so there is no value to display.</button>
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">D</span>The measure is stored in the wrong table and cannot be evaluated in this visual.</button>
+      </div>
+      <div class="fb fbok" id="fb4c"><strong>Correct.</strong> Blank in Power BI means "no data for this combination." If a category-channel combination has never had a transaction, the measure returns blank — which is the correct and expected result. Blank ≠ zero: zero would mean there were transactions that summed to zero, which is a different business situation. When a stakeholder asks about a blank cell, the answer is usually "there were no sales in that combination during the selected period."</div>
+      <div class="fb fberr" id="fb4w"><strong>Not quite.</strong> The answer is C. Blank means no matching rows in the current filter context — not an error, not zero. It is the correct representation of "no data."</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">05 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">Why should you store all measures in a dedicated <code>_Measures</code> table rather than inside FactSales?</div>
+      <div class="opts" id="o5">
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">A</span>Measures in a dedicated table are calculated faster by the Power BI engine.</button>
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">B</span>It is technically required — measures cannot be stored in fact tables.</button>
+        <button class="opt" onclick="pick(this,'o5','c')"><span class="ol">C</span>Organisation and discoverability — all calculations are in one place, clearly separated from raw data columns, making the model easier to maintain and hand off.</button>
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">D</span>Measures in fact tables cannot reference columns from dimension tables.</button>
+      </div>
+      <div class="fb fbok" id="fb5c"><strong>Correct.</strong> There is no performance difference — measures have no physical location in the data model. The benefit is entirely organisational. When a model has 40+ measures spread across 8 tables, finding and maintaining them becomes painful. A _Measures table with display folder subfolders (Revenue, Cost &amp; Margin, Ratios, Counts) makes the model self-documenting and reduces onboarding time significantly for new team members and clients.</div>
+      <div class="fb fberr" id="fb5w"><strong>Not quite.</strong> The answer is C. There is no technical requirement or performance difference. The benefit is purely organisational — all calculations in one place, clearly labelled and grouped.</div>
+    </div>
+
+    <!-- Q6 open -->
+    <div class="qc">
+      <div class="qm"><span class="qn">06 / 07</span><span class="qb bop">Open-ended</span></div>
+      <div class="qtxt">Using the Contoso dataset, a stakeholder asks: "How many unique products did we sell in each product category, and what percentage of our total product catalogue does that represent?" Write the two DAX measures this requires.</div>
+      <textarea class="ota" id="ta6" placeholder="Measure 1: Products Sold = ...&#10;Measure 2: % of Catalogue = ..."></textarea>
+      <button class="cbtn" id="btn6" onclick="showModel('ta6','m6','btn6')">See model answer</button>
+      <div class="mans" id="m6">
+        <strong>Model answer</strong>
+        <strong style="display:block;font-size:.9rem;text-transform:none;letter-spacing:0;margin-top:.5rem">Measure 1 — Products Sold</strong>
+        <code style="display:block;font-family:DM Mono,monospace;font-size:.82rem;margin:.3rem 0;background:#1A1917;color:#FAC775;padding:.4rem .6rem;border-radius:4px">Products Sold = DISTINCTCOUNT(FactSales[ProductKey])</code>
+        This counts unique products that appear in the filtered sales. When the visual is filtered to a category, it shows only products actually sold in that category.
+        <br><br>
+        <strong style="display:block;font-size:.9rem;text-transform:none;letter-spacing:0">Measure 2 — % of Catalogue</strong>
+        <code style="display:block;font-family:DM Mono,monospace;font-size:.82rem;margin:.3rem 0;background:#1A1917;color:#FAC775;padding:.4rem .6rem;border-radius:4px">% of Catalogue = DIVIDE([Products Sold], COUNTROWS(DimProduct))</code>
+        COUNTROWS(DimProduct) gives the total number of products in the catalogue — it is not filtered by category because we reference the dimension table directly, which is not affected by the product filter propagated from FactSales. DIVIDE handles the zero-denominator case safely.
+      </div>
+    </div>
+
+    <!-- Q7 open -->
+    <div class="qc">
+      <div class="qm"><span class="qn">07 / 07</span><span class="qb bop">Open-ended</span></div>
+      <div class="qtxt">A colleague writes: <code>Revenue per Unit = SUM(FactSales[SalesAmount]) / COUNT(FactSales[ProductKey])</code>. Identify two problems with this measure and write the correct version.</div>
+      <textarea class="ota" id="ta7" placeholder="Problem 1:&#10;Problem 2:&#10;Correct version:"></textarea>
+      <button class="cbtn" id="btn7" onclick="showModel('ta7','m7','btn7')">See model answer</button>
+      <div class="mans" id="m7">
+        <strong>Model answer</strong>
+        <strong style="display:block;font-size:.9rem;text-transform:none;letter-spacing:0;margin-top:.5rem">Two problems:</strong>
+        <strong>1.</strong> Uses / instead of DIVIDE — will throw a division error when any filter context produces zero transactions (new product, future date, filtered-out category).<br><br>
+        <strong>2.</strong> Uses COUNT on a column — COUNT(FactSales[ProductKey]) skips rows where ProductKey is blank. If any rows have a blank ProductKey due to a data quality issue, the denominator is understated and the result is inflated. Use COUNTROWS for reliable row counts.<br><br>
+        <strong style="display:block;font-size:.9rem;text-transform:none;letter-spacing:0">Correct version:</strong>
+        <code style="display:block;font-family:DM Mono,monospace;font-size:.82rem;margin:.3rem 0;background:#1A1917;color:#FAC775;padding:.4rem .6rem;border-radius:4px">Revenue per Transaction = DIVIDE([Total Revenue], [Total Transactions])</code>
+        References explicit measures: Total Revenue = SUM(FactSales[SalesAmount]), Total Transactions = COUNTROWS(FactSales). DIVIDE handles zero safely. Both measures are reusable elsewhere in the model.
+      </div>
+    </div>
+
+    <div class="scorecard" id="sc">
+      <div class="snum" id="snum"></div>
+      <div class="slbl">multiple choice correct</div>
+      <div class="smsg" id="smsg"></div>
+    </div>
+    <a class="next" href="week03-exercise.html">
+      <div><div class="nlbl">Next up</div><div class="ntitle">Week 3 Exercise → Build your first Contoso dashboard</div></div>
+      <div class="narr">→</div>
+    </a>
+  </div>
+</main>
+</div>
+
+<script>
+const sc={};let mcD=0,opD=0;const MCT=5;
+function pick(btn,gid,res){const g=document.getElementById(gid);if(g.querySelector('.r,.w'))return;g.querySelectorAll('.opt').forEach(b=>b.disabled=true);const n=gid.replace('o','');if(res==='c'){btn.classList.add('r');btn.querySelector('.ol').textContent='✓';document.getElementById('fb'+n+'c').classList.add('show');sc[gid]=1;}else{btn.classList.add('w');btn.querySelector('.ol').textContent='✗';document.getElementById('fb'+n+'w').classList.add('show');sc[gid]=0;g.querySelectorAll('.opt').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'c'")){b.classList.add('h');b.querySelector('.ol').textContent='✓';}});}mcD++;upBar();if(mcD===MCT)showScore();}
+function showModel(ta,mid,bid){document.getElementById(ta).disabled=true;document.getElementById(bid).disabled=true;document.getElementById(mid).classList.add('show');opD++;upBar();}
+function upBar(){document.getElementById('qpf').style.width=((mcD+opD)/7*100)+'%'}
+function showScore(){const n=Object.values(sc).reduce((a,b)=>a+b,0);document.getElementById('snum').textContent=n+' / '+MCT;const msgs=['Review Parts 2, 3 and 7 before the exercise.','Review the questions you missed before continuing.','Good. Move to the exercise.','Strong. On to the exercise.','Perfect. On to the exercise.'];document.getElementById('smsg').textContent=msgs[n];const c=document.getElementById('sc');c.style.display='block';c.scrollIntoView({behavior:'smooth',block:'center'});}
+function nv(id,btn){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on');}
+window.addEventListener('scroll',()=>{const ids=['p1','p2','p3','p4','p5','p6','p7','p8','quiz'];const navs=document.querySelectorAll('.ni');let cur=0;ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<130)cur=i;});navs.forEach(n=>n.classList.remove('on'));if(navs[cur])navs[cur].classList.add('on');});
+</script>
+</body>
+</html>

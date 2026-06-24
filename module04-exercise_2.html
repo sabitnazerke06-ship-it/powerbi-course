@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4 · Exercise — CALCULATE Patterns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F2;--surf:#FFFFFF;--ink:#1A1917;--ink2:#4A4845;--ink3:#908D88;--acc:#1B4FD8;--acc-l:#EEF2FD;--rule:#E2E0DB;--tag-bg:#EEEDFE;--tag-tx:#3C3489;--ok:#0F6E56;--ok-bg:#E1F5EE;--ok-bd:#1D9E75;--warn-bg:#FFF8EC;--warn-bd:#F5C842;--warn-tx:#7A5C00;--err:#A32D2D;--err-bg:#FCEBEB;--err-bd:#E24B4A;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.8}
+.topbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.tb{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.ts{color:var(--rule)}.tw{font-size:13px;font-weight:500;color:var(--ink2)}
+.tp{margin-left:auto;display:flex;gap:4px;align-items:center}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--rule)}.pd.done{background:var(--ok-bd)}.pd.on{background:var(--acc)}
+.layout{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:210px 1fr;padding:0 2rem}
+.sidebar{padding:2.5rem 1.25rem 2.5rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--rule)}
+.sl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.ni{display:block;padding:5px 10px;border-radius:6px;font-size:12.5px;color:var(--ink2);line-height:1.45;margin-bottom:1px;transition:background .12s,color .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.ni:hover{background:var(--acc-l);color:var(--acc)}.ni.on{background:var(--acc-l);color:var(--acc);font-weight:500}
+.ni.sep{border-top:1px solid var(--rule);margin-top:8px;padding-top:10px}
+.ni.bonus-nav{color:var(--warn-tx)}
+.content{padding:3rem 0 5rem 3rem;max-width:730px}
+.mod-label{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#7A3B00;background:#FFF0E0;border:1px solid #F5C090;padding:4px 12px;border-radius:4px;margin-bottom:1rem}
+.ex-number{font-family:var(--mono);font-size:.85rem;color:var(--ink3);margin-bottom:.35rem}
+.ex-title{font-family:var(--serif);font-size:2.4rem;line-height:1.15;margin-bottom:1.25rem;letter-spacing:-.01em}
+.meta-row{display:flex;gap:1.5rem;padding:1rem 1.25rem;background:var(--surf);border:1px solid var(--rule);border-radius:10px;margin-bottom:2.5rem;flex-wrap:wrap}
+.mi{font-size:13px;color:var(--ink3)}.mi strong{color:var(--ink2);font-weight:500;display:block;font-size:10.5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+.sec-h{font-family:var(--serif);font-size:1.5rem;color:var(--ink);margin:3rem 0 1rem;padding-bottom:.6rem;border-bottom:2px solid var(--ink)}
+.sec-h.sub{font-size:1.15rem;margin:2rem 0 .75rem;border-bottom:1px solid var(--rule);font-family:var(--sans);font-weight:500;letter-spacing:0;color:var(--ink2)}
+p{margin-bottom:1rem;font-size:.975rem;color:var(--ink2);line-height:1.8}
+p strong{color:var(--ink);font-weight:500}
+code{font-family:var(--mono);font-size:.83em;background:var(--rule);padding:2px 5px;border-radius:3px;color:var(--ink)}
+ul.prose{margin:.75rem 0 1.25rem;padding-left:1.25rem}
+ul.prose li{font-size:.96rem;color:var(--ink2);margin-bottom:.45rem;line-height:1.7}
+ul.prose li strong{color:var(--ink);font-weight:500}
+.setup-box{background:var(--ink);color:#E2E0DB;border-radius:12px;padding:1.75rem;margin-bottom:2.5rem}
+.setup-title{font-size:.78rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#FAC775;margin-bottom:1rem}
+.setup-step{display:flex;gap:12px;margin-bottom:.875rem;align-items:flex-start}
+.setup-step:last-child{margin-bottom:0}
+.ss-num{width:22px;height:22px;border-radius:50%;background:#FAC775;color:#1A1917;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.ss-text{font-size:.88rem;color:#C8C5BE;line-height:1.65}
+.ss-text strong{color:#fff;font-weight:500}
+.ss-text code{font-family:var(--mono);font-size:.82em;background:rgba(255,255,255,.1);padding:2px 6px;border-radius:3px;color:#FAC775}
+.result-wrap{border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:1.25rem 0}
+.result-wrap-header{background:var(--bg);padding:9px 14px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.result-table{width:100%;border-collapse:collapse;font-size:.87rem}
+.result-table th{background:var(--ink);color:#fff;padding:9px 14px;text-align:left;font-size:.75rem;font-weight:500;letter-spacing:.05em;text-transform:uppercase}
+.result-table td{padding:8px 14px;border-bottom:1px solid var(--rule);color:var(--ink2)}
+.result-table tr:last-child td{border-bottom:none}
+.result-table tr.total-row td{font-weight:600;color:var(--ink);background:var(--bg)}
+.result-table td.num{text-align:right;font-family:var(--mono);font-size:.83rem}
+.result-table td.hl{color:var(--ok);font-weight:500}
+.prereq-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:.75rem 0}
+.prereq-table th{background:var(--bg);color:var(--ink3);font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;text-align:left;border-bottom:1px solid var(--rule)}
+.prereq-table td{padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+.prereq-table tr:last-child td{border-bottom:none}
+.prereq-table td:first-child{font-family:var(--mono);font-size:.82rem;color:var(--acc);white-space:nowrap}
+.prereq-table td:nth-child(2){color:var(--ink3);font-size:.83rem}
+.prereq-table td:nth-child(3){color:var(--ink2);font-size:.85rem}
+.ex-block{border:1px solid var(--rule);border-radius:12px;overflow:hidden;margin:1.75rem 0}
+.ex-block-header{background:var(--surf);padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px}
+.ex-num{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#FAC775;font-family:var(--mono);font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ex-block-title{font-size:1rem;font-weight:500;color:var(--ink);line-height:1.45}
+.ex-block-body{padding:1.25rem 1.5rem;background:var(--bg)}
+.ex-block-body p{font-size:.93rem}
+.hint{background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:.75rem 1rem;margin-top:.75rem;font-size:.87rem;color:var(--warn-tx);line-height:1.65}
+.hint strong{color:var(--warn-tx);font-size:.78rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:3px}
+.sol-wrap{border:1px solid var(--ok-bd);border-radius:12px;overflow:hidden;margin:2.5rem 0}
+.sol-header{background:var(--ok-bd);padding:11px 16px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.sol-header-text{font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#fff;flex:1}
+.sol-arrow{color:#fff;font-size:14px;transition:transform .2s}
+.sol-arrow.open{transform:rotate(180deg)}
+.sol-body{display:none;background:var(--ok-bg)}
+.sol-body.show{display:block}
+.sol-section{padding:1.25rem 1.5rem;border-bottom:1px solid rgba(29,158,117,.2)}
+.sol-section:last-child{border-bottom:none}
+.sol-section-label{font-size:.75rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ok);margin-bottom:.5rem}
+.sol-section p{font-size:.9rem;color:var(--ok);margin-bottom:.5rem}
+.sol-section p:last-child{margin-bottom:0}
+.code-block{background:#1A1917;border-radius:8px;padding:1rem 1.25rem;margin:.75rem 0;overflow-x:auto}
+.code-block pre{font-family:var(--mono);font-size:.82rem;line-height:1.9;color:#E2E0DB;white-space:pre}
+.fn{color:#FAC775}.cm{color:#636059;font-style:italic}.str{color:#A5D6A7}.num{color:#CE93D8}
+.callout{border-left:3px solid var(--warn-bd);background:var(--warn-bg);padding:.875rem 1.1rem;border-radius:0 8px 8px 0;margin:1.25rem 0;font-size:.91rem;color:var(--warn-tx);line-height:1.7}
+.callout strong{color:var(--warn-tx)}
+.ci{border-left-color:var(--acc);background:var(--acc-l);color:#1A3A8F}.ci strong{color:#1A3A8F}
+.cg{border-left-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}.cg strong{color:var(--ok)}
+.bonus-wrap{background:#FFF8EC;border:1px solid #F5C842;border-radius:12px;padding:1.5rem;margin-top:3rem}
+.bonus-tag{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#7A5C00;background:#F5C842;padding:3px 10px;border-radius:20px;margin-bottom:.75rem}
+.bonus-title{font-family:var(--serif);font-size:1.2rem;color:var(--ink);margin-bottom:.75rem}
+.checklist-wrap{margin-top:3.5rem;padding:1.75rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px}
+.checklist-title{font-family:var(--serif);font-size:1.3rem;color:var(--ink);margin-bottom:.4rem}
+.checklist-sub{font-size:.88rem;color:var(--ink3);margin-bottom:1.25rem}
+.checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:1.5rem}
+.cl-item{display:flex;align-items:center;gap:10px;font-size:.9rem;color:var(--ink2);cursor:pointer;padding:6px 8px;border-radius:6px;transition:background .12s}
+.cl-item:hover{background:var(--bg)}
+.cl-box{width:18px;height:18px;border:2px solid var(--rule);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:11px}
+.cl-item.checked .cl-box{background:var(--ok-bd);border-color:var(--ok-bd);color:#fff}
+.next-btn{display:inline-flex;align-items:center;gap:.75rem;padding:11px 22px;background:var(--acc);color:#fff;border-radius:8px;text-decoration:none;font-size:.92rem;font-weight:500;transition:opacity .15s}
+.next-btn:hover{opacity:.85}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:2rem 0 4rem}.ex-title{font-size:1.9rem}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="tb">Power BI Analyst Program</span>
+  <span class="ts">·</span>
+  <span class="tw">Module 4 Exercise — CALCULATE Patterns</span>
+  <div class="tp">
+    <div class="pd done"></div><div class="pd done"></div><div class="pd done"></div><div class="pd done"></div>
+    <div class="pd on"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sl">Contents</div>
+  <button class="ni on" onclick="nv('setup',this)">Setup</button>
+  <button class="ni sep" onclick="nv('ex01',this)">04.01 · Channel comparison</button>
+  <button class="ni" onclick="nv('ex02',this)">04.02 · % of total</button>
+  <button class="ni" onclick="nv('ex03',this)">04.03 · Conditional aggregation</button>
+  <button class="ni" onclick="nv('ex04',this)">04.04 · Promotion analysis</button>
+  <button class="ni" onclick="nv('ex05',this)">04.05 · SUMMARIZE</button>
+  <button class="ni sep bonus-nav" onclick="nv('bonus',this)">★ Bonus — ALLEXCEPT</button>
+</nav>
+
+<main class="content">
+
+  <div class="mod-label">Module 4 · Exercise Book</div>
+  <div class="ex-number">Power BI Analyst Program</div>
+  <h1 class="ex-title">CALCULATE<br><em>Patterns</em></h1>
+
+  <div class="meta-row">
+    <div class="mi"><strong>Dataset</strong>ContosoRetailDW (.pbix)</div>
+    <div class="mi"><strong>Estimated time</strong>60 – 75 min</div>
+    <div class="mi"><strong>Prerequisite</strong>Module 3 measures complete</div>
+    <div class="mi"><strong>New measures</strong>9 required + 1 bonus</div>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setup" class="setup-box">
+    <div class="setup-title">Before you start</div>
+    <div class="setup-step">
+      <div class="ss-num">1</div>
+      <div class="ss-text">Open your Contoso .pbix file from Module 3. Confirm <code>_Measures</code> already contains: <strong>Total Revenue, Total Cost, Gross Profit, Gross Margin %, Total Transactions</strong>. If any are missing, complete Module 3 first.</div>
+    </div>
+    <div class="setup-step">
+      <div class="ss-num">2</div>
+      <div class="ss-text">Add a new report page and rename it <strong>"Module 4 Exercise"</strong>. All new visuals go here. Keep the Module 3 page intact.</div>
+    </div>
+    <div class="setup-step">
+      <div class="ss-num">3</div>
+      <div class="ss-text">Confirm these tables are visible in the Fields panel: <code>Channel</code> (with <code>ChannelName</code>), <code>Promotion</code> (with <code>PromotionName</code>), <code>Geography</code> (with <code>RegionCountryName</code>, <code>ContinentName</code>).</div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 04.01 ═══ -->
+  <div id="ex01">
+    <h2 class="sec-h">Exercise 04.01 — Channel comparison</h2>
+
+    <p>The Commercial Director wants to compare all four sales channels side by side in one visual — Store, Online, Reseller, and Catalog — always showing each channel independently. Without CALCULATE, a channel slicer would collapse the view to a single channel. With CALCULATE, each measure is hardwired to its own channel regardless of any channel filter active on the page.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>A Clustered bar chart showing all four channels simultaneously. The key behaviour: adding a <strong>Channel slicer</strong> and selecting "Online" should NOT collapse the chart to one bar — all four channel measures remain visible because each one overrides the channel filter independently.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Channel revenue — no filters active</div>
+      <table class="result-table">
+        <thead><tr><th>Channel</th><th class="num">Revenue</th><th class="num">% of Total</th></tr></thead>
+        <tbody>
+          <tr><td>Store</td><td class="num">4,854,699,598.32</td><td class="num">58.2%</td></tr>
+          <tr><td>Online</td><td class="num">1,686,071,109.88</td><td class="num">20.2%</td></tr>
+          <tr><td>Reseller</td><td class="num">1,104,548,700.87</td><td class="num">13.2%</td></tr>
+          <tr><td>Catalog</td><td class="num">695,904,955.76</td><td class="num">8.3%</td></tr>
+          <tr class="total-row"><td>Total</td><td class="num">8,341,224,364.83</td><td class="num hl">100.0%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout"><strong>Note:</strong> A ProductCategory slicer WILL affect channel measures — if you select "Computers", all four channel measures show Computers-only revenue. This is expected and correct. CALCULATE fixes the channel filter only, not the product filter. Removing the product filter is covered in Exercise 04.02.</div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Total Revenue]</td><td>Measure</td><td>Created in Module 3 — base measure to wrap in CALCULATE</td></tr>
+          <tr><td>Channel[ChannelName]</td><td>Column</td><td>Values: "Store", "Online", "Reseller", "Catalog"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Create four measures — <strong>Store Revenue</strong>, <strong>Online Revenue</strong>, <strong>Reseller Revenue</strong>, and <strong>Catalog Revenue</strong> — each fixing the result to its specific channel using CALCULATE.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Each measure follows the same pattern: wrap [Total Revenue] in CALCULATE and add a filter argument that sets ChannelName to the specific value. CALCULATE will replace whatever channel filter is currently active in the report.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Build a Clustered bar chart with all four channel measures and <code>ProductCategory[ProductCategory]</code> as a slicer. Compare the behaviour of channel measures vs [Total Revenue] when you select "Computers."</div></div>
+      <div class="ex-block-body">
+        <p>Add a Card visual with <code>[Total Revenue]</code> (no CALCULATE) next to the bar chart. Then select "Computers" in the slicer and observe:</p>
+        <ul class="prose" style="margin-top:.5rem">
+          <li><strong>[Total Revenue] card changes</strong> — it now shows only Computers revenue (~$3.2B). This is expected — no CALCULATE override, so the slicer affects it.</li>
+          <li><strong>Channel measure bars do NOT change</strong> — Store Revenue still shows $4.85B, Online $1.69B, etc. The CALCULATE filter argument fixes ChannelName regardless of what the slicer says.</li>
+        </ul>
+        <p style="margin-top:.75rem">This is the core difference: measures without CALCULATE respect all active filters. Measures with CALCULATE can selectively override specific filters while leaving others intact.</p>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s01')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr01">▼</span>
+      </div>
+      <div class="sol-body" id="s01">
+        <div class="sol-section">
+          <div class="sol-section-label">Measures — all in _Measures table</div>
+          <div class="code-block"><pre>Store Revenue =
+<span class="fn">CALCULATE</span>([Total Revenue], Channel[ChannelName] = <span class="str">"Store"</span>)
+
+Online Revenue =
+<span class="fn">CALCULATE</span>([Total Revenue], Channel[ChannelName] = <span class="str">"Online"</span>)
+
+Reseller Revenue =
+<span class="fn">CALCULATE</span>([Total Revenue], Channel[ChannelName] = <span class="str">"Reseller"</span>)
+
+Catalog Revenue =
+<span class="fn">CALCULATE</span>([Total Revenue], Channel[ChannelName] = <span class="str">"Catalog"</span>)</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Why the slicer has no effect</div>
+          <p>The CALCULATE filter argument <code>Channel[ChannelName] = "Store"</code> replaces any existing filter on ChannelName in the current context. A product category slicer filters ProductCategory — a different table — and does not affect the Channel filter. The channel measures are therefore immune to product filtering.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 04.02 ═══ -->
+  <div id="ex02">
+    <h2 class="sec-h">Exercise 04.02 — % of total</h2>
+
+    <p>The Category Analyst needs a matrix showing each product subcategory's revenue alongside two percentage figures: its share of the parent category's total, and its share of company-wide revenue. The two measures require different ALL arguments — this distinction is the core concept to practise.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>A Matrix visual with Category and Subcategory as rows. The <strong>% of Category</strong> column sums to 100% within each category. The <strong>% of Grand Total</strong> shows each subcategory's share of $8.34B.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Visual preview — Matrix with Computers expanded</div>
+      <div style="padding:1.25rem;background:#fff;overflow-x:auto">
+        <svg viewBox="0 0 660 230" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:660px;display:block;margin:0 auto">
+          <!-- header row -->
+          <rect x="0" y="0" width="660" height="28" fill="#1A1917"/>
+          <text x="10" y="18" font-family="DM Sans,sans-serif" font-size="10" fill="#fff" font-weight="500">Category → Subcategory</text>
+          <text x="390" y="18" font-family="DM Sans,sans-serif" font-size="10" fill="#fff" font-weight="500" text-anchor="end">Revenue</text>
+          <text x="520" y="18" font-family="DM Sans,sans-serif" font-size="10" fill="#fff" font-weight="500" text-anchor="end">% of Category</text>
+          <text x="650" y="18" font-family="DM Sans,sans-serif" font-size="10" fill="#fff" font-weight="500" text-anchor="end">% of Grand Total</text>
+          <!-- Computers row -->
+          <rect x="0" y="28" width="660" height="26" fill="#EEF2FD"/>
+          <text x="10" y="45" font-family="DM Sans,sans-serif" font-size="10" fill="#1B4FD8" font-weight="500">⊟ Computers</text>
+          <text x="390" y="45" font-family="DM Mono,monospace" font-size="10" fill="#1A1917" text-anchor="end">3,209,427,141.42</text>
+          <text x="520" y="45" font-family="DM Mono,monospace" font-size="10" fill="#0F6E56" font-weight="600" text-anchor="end">100.00%</text>
+          <text x="650" y="45" font-family="DM Mono,monospace" font-size="10" fill="#0F6E56" font-weight="600" text-anchor="end">38.48%</text>
+          <!-- Projectors & Screens -->
+          <rect x="0" y="54" width="660" height="24" fill="#fff"/>
+          <text x="22" y="70" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Projectors &amp; Screens</text>
+          <text x="390" y="70" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">1,107,199,413.48</text>
+          <text x="520" y="70" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">34.50%</text>
+          <text x="650" y="70" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">13.27%</text>
+          <!-- Laptops -->
+          <rect x="0" y="78" width="660" height="24" fill="#F7F6F2"/>
+          <text x="22" y="94" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Laptops</text>
+          <text x="390" y="94" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">933,130,593.78</text>
+          <text x="520" y="94" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">29.07%</text>
+          <text x="650" y="94" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">11.19%</text>
+          <!-- Desktops -->
+          <rect x="0" y="102" width="660" height="24" fill="#fff"/>
+          <text x="22" y="118" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Desktops</text>
+          <text x="390" y="118" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">508,196,937.08</text>
+          <text x="520" y="118" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">15.83%</text>
+          <text x="650" y="118" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">6.09%</text>
+          <!-- Printers -->
+          <rect x="0" y="126" width="660" height="24" fill="#F7F6F2"/>
+          <text x="22" y="142" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Printers, Scanners &amp; Fax</text>
+          <text x="390" y="142" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">281,762,342.20</text>
+          <text x="520" y="142" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">8.78%</text>
+          <text x="650" y="142" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">3.38%</text>
+          <!-- Monitors -->
+          <rect x="0" y="150" width="660" height="24" fill="#fff"/>
+          <text x="22" y="166" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Monitors</text>
+          <text x="390" y="166" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">268,114,052.77</text>
+          <text x="520" y="166" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">8.35%</text>
+          <text x="650" y="166" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">3.21%</text>
+          <!-- Computers Accessories -->
+          <rect x="0" y="174" width="660" height="24" fill="#F7F6F2"/>
+          <text x="22" y="190" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Computers Accessories</text>
+          <text x="390" y="190" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">111,023,802.11</text>
+          <text x="520" y="190" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">3.46%</text>
+          <text x="650" y="190" font-family="DM Mono,monospace" font-size="9.5" fill="#4A4845" text-anchor="end">1.33%</text>
+          <!-- Total row -->
+          <rect x="0" y="198" width="660" height="28" fill="#E2E0DB"/>
+          <text x="10" y="216" font-family="DM Sans,sans-serif" font-size="10" fill="#1A1917" font-weight="600">Total</text>
+          <text x="390" y="216" font-family="DM Mono,monospace" font-size="10" fill="#1A1917" font-weight="600" text-anchor="end">8,341,224,364.83</text>
+          <text x="520" y="216" font-family="DM Mono,monospace" font-size="10" fill="#1A1917" font-weight="600" text-anchor="end">—</text>
+          <text x="650" y="216" font-family="DM Mono,monospace" font-size="10" fill="#0F6E56" font-weight="600" text-anchor="end">100.00%</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="callout ci"><strong>Key check:</strong> Within Computers, the % of Category column (34.50% + 29.07% + 15.83% + 8.78% + 8.35% + 3.46%) should sum to <strong>100%</strong>. The % of Grand Total column for Computers subcategories should sum to <strong>38.48%</strong> (Computers' share of total revenue).</div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Total Revenue]</td><td>Measure</td><td>Module 3 — numerator for both % measures</td></tr>
+          <tr><td>ProductCategory[ProductCategory]</td><td>Column</td><td>Matrix row — parent level</td></tr>
+          <tr><td>ProductSubcategory[ProductSubcategory]</td><td>Column</td><td>Matrix row — child level</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Create a measure named <strong>% of Category Revenue</strong> that shows each subcategory's share of its parent category's total revenue.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>The denominator removes the subcategory filter while keeping the category filter. In this Contoso file, ProductSubcategory is a separate table — use <code>ALL(ProductSubcategory[ProductSubcategory])</code> (column reference) rather than <code>ALL(ProductSubcategory)</code> (full table), as the full-table version may not correctly remove the filter through the relationship chain.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Create a measure named <strong>% of Grand Total</strong> that shows each subcategory's share of company-wide revenue, regardless of any product filter.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Use two separate ALL arguments — one for each product table: <code>ALL(ProductCategory), ALL(ProductSubcategory)</code>. Note: <code>ALL(ProductCategory, ProductSubcategory)</code> with multiple tables in a single call throws an error in this Power BI version.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">3</div><div class="ex-block-title">Build a Matrix visual. Verify: <strong>% of Category sums to 100% within each category.</strong> To expand rows: click the double-down arrow ⇓ in the visual header, or Format pane → Row headers → +/− icons → On.</div></div>
+      <div class="ex-block-body">
+        <p>If % of Category shows the same values as % of Grand Total on every row, the subcategory filter is not being removed correctly. Try switching from <code>ALL(ProductSubcategory)</code> to <code>ALL(ProductSubcategory[ProductSubcategory])</code> in your denominator.</p>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s02')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr02">▼</span>
+      </div>
+      <div class="sol-body" id="s02">
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: % of Category Revenue</div>
+          <div class="code-block"><pre>% of Category Revenue =
+<span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>(
+        [Total Revenue],
+        <span class="fn">ALL</span>(ProductSubcategory[ProductSubcategory])
+    )
+)</pre></div>
+          <p>Using <code>ALL(ProductSubcategory[ProductSubcategory])</code> removes the filter on the subcategory column specifically. The category filter from the matrix row remains intact — denominator is the whole category total. If this still gives identical results to % of Grand Total, try <code>REMOVEFILTERS(ProductSubcategory)</code> instead.</p>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Measure: % of Grand Total</div>
+          <div class="code-block"><pre>% of Grand Total =
+<span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>(
+        [Total Revenue],
+        <span class="fn">ALL</span>(ProductCategory),
+        <span class="fn">ALL</span>(ProductSubcategory)
+    )
+)</pre></div>
+          <p>Two separate ALL arguments — one per table — removes all product filters. Denominator is always $8,341,224,364.83 regardless of context.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 04.03 ═══ -->
+  <div id="ex03">
+    <h2 class="sec-h">Exercise 04.03 — Conditional aggregation</h2>
+
+    <p>The Product Strategy team wants to split revenue into two price tiers: premium products (unit price above $500) and budget products (unit price $500 and below). This requires FILTER because the condition uses a comparison operator — direct equality syntax inside CALCULATE cannot handle greater-than or less-than conditions.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>Three Card visuals side by side. Premium Revenue plus Budget Revenue must equal Total Revenue ($8,341,224,364.83) — use this as your verification check.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Card visuals — no filters active</div>
+      <table class="result-table">
+        <thead><tr><th>Measure</th><th class="num">Expected value</th><th>Condition</th></tr></thead>
+        <tbody>
+          <tr><td>Premium Revenue</td><td class="num hl">$3.9bn</td><td>Product[UnitPrice] &gt; 500</td></tr>
+          <tr><td>Budget Revenue</td><td class="num hl">$4.4bn</td><td>Product[UnitPrice] ≤ 500</td></tr>
+          <tr><td>Premium Revenue %</td><td class="num hl">47.04%</td><td>Premium ÷ Total Revenue</td></tr>
+          <tr class="total-row"><td>Verification: Premium + Budget</td><td class="num">8,341,224,364.83</td><td>Must equal Total Revenue</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout ci"><strong>Note on UnitPrice in this dataset.</strong> <code>Product[UnitPrice]</code> is the unit selling price per individual product, not per transaction. In this Contoso file the majority of products are priced below $500, which is why Budget Revenue (~$4.4bn) is larger than Premium Revenue (~$3.9bn) — the opposite of what you might expect from a premium-heavy retail brand.</div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Total Revenue]</td><td>Measure</td><td>Module 3 — used in CALCULATE and as denominator</td></tr>
+          <tr><td>Product[UnitPrice]</td><td>Column</td><td>Unit selling price per product — threshold: 500</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Create a measure named <strong>Premium Revenue</strong> that calculates total revenue only for products with a unit price above $500.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Use FILTER inside CALCULATE. FILTER scans the Product table row by row and keeps only rows where UnitPrice &gt; 500. The result of FILTER becomes the new product filter context inside CALCULATE.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Create a measure named <strong>Budget Revenue</strong> for products with unit price at or below $500. Then create <strong>Premium Revenue %</strong> as a percentage of Total Revenue.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>The boundary value (exactly $500) must go into exactly one bucket. Use &gt; 500 for Premium and ≤ 500 for Budget to ensure no overlap and no gap.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">3</div><div class="ex-block-title">Add a fourth Card with [Total Revenue]. Confirm that <strong>Premium Revenue + Budget Revenue = Total Revenue</strong>.</div></div>
+      <div class="ex-block-body">
+        <p>If the sum does not match, check the boundary conditions on your FILTER arguments. Also verify the table name is <code>Product</code> (not <code>DimProduct</code>) and the column is <code>Product[UnitPrice]</code>.</p>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s03')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr03">▼</span>
+      </div>
+      <div class="sol-body" id="s03">
+        <div class="sol-section">
+          <div class="sol-section-label">Measures — all in _Measures table</div>
+          <div class="code-block"><pre>Premium Revenue =
+<span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    <span class="fn">FILTER</span>(Product, Product[UnitPrice] > <span class="num">500</span>)
+)
+
+Budget Revenue =
+<span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    <span class="fn">FILTER</span>(Product, Product[UnitPrice] <= <span class="num">500</span>)
+)
+
+Premium Revenue % =
+<span class="fn">DIVIDE</span>([Premium Revenue], [Total Revenue])</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Why FILTER is needed here</div>
+          <p>CALCULATE accepts direct equality as a shorthand: <code>Channel[ChannelName] = "Store"</code> works without FILTER. But comparison operators (&gt;, &lt;, ≤, ≥, &lt;&gt;) are not supported in that shorthand. FILTER must be used whenever the condition is not a simple equality test.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 04.04 ═══ -->
+  <div id="ex04">
+    <h2 class="sec-h">Exercise 04.04 — Promotion analysis</h2>
+
+    <p>The Marketing Analyst wants to understand how much revenue is generated at full price versus during promotional periods, and whether promotions produce meaningfully more revenue than full-price selling. The key challenge: one measure requires FILTER because the condition uses a not-equal operator (&lt;&gt;).</p>
+
+    <div class="callout ci"><strong>Check your Promotion table first.</strong> Before writing any measures, add a table visual with <code>Promotion[PromotionName]</code> to the report page and note the exact text used for the no-discount value. It may be <code>"No Discount"</code> or a variant. Remove the table visual after confirming the value.</div>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>Full Price Revenue + Promo Revenue must equal Total Revenue ($8,341,224,364.83). If they do not add up, the PromotionName text in your measures does not match exactly.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Card visuals — no filters active</div>
+      <table class="result-table">
+        <thead><tr><th>Measure</th><th class="num">Expected value</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Full Price Revenue</td><td class="num hl">$2.80bn</td><td>PromotionName = "No Discount"</td></tr>
+          <tr><td>Promo Revenue</td><td class="num hl">$5.54bn</td><td>PromotionName ≠ "No Discount"</td></tr>
+          <tr><td>Promotion Uplift %</td><td class="num hl">98.17%</td><td>(Promo − Full Price) ÷ Full Price</td></tr>
+          <tr class="total-row"><td>Full Price + Promo</td><td class="num">8,341,224,364.83</td><td>Must equal Total Revenue ✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout cg"><strong>Insight:</strong> Promo Revenue ($5.54bn) is nearly double Full Price Revenue ($2.80bn), giving a 98% uplift. This means most Contoso sales happen during promotions — which is a significant finding for the Marketing team. A Promotion Uplift % above 0% means promotional periods generate more revenue than full-price periods.</div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Total Revenue]</td><td>Measure</td><td>Module 3 — base measure</td></tr>
+          <tr><td>Promotion[PromotionName]</td><td>Column</td><td>Contains "No Discount" plus named promotional campaigns</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Create a measure named <strong>Full Price Revenue</strong> that returns revenue only for transactions with no discount applied.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>This is a simple equality filter — no FILTER function needed. Use the direct CALCULATE syntax: <code>Promotion[PromotionName] = "No Discount"</code>.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Create a measure named <strong>Promo Revenue</strong> that returns revenue for all promotional transactions (everything except "No Discount").</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>The condition is PromotionName ≠ "No Discount" — a not-equal comparison. This cannot be expressed as a direct CALCULATE argument. Use FILTER(Promotion, Promotion[PromotionName] &lt;&gt; "No Discount").</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">3</div><div class="ex-block-title">Create a measure named <strong>Promotion Uplift %</strong> expressing how much more (or less) revenue promotional sales generate compared to full-price sales.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>Uplift % = (Promo Revenue − Full Price Revenue) ÷ Full Price Revenue. A negative result means more revenue comes from full-price sales — which is a healthy sign in retail.</div>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s04')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr04">▼</span>
+      </div>
+      <div class="sol-body" id="s04">
+        <div class="sol-section">
+          <div class="sol-section-label">Measures — all in _Measures table</div>
+          <div class="code-block"><pre>Full Price Revenue =
+<span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    Promotion[PromotionName] = <span class="str">"No Discount"</span>
+)
+
+Promo Revenue =
+<span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    <span class="fn">FILTER</span>(Promotion, Promotion[PromotionName] <> <span class="str">"No Discount"</span>)
+)
+
+Promotion Uplift % =
+<span class="fn">DIVIDE</span>(
+    [Promo Revenue] - [Full Price Revenue],
+    [Full Price Revenue]
+)</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Direct syntax vs FILTER — when each applies</div>
+          <p>Full Price Revenue uses direct equality (<code>PromotionName = "No Discount"</code>) — no FILTER needed, and this is faster because Power BI can optimise it without scanning each row. Promo Revenue uses &lt;&gt; — a comparison operator — which requires FILTER to iterate the Promotion table row by row and apply the condition.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ EXERCISE 04.05 ═══ -->
+  <div id="ex05">
+    <h2 class="sec-h">Exercise 04.05 — SUMMARIZE</h2>
+
+    <p>This exercise is not about building a report visual. It focuses on understanding what SUMMARIZE returns as a table function, why measures should never be placed directly inside it, and how the correct ADDCOLUMNS pattern fixes this. You will run three queries in Query View and compare the results.</p>
+
+    <h2 class="sec-h sub">Expected Results</h2>
+    <p>Query 3 (the correct pattern) should return one row per country, with revenue and transaction count columns. Revenues across all countries should sum to $8,341,224,364.83. The United States should appear as the largest market.</p>
+
+    <div class="result-wrap">
+      <div class="result-wrap-header">Query 3 output — top rows by revenue (approximate)</div>
+      <table class="result-table">
+        <thead><tr><th>RegionCountryName</th><th class="num">@Revenue</th><th class="num">@Transactions</th></tr></thead>
+        <tbody>
+          <tr><td>United States</td><td class="num">largest market</td><td class="num">largest count</td></tr>
+          <tr><td>other countries</td><td class="num">varies</td><td class="num">varies</td></tr>
+          <tr class="total-row"><td>Sum across all rows</td><td class="num hl">8,341,224,364.83</td><td class="num hl">2,282,482</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Prerequisites</h2>
+    <div class="result-wrap">
+      <table class="prereq-table">
+        <thead><tr><th>Object</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>[Total Revenue]</td><td>Measure</td><td>Module 3</td></tr>
+          <tr><td>[Total Transactions]</td><td>Measure</td><td>Module 3</td></tr>
+          <tr><td>Geography[RegionCountryName]</td><td>Column</td><td>Country dimension</td></tr>
+          <tr><td>Query View</td><td>Tool</td><td>View → Query View in Power BI Desktop</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="sec-h sub">Tasks</h2>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Open <strong>Query View</strong> (View → Query View). Run this query and observe the output — a table of unique country/year combinations from Sales.</div></div>
+      <div class="ex-block-body">
+        <div class="code-block"><pre><span class="fn">EVALUATE</span>
+<span class="fn">SUMMARIZE</span>(
+    Sales,
+    Geography[RegionCountryName],
+    Calendar[Year]
+)
+<span class="fn">ORDER BY</span> Geography[RegionCountryName], Calendar[Year]</pre></div>
+        <p style="font-size:.88rem;color:var(--ink3)">This is the basic use of SUMMARIZE — returning unique combinations of dimensions that exist in Sales. No measures yet.</p>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">2</div><div class="ex-block-title">Run this second query — measures placed directly inside SUMMARIZE. Note the results, then read why this pattern is dangerous.</div></div>
+      <div class="ex-block-body">
+        <div class="code-block"><pre><span class="fn">EVALUATE</span>
+<span class="fn">SUMMARIZE</span>(
+    Sales,
+    Geography[RegionCountryName],
+    <span class="str">"Revenue"</span>, [Total Revenue]  <span class="cm">-- ⚠ do not use in production</span>
+)</pre></div>
+        <div class="hint"><strong>Hint</strong>This may produce correct-looking results in simple cases — but SUMMARIZE uses an internal "clustering" algorithm that can silently return wrong numbers in complex models. It is never the right pattern.</div>
+      </div>
+    </div>
+
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">3</div><div class="ex-block-title">Run this third query — the correct ADDCOLUMNS pattern. Verify that revenues sum to the expected total.</div></div>
+      <div class="ex-block-body">
+        <div class="code-block"><pre><span class="fn">EVALUATE</span>
+<span class="fn">ADDCOLUMNS</span>(
+    <span class="fn">SUMMARIZE</span>(Sales, Geography[RegionCountryName]),
+    <span class="str">"@Revenue"</span>, [Total Revenue],
+    <span class="str">"@Transactions"</span>, [Total Transactions]
+)
+<span class="fn">ORDER BY</span> [@Revenue] <span class="fn">DESC</span></pre></div>
+        <p style="font-size:.88rem;color:var(--ink3)">The <code>@</code> prefix on column names is a convention indicating these columns were created inside this query — not from the model schema.</p>
+      </div>
+    </div>
+
+    <div class="sol-wrap">
+      <div class="sol-header" onclick="toggleSol('s05')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarr05">▼</span>
+      </div>
+      <div class="sol-body" id="s05">
+        <div class="sol-section">
+          <div class="sol-section-label">The golden rule</div>
+          <p>Never add measures directly as arguments inside SUMMARIZE. Always use ADDCOLUMNS to wrap SUMMARIZE and add calculated columns outside of its grouping logic. The pattern is always:</p>
+          <div class="code-block"><pre><span class="fn">ADDCOLUMNS</span>(
+    <span class="fn">SUMMARIZE</span>(FactTable, Dimension[Column]),
+    <span class="str">"@MeasureName"</span>, [Your Measure]
+)</pre></div>
+        </div>
+        <div class="sol-section">
+          <div class="sol-section-label">Why queries 2 and 3 may look identical but aren't</div>
+          <p>In simple models with clean data, both queries can return the same numbers. The danger is in complex models with multiple relationships, calculated tables, or security filters — where SUMMARIZE's internal clustering produces subtly wrong aggregations with no error message. ADDCOLUMNS evaluates measures in a clean filter context derived from the SUMMARIZE grouping, which is always correct.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BONUS -->
+  <div id="bonus" class="bonus-wrap">
+    <div class="bonus-tag">★ Bonus</div>
+    <div class="bonus-title">ALLEXCEPT — % of continent revenue</div>
+
+    <p>The stakeholder wants a matrix showing each country's revenue alongside its percentage of the continent's total. The measure must stay sensitive to continent selection but ignore any country-level filter — exactly the use case for ALLEXCEPT.</p>
+
+    <h2 class="sec-h sub" style="margin-top:1.25rem">Expected Results</h2>
+    <p>A Matrix with <code>Geography[ContinentName]</code> as rows and <code>Geography[RegionCountryName]</code> as sub-rows. The <strong>% of Continent</strong> column must sum to 100% within each continent independently.</p>
+
+    <h2 class="sec-h sub">Task</h2>
+    <div class="ex-block">
+      <div class="ex-block-header"><div class="ex-num">1</div><div class="ex-block-title">Create a measure named <strong>% of Continent Revenue</strong> that shows each country's share of its own continent's total revenue.</div></div>
+      <div class="ex-block-body">
+        <div class="hint"><strong>Hint</strong>The denominator must remove all geography filters except the continent filter. Use ALLEXCEPT(Geography, Geography[ContinentName]) — this keeps the continent filter while removing all other Geography filters including the country filter.</div>
+        <div class="hint" style="margin-top:.5rem;border-color:var(--acc);background:var(--acc-l);color:#1A3A8F"><strong style="color:#1A3A8F">Note on Matrix expand icons</strong>In newer versions of Power BI Desktop, the Matrix visual uses drill-down arrows at the top of the visual instead of +/− icons on each row. To expand all continents at once, click the <strong>double-down arrow ⇓</strong> ("Expand all down one level") in the visual header. To re-enable row-level +/− icons: Format pane → Row headers → +/− icons → toggle On.</div>
+      </div>
+    </div>
+
+    <div class="sol-wrap" style="border-color:var(--warn-bd);margin-top:1.25rem">
+      <div class="sol-header" style="background:var(--warn-bd)" onclick="toggleSol('sbonus')">
+        <span class="sol-header-text">Solution — click to reveal</span>
+        <span class="sol-arrow" id="sarrsbonus">▼</span>
+      </div>
+      <div class="sol-body" id="sbonus" style="background:var(--warn-bg)">
+        <div class="sol-section" style="border-color:rgba(245,200,66,.3)">
+          <div class="sol-section-label" style="color:var(--warn-tx)">Measure: % of Continent Revenue</div>
+          <div class="code-block"><pre>% of Continent Revenue =
+<span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>(
+        [Total Revenue],
+        <span class="fn">ALLEXCEPT</span>(Geography, Geography[ContinentName])
+    )
+)</pre></div>
+          <p style="color:var(--warn-tx)"><strong>Why ALLEXCEPT and not ALL?</strong> ALL(Geography) would remove all geography filters — the denominator becomes worldwide revenue and every row shows % of global total, not % of continent. ALLEXCEPT keeps the ContinentName filter intact while removing the country-level filter. The denominator is therefore the continent's total, and within each continent the percentages sum to 100%.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="checklist-wrap">
+    <div class="checklist-title">Before you finish</div>
+    <div class="checklist-sub">Check off each item. All should be complete before Module 5.</div>
+    <div class="checklist">
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>4 channel measures — values unchanged when product slicer is applied</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>% of Category sums to 100% within each category in the matrix</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Premium Revenue + Budget Revenue = $8,341,224,364.83</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Full Price Revenue + Promo Revenue = $8,341,224,364.83</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Query 3 (ADDCOLUMNS) returns one row per country, revenues sum correctly</div>
+      <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box"></div>Can explain why measures should never go directly inside SUMMARIZE</div>
+    </div>
+    <a class="next-btn" href="module05-lesson.html">Continue to Module 5 — Time Intelligence →</a>
+  </div>
+
+</main>
+</div>
+
+<script>
+function toggleSol(id){const body=document.getElementById(id);const arr=document.getElementById('sarr'+id);body.classList.toggle('show');arr.classList.toggle('open');}
+function toggleCheck(el){el.classList.toggle('checked');const box=el.querySelector('.cl-box');box.textContent=el.classList.contains('checked')?'✓':'';}
+function nv(id,btn){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on');}
+window.addEventListener('scroll',()=>{const ids=['setup','ex01','ex02','ex03','ex04','ex05','bonus'];const navs=document.querySelectorAll('.ni');let cur=0;ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<130)cur=i;});navs.forEach(n=>n.classList.remove('on'));if(navs[cur])navs[cur].classList.add('on');});
+</script>
+</body>
+</html>

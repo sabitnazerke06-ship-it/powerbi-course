@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 4 · Filter Context, CALCULATE &amp; Table Functions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F2;--surf:#FFFFFF;--ink:#1A1917;--ink2:#4A4845;--ink3:#908D88;--acc:#1B4FD8;--acc-l:#EEF2FD;--rule:#E2E0DB;--tag-bg:#EEEDFE;--tag-tx:#3C3489;--ok:#0F6E56;--ok-bg:#E1F5EE;--ok-bd:#1D9E75;--warn-bg:#FFF8EC;--warn-bd:#F5C842;--warn-tx:#7A5C00;--err:#A32D2D;--err-bg:#FCEBEB;--err-bd:#E24B4A;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.8}
+.topbar{background:var(--surf);border-bottom:1px solid var(--rule);padding:0 2rem;height:52px;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100}
+.tb{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}.ts{color:var(--rule)}.tw{font-size:13px;font-weight:500;color:var(--ink2)}
+.tp{margin-left:auto;display:flex;gap:4px;align-items:center}
+.pd{width:7px;height:7px;border-radius:50%;background:var(--rule)}.pd.done{background:var(--ok-bd)}.pd.on{background:var(--acc)}
+.layout{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:210px 1fr;padding:0 2rem}
+.sidebar{padding:2.5rem 1.25rem 2.5rem 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--rule)}
+.sl{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.ni{display:block;padding:5px 10px;border-radius:6px;font-size:12.5px;color:var(--ink2);line-height:1.45;margin-bottom:1px;transition:background .12s,color .12s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.ni:hover{background:var(--acc-l);color:var(--acc)}.ni.on{background:var(--acc-l);color:var(--acc);font-weight:500}
+.ni.qnav{border-top:1px solid var(--rule);margin-top:8px;padding-top:12px;color:var(--acc)}
+.content{padding:3rem 0 5rem 3rem;max-width:730px}
+.mod-tag{display:inline-block;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--tag-tx);background:var(--tag-bg);padding:4px 10px;border-radius:4px;margin-bottom:1.25rem}
+.lesson-title{font-family:var(--serif);font-size:2.7rem;line-height:1.12;margin-bottom:1rem;letter-spacing:-.01em}
+.lesson-sub{font-size:1.05rem;color:var(--ink2);font-weight:300;line-height:1.75;max-width:560px;margin-bottom:2rem}
+.meta-row{display:flex;gap:1.5rem;padding:1rem 1.25rem;background:var(--surf);border:1px solid var(--rule);border-radius:10px;margin-bottom:3rem;flex-wrap:wrap}
+.mi{font-size:13px;color:var(--ink3)}.mi strong{color:var(--ink2);font-weight:500;display:block;font-size:10.5px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.06em}
+.ph{display:flex;align-items:baseline;gap:1rem;margin:3.5rem 0 1.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--rule)}
+.pn{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;flex-shrink:0;padding-top:3px}
+.pt{font-family:var(--serif);font-size:1.55rem;color:var(--ink);line-height:1.2}
+h3{font-size:.85rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin:2rem 0 .8rem}
+p{margin-bottom:1.1rem;font-size:.975rem;color:var(--ink2);line-height:1.8}
+p strong{color:var(--ink);font-weight:500}
+code{font-family:var(--mono);font-size:.83em;background:var(--rule);padding:2px 5px;border-radius:3px;color:var(--ink)}
+ul.prose{margin:1rem 0 1.5rem;padding-left:1.25rem}
+ul.prose li{font-size:.96rem;color:var(--ink2);margin-bottom:.5rem;line-height:1.7}
+ul.prose li strong{color:var(--ink);font-weight:500}
+.callout{border-left:3px solid var(--warn-bd);background:var(--warn-bg);padding:1rem 1.25rem;border-radius:0 8px 8px 0;margin:2rem 0;font-size:.93rem;color:var(--warn-tx);line-height:1.7}
+.callout strong{color:var(--warn-tx)}
+.ci{border-left-color:var(--acc);background:var(--acc-l);color:#1A3A8F}.ci strong{color:#1A3A8F}
+.cg{border-left-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}.cg strong{color:var(--ok)}
+.ce{border-left-color:var(--err-bd);background:var(--err-bg);color:var(--err)}.ce strong{color:var(--err)}
+.dw{margin:2rem 0;background:var(--surf);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.dc{padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule);background:var(--bg)}
+.db{padding:1.5rem;overflow-x:auto}.db svg{display:block;margin:0 auto}
+.code-block{background:#1A1917;border-radius:10px;padding:1.25rem 1.5rem;margin:1.5rem 0;overflow-x:auto}
+.code-block pre{font-family:var(--mono);font-size:.82rem;line-height:1.9;color:#E2E0DB;white-space:pre}
+.kw{color:#B5D4F4}.fn{color:#FAC775}.str{color:#A5D6A7}.cm{color:#636059;font-style:italic}.ref{color:#B5D4F4}.num{color:#CE93D8}
+.rb{border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin:1.5rem 0}
+.rbh{background:var(--surf);padding:9px 14px;font-size:11px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);border-bottom:1px solid var(--rule)}
+.rbb{padding:1rem 1.25rem;background:var(--bg)}
+.rbb p{margin-bottom:.5rem;font-size:.93rem}.rbb p:last-child{margin-bottom:0}
+.ds-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;padding:3px 9px;border-radius:20px;letter-spacing:.04em;text-transform:uppercase;background:#1A1917;color:#FAC775;margin-bottom:1rem}
+/* COMPARISON GRID */
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.5rem 0}
+.cmp-card{background:var(--surf);border:1px solid var(--rule);border-radius:10px;padding:1.25rem}
+.cmp-card.good{border-color:var(--ok-bd);background:var(--ok-bg)}
+.cmp-card.bad{border-color:var(--err-bd);background:var(--err-bg)}
+.cmp-card h4{font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:.75rem}
+.cmp-card.good h4{color:var(--ok)}.cmp-card.bad h4{color:var(--err)}
+.cmp-card p{font-size:.9rem;margin-bottom:.6rem}.cmp-card p:last-child{margin-bottom:0}
+/* MINI TABLE */
+.mini-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.8rem;margin:.75rem 0}
+.mini-table th{background:var(--bg);color:var(--ink3);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:7px 12px;text-align:left;border-bottom:1px solid var(--rule)}
+.mini-table td{padding:6px 12px;border-bottom:1px solid var(--rule);color:var(--ink2)}
+.mini-table tr:last-child td{border-bottom:none}
+.mini-table .hl{color:var(--ok);font-weight:500}
+.mini-table .err-val{color:var(--err)}
+.mini-table .blank-row td{background:var(--warn-bg);font-style:italic;color:var(--warn-tx)}
+/* STEP FLOW */
+.step-flow{display:flex;flex-direction:column;gap:0;margin:1.5rem 0;border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.step-item{display:flex;gap:14px;padding:14px 16px;border-bottom:1px solid var(--rule);background:var(--surf)}
+.step-item:last-child{border-bottom:none}
+.step-circle{width:26px;height:26px;border-radius:50%;background:var(--acc);color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-content{flex:1}
+.step-name{font-size:.85rem;font-weight:500;color:var(--ink);margin-bottom:2px;font-family:var(--mono)}
+.step-desc{font-size:.88rem;color:var(--ink3);line-height:1.55}
+/* TABLE FUNCTIONS GRID */
+.fn-table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1.5rem 0}
+.fn-table th{background:var(--ink);color:#fff;padding:10px 14px;text-align:left;font-size:.75rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.fn-table td{padding:10px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+.fn-table tr:last-child td{border-bottom:none}
+.fn-table tr:hover td{background:var(--surf)}
+.fn-table .fn-name{font-family:var(--mono);font-size:.83rem;color:var(--acc);font-weight:500;white-space:nowrap}
+.fn-table .fn-use{font-size:.85rem;color:var(--ink2)}
+.fn-table .fn-note{font-size:.8rem;color:var(--ink3)}
+/* QUIZ */
+.qs{margin-top:4rem;border-top:2px solid var(--ink);padding-top:2.5rem}
+.qh{display:flex;align-items:baseline;gap:1rem;margin-bottom:.5rem}
+.qt{font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase}
+.qtl{font-family:var(--serif);font-size:1.8rem;color:var(--ink)}
+.qi{font-size:.9rem;color:var(--ink3);margin-bottom:2rem;line-height:1.65}
+.qpb{height:4px;background:var(--rule);border-radius:2px;margin-bottom:2.5rem;overflow:hidden}
+.qpf{height:100%;background:var(--acc);border-radius:2px;transition:width .4s ease;width:0%}
+.qc{background:var(--surf);border:1px solid var(--rule);border-radius:14px;padding:1.75rem;margin-bottom:1.5rem}
+.qm{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
+.qn{font-family:var(--mono);font-size:11px;color:var(--ink3)}
+.qb{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;letter-spacing:.05em;text-transform:uppercase}
+.bmc{background:var(--tag-bg);color:var(--tag-tx)}.bop{background:var(--ok-bg);color:var(--ok)}
+.qtxt{font-size:1rem;color:var(--ink);line-height:1.6;margin-bottom:1.25rem;font-weight:500}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--rule);border-radius:8px;cursor:pointer;transition:all .15s;background:var(--bg);font-size:.92rem;color:var(--ink2);line-height:1.55;text-align:left;width:100%;font-family:var(--sans)}
+.opt:hover:not([disabled]){border-color:var(--acc);background:var(--acc-l);color:var(--acc)}
+.opt.r{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok)}
+.opt.w{border-color:var(--err-bd);background:var(--err-bg);color:var(--err)}
+.opt.h{border-color:var(--ok-bd);background:var(--ok-bg);color:var(--ok);opacity:.65}
+.ol{width:22px;height:22px;border-radius:50%;background:var(--rule);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;color:var(--ink3)}
+.opt.r .ol{background:var(--ok-bd);color:#fff}.opt.w .ol{background:var(--err-bd);color:#fff}.opt.h .ol{background:var(--ok-bd);color:#fff}
+.fb{margin-top:1rem;padding:.875rem 1rem;border-radius:8px;font-size:.9rem;line-height:1.65;display:none}
+.fb.show{display:block}
+.fbok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)}.fbok strong{font-weight:500}
+.fberr{background:var(--err-bg);color:var(--err);border:1px solid var(--err-bd)}.fberr strong{font-weight:500}
+.ota{width:100%;min-height:100px;border:1px solid var(--rule);border-radius:8px;padding:12px 14px;font-family:var(--sans);font-size:.92rem;color:var(--ink);background:var(--bg);resize:vertical;line-height:1.65;transition:border-color .15s;margin-bottom:.75rem}
+.ota:focus{outline:none;border-color:var(--acc);background:var(--surf)}.ota:disabled{opacity:.6;cursor:default}
+.cbtn{padding:9px 20px;background:var(--acc);color:#fff;border:none;border-radius:7px;font-size:.9rem;font-weight:500;cursor:pointer;font-family:var(--sans);transition:opacity .15s}
+.cbtn:hover{opacity:.85}.cbtn:disabled{opacity:.4;cursor:default}
+.mans{margin-top:1rem;padding:1rem 1.25rem;background:var(--acc-l);border:1px solid #B5D4F4;border-radius:8px;font-size:.9rem;color:#1A3A8F;display:none;line-height:1.7}
+.mans.show{display:block}
+.mans strong{color:#1A3A8F;display:block;margin-bottom:.4rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.scorecard{margin-top:2.5rem;padding:2rem;background:var(--surf);border:1px solid var(--rule);border-radius:14px;text-align:center;display:none}
+.snum{font-family:var(--serif);font-size:3.5rem;color:var(--acc);line-height:1;margin-bottom:.5rem}
+.slbl{font-size:.9rem;color:var(--ink3);margin-bottom:1.5rem}
+.smsg{font-size:1rem;color:var(--ink2);max-width:420px;margin:0 auto}
+.next{margin-top:2.5rem;padding:1.5rem;border:1px solid var(--rule);border-radius:12px;background:var(--surf);display:flex;align-items:center;gap:1.5rem;text-decoration:none;transition:border-color .15s}
+.next:hover{border-color:var(--acc)}
+.nlbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:4px}
+.ntitle{font-family:var(--serif);font-size:1.1rem;color:var(--ink)}
+.narr{margin-left:auto;font-size:1.4rem;color:var(--ink3)}
+@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:2rem 0 4rem}.lesson-title{font-size:2rem}.cmp-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="tb">Power BI Analyst Program</span>
+  <span class="ts">·</span>
+  <span class="tw">Week 4 — Filter Context, CALCULATE &amp; Table Functions</span>
+  <div class="tp">
+    <div class="pd done"></div><div class="pd done"></div><div class="pd done"></div><div class="pd done"></div>
+    <div class="pd on"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
+    <div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div>
+  </div>
+</div>
+
+<div class="layout">
+<nav class="sidebar">
+  <div class="sl">In this lesson</div>
+  <button class="ni on" onclick="nv('p1',this)">1 · Two contexts, one engine</button>
+  <button class="ni" onclick="nv('p2',this)">2 · Row context in detail</button>
+  <button class="ni" onclick="nv('p3',this)">3 · Filter context in detail</button>
+  <button class="ni" onclick="nv('p4',this)">4 · CALCULATE — context modifier</button>
+  <button class="ni" onclick="nv('p5',this)">5 · Table functions overview</button>
+  <button class="ni" onclick="nv('p6',this)">6 · ALL, REMOVEFILTERS, ALLEXCEPT</button>
+  <button class="ni" onclick="nv('p7',this)">7 · FILTER — adding conditions</button>
+  <button class="ni" onclick="nv('p8',this)">8 · SUMMARIZE, VALUES &amp; BLANK rows</button>
+  <button class="ni" onclick="nv('p9',this)">9 · Practical CALCULATE patterns</button>
+  <button class="ni" onclick="nv('p10',this)">10 · Context transition</button>
+  <button class="ni qnav" onclick="nv('quiz',this)">✦ Check your understanding</button>
+</nav>
+
+<main class="content">
+  <div class="mod-tag">Module 2 · Power BI Core</div>
+  <h1 class="lesson-title">Filter context,<br><em>CALCULATE &amp;<br>table functions</em></h1>
+  <p class="lesson-sub">CALCULATE is the most important function in DAX. Every advanced measure either uses it directly or depends on something that does. This week you understand it completely — not just the syntax, but <em>why</em> it works — and you learn the family of table functions that give you precise control over context.</p>
+  <div class="meta-row">
+    <div class="mi"><strong>Dataset</strong>Contoso Sales .pbix</div>
+    <div class="mi"><strong>Key functions</strong>CALCULATE, ALL, REMOVEFILTERS, ALLEXCEPT, FILTER, SUMMARIZE</div>
+    <div class="mi"><strong>Prerequisite</strong>Week 3 measures complete</div>
+    <div class="mi"><strong>Quiz</strong>5 MC + 2 open-ended</div>
+  </div>
+
+  <!-- ═══ PART 1 ═══ -->
+  <div id="p1" class="ph"><span class="pn">01</span><h2 class="pt">Two contexts, one evaluation engine</h2></div>
+
+  <p>Every DAX expression evaluates inside a context. Context determines which rows of data the expression "sees" when it calculates. There are exactly two types of context in DAX, and the difference between them is the key to understanding everything else.</p>
+
+  <div class="callout ci"><strong>The Excel analogy — before anything else.</strong> You already know both contexts from Excel, just by different names. <strong>Row context</strong> is what happens when you write <code>=B2*C2</code> in a spreadsheet cell — Excel is "standing on row 2" and reads values from that specific row. <strong>Filter context</strong> is what a PivotTable does — it takes the full dataset and shows only the rows that match your selected Region, Year, and Category. DAX works identically, just more powerfully.</div>
+
+  <div class="dw">
+    <div class="dc">Row context vs filter context — a direct comparison</div>
+    <div class="db">
+      <svg width="600" height="245" viewBox="0 0 600 245" role="img">
+        <title>Row context vs filter context comparison</title>
+        <rect x="10" y="10" width="272" height="225" rx="10" fill="#EEF2FD" stroke="#1B4FD8" stroke-width="1.5"/>
+        <rect x="10" y="10" width="272" height="36" rx="10" fill="#1B4FD8"/>
+        <rect x="10" y="32" width="272" height="14" fill="#1B4FD8"/>
+        <text x="146" y="34" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#fff">Row Context</text>
+        <text x="146" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#1B4FD8" font-weight="500">Sees: ONE row at a time</text>
+        <text x="146" y="75" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#378ADD">Where it exists: calculated columns,</text>
+        <text x="146" y="89" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#378ADD">iterator functions (SUMX, FILTER…)</text>
+        <text x="146" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Example: calculated column in FactSales</text>
+        <rect x="26" y="119" width="240" height="22" rx="4" fill="#1A1917"/>
+        <text x="146" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#FAC775">Gross Margin = [SalesAmount] - [TotalCost]</text>
+        <text x="146" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Row 1: 500 − 320 = 180</text>
+        <text x="146" y="175" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Row 2: 750 − 480 = 270</text>
+        <text x="146" y="190" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Row 3: 300 − 190 = 110</text>
+        <text x="146" y="225" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#1B4FD8">Each row evaluated independently</text>
+
+        <rect x="318" y="10" width="272" height="225" rx="10" fill="#E1F5EE" stroke="#1D9E75" stroke-width="1.5"/>
+        <rect x="318" y="10" width="272" height="36" rx="10" fill="#1D9E75"/>
+        <rect x="318" y="32" width="272" height="14" fill="#1D9E75"/>
+        <text x="454" y="34" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="500" fill="#fff">Filter Context</text>
+        <text x="454" y="58" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="#0F6E56" font-weight="500">Sees: ALL matching rows at once</text>
+        <text x="454" y="75" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#0F6E56">Where it exists: measures, report visuals,</text>
+        <text x="454" y="89" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#0F6E56">slicers, page filters, CALCULATE</text>
+        <text x="454" y="112" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Example: measure in a bar chart</text>
+        <rect x="334" y="119" width="240" height="22" rx="4" fill="#1A1917"/>
+        <text x="454" y="134" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#FAC775">Total Revenue = SUM(FactSales[SalesAmount])</text>
+        <text x="454" y="160" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">Filter = "Cameras" category</text>
+        <text x="454" y="175" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">→ Sees only Camera rows</text>
+        <text x="454" y="190" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4A4845">→ Sums those rows only</text>
+        <text x="454" y="225" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#0F6E56">All matching rows evaluated together</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>The critical insight: <strong>measures always evaluate in filter context, never in row context.</strong> When you write <code>SUM(FactSales[SalesAmount])</code>, DAX sums all rows that survive the current filter context — whatever filters are active from slicers, visual axes, and page filters. Calculated columns, on the other hand, always evaluate in row context, seeing one row at a time.</p>
+
+  <!-- ═══ PART 2 ═══ -->
+  <div id="p2" class="ph"><span class="pn">02</span><h2 class="pt">Row context in detail</h2></div>
+
+  <p>Row context is the simpler of the two. When DAX iterates over a table row by row — during a calculated column evaluation or inside an iterator function — it maintains a row context. In that state, you can reference column values from the current row directly.</p>
+
+  <div class="ds-badge">Contoso dataset</div>
+  <div class="code-block">
+<pre><span class="cm">-- Calculated column on FactSales</span>
+<span class="cm">-- DAX creates row context automatically: iterates every row</span>
+Gross Margin = FactSales[SalesAmount] - FactSales[TotalCost]
+<span class="cm">-- Row 1: SalesAmount=500, TotalCost=320  → Gross Margin=180</span>
+<span class="cm">-- Row 2: SalesAmount=750, TotalCost=480  → Gross Margin=270</span>
+<span class="cm">-- Each row is evaluated independently — this is row context</span></pre>
+  </div>
+
+  <div class="callout ce"><strong>The row context trap: SUM inside a calculated column.</strong> Inside a calculated column, if you write <code>SUM(FactSales[SalesAmount])</code>, it does NOT sum only the current row. SUM ignores row context entirely and sums the entire unfiltered table — you get the same grand total on every single row. This is one of the most common and confusing mistakes in early DAX work. If you need the value of the current row, reference the column directly: <code>FactSales[SalesAmount]</code>. If you genuinely need a filtered sum, wrap it in CALCULATE (explained in Part 4).</div>
+
+  <div class="cmp-grid">
+    <div class="cmp-card bad">
+      <h4>Wrong — same value on every row</h4>
+      <p><code>TotalQty = SUM(FactSales[Quantity])</code></p>
+      <p>Result: 43,517 on every row. SUM ignores row context and aggregates the entire table.</p>
+    </div>
+    <div class="cmp-card good">
+      <h4>Correct — row value only</h4>
+      <p><code>RowQty = FactSales[Quantity]</code></p>
+      <p>Result: the actual quantity for that specific row. No aggregation needed — row context provides the value directly.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PART 3 ═══ -->
+  <div id="p3" class="ph"><span class="pn">03</span><h2 class="pt">Filter context in detail</h2></div>
+
+  <p>Filter context is what makes Power BI interactive. Every time a user clicks a slicer, selects a bar in a chart, or applies a page-level filter, they are modifying the filter context. Measures evaluate inside whatever filter context currently exists. Filter context is not a single thing — it is built from multiple layers that stack together:</p>
+
+  <div class="dw">
+    <div class="dc">Where filter context comes from — layers stack top to bottom</div>
+    <div class="db">
+      <svg width="580" height="230" viewBox="0 0 580 230" role="img">
+        <title>Filter context layers</title>
+        <rect x="20" y="10" width="540" height="38" rx="8" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="1"/>
+        <text x="50" y="25" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#4A4845">① Report-level filter</text>
+        <text x="50" y="41" font-family="DM Mono,monospace" font-size="9" fill="#908D88">DimDate[CalendarYear] = 2023  (applied to all pages)</text>
+        <rect x="40" y="58" width="500" height="38" rx="8" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="70" y="73" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#1B4FD8">② Page-level filter</text>
+        <text x="70" y="89" font-family="DM Mono,monospace" font-size="9" fill="#378ADD">DimGeography[ContinentName] = "North America"</text>
+        <rect x="60" y="106" width="460" height="38" rx="8" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/>
+        <text x="90" y="121" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#BA7517">③ Slicer selection</text>
+        <text x="90" y="137" font-family="DM Mono,monospace" font-size="9" fill="#BA7517">DimChannel[ChannelName] = "Store"</text>
+        <rect x="80" y="154" width="420" height="38" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="110" y="169" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#0F6E56">④ Visual axis / legend</text>
+        <text x="110" y="185" font-family="DM Mono,monospace" font-size="9" fill="#0F6E56">DimProductCategory[ProductCategoryName] = "Cameras"</text>
+        <rect x="100" y="202" width="380" height="22" rx="6" fill="#1A1917"/>
+        <text x="290" y="217" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#FAC775">Measure sees: 2023 · North America · Store · Cameras — all four simultaneously</text>
+      </svg>
+    </div>
+  </div>
+
+  <p>All four layers are active simultaneously when a measure evaluates in a visual. Each layer narrows the set of rows. The measure sees only rows that satisfy all active conditions at once — this is filter propagation through the star schema, where dimension table filters flow through relationships into the fact table.</p>
+
+  <!-- ═══ PART 4 ═══ -->
+  <div id="p4" class="ph"><span class="pn">04</span><h2 class="pt">CALCULATE — the context modifier</h2></div>
+
+  <p>CALCULATE does one thing: it evaluates an expression in a <strong>modified filter context</strong>. You provide an expression and one or more filter arguments. CALCULATE takes the current filter context, applies your modifications, evaluates the expression in the resulting context, and returns the result.</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- CALCULATE syntax</span>
+<span class="fn">CALCULATE</span>(
+    &lt;expression&gt;,    <span class="cm">-- what to calculate</span>
+    &lt;filter1&gt;,       <span class="cm">-- modification 1</span>
+    &lt;filter2&gt;,       <span class="cm">-- modification 2 (AND logic — both apply)</span>
+    ...
+)</pre>
+  </div>
+
+  <div class="callout"><strong>CALCULATE replaces, it does not add.</strong> This is the single most important thing to internalise. If the current context has <code>ChannelName = "Store"</code> from a slicer and your CALCULATE specifies <code>ChannelName = "Online"</code>, the result is Online only — not both. The filter argument replaces the existing filter on that column. Filters on other columns are unaffected and remain unchanged.</div>
+
+  <div class="ds-badge">Contoso dataset</div>
+  <div class="code-block">
+<pre><span class="cm">-- Base measure</span>
+Total Revenue = <span class="fn">SUM</span>(FactSales[SalesAmount])
+
+<span class="cm">-- CALCULATE: ignores any channel slicer, always returns Online only</span>
+Online Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimChannel[ChannelName] = <span class="str">"Online"</span>
+)
+
+<span class="cm">-- Multiple filters: AND logic — both conditions apply simultaneously</span>
+US Store Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimChannel[ChannelName] = <span class="str">"Store"</span>,
+    DimGeography[RegionCountryName] = <span class="str">"United States"</span>
+)
+
+<span class="cm">-- Full-price sales only (no promotions)</span>
+Full Price Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimPromotion[PromotionType] = <span class="str">"No Discount"</span>
+)</pre>
+  </div>
+
+  <div class="dw">
+    <div class="dc">What CALCULATE actually does to filter context — before and after</div>
+    <div class="db">
+      <svg width="580" height="205" viewBox="0 0 580 205" role="img">
+        <title>CALCULATE filter modification</title>
+        <defs>
+          <marker id="ac" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+        <text x="130" y="18" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#4A4845">Incoming filter context</text>
+        <rect x="20" y="28" width="220" height="28" rx="6" fill="#FAEEDA" stroke="#FAC775" stroke-width="1"/>
+        <text x="130" y="46" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#BA7517">ChannelName = "Store" (from slicer)</text>
+        <rect x="20" y="64" width="220" height="28" rx="6" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="130" y="82" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#1B4FD8">CalendarYear = 2023 (from filter)</text>
+        <rect x="20" y="100" width="220" height="28" rx="6" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="130" y="118" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#0F6E56">Category = "Cameras" (from axis)</text>
+        <rect x="258" y="65" width="70" height="50" rx="8" fill="#1A1917"/>
+        <text x="293" y="86" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="500" fill="#FAC775">CALCULATE</text>
+        <text x="293" y="101" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#A5D6A7">ChannelName</text>
+        <text x="293" y="113" text-anchor="middle" font-family="DM Mono,monospace" font-size="8" fill="#A5D6A7">= "Online"</text>
+        <line x1="240" y1="90" x2="257" y2="90" stroke="#908D88" stroke-width="1.5" marker-end="url(#ac)"/>
+        <line x1="328" y1="90" x2="345" y2="90" stroke="#1D9E75" stroke-width="1.5" marker-end="url(#ac)"/>
+        <text x="460" y="18" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="500" fill="#4A4845">Modified context inside CALCULATE</text>
+        <rect x="345" y="28" width="220" height="28" rx="6" fill="#FCEBEB" stroke="#E24B4A" stroke-width="1"/>
+        <text x="455" y="38" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#A32D2D" font-style="italic">"Store" REPLACED</text>
+        <text x="455" y="50" text-anchor="middle" font-family="DM Mono,monospace" font-size="9" fill="#A32D2D">ChannelName = "Online" ← new</text>
+        <rect x="345" y="64" width="220" height="28" rx="6" fill="#EEF2FD" stroke="#B5D4F4" stroke-width="1"/>
+        <text x="455" y="82" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#1B4FD8">CalendarYear = 2023 (unchanged)</text>
+        <rect x="345" y="100" width="220" height="28" rx="6" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="455" y="118" text-anchor="middle" font-family="DM Mono,monospace" font-size="9.5" fill="#0F6E56">Category = "Cameras" (unchanged)</text>
+        <rect x="345" y="142" width="220" height="32" rx="6" fill="#1A1917"/>
+        <text x="455" y="157" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" fill="#fff">Result: Online camera sales in 2023</text>
+        <text x="455" y="170" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#908D88">The slicer's "Store" filter was overridden</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ═══ PART 5 ═══ -->
+  <div id="p5" class="ph"><span class="pn">05</span><h2 class="pt">Table functions — scalar vs table results</h2></div>
+
+  <p>Most DAX functions return a single number — a <strong>scalar</strong>. For example, <code>SUM(FactSales[SalesAmount])</code> returns one number: the total. <strong>Table functions</strong> are different — they return an entire table: a set of rows and columns.</p>
+
+  <p>You cannot place a table directly into a report visual. Instead, table functions are passed as arguments to other functions. The most common pattern: pass a table function into CALCULATE to modify filter context, or into an iterator (like SUMX) to define which rows to iterate over.</p>
+
+  <div class="rb">
+    <div class="rbh">The table functions you will use this week</div>
+    <div class="rbb">
+      <table class="fn-table">
+        <thead><tr><th>Function</th><th>What it returns</th><th>Primary use</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="fn-name">ALL(table)</td>
+            <td class="fn-use">All rows of the table, ignoring all filters</td>
+            <td class="fn-note">CALCULATE argument to remove filters; or standalone to return all rows</td>
+          </tr>
+          <tr>
+            <td class="fn-name">ALL(table[col])</td>
+            <td class="fn-use">All unique values of a column, ignoring filters</td>
+            <td class="fn-note">Remove filter on one column only, leaving others intact</td>
+          </tr>
+          <tr>
+            <td class="fn-name">REMOVEFILTERS(table)</td>
+            <td class="fn-use">Same as ALL — removes all filters from a table</td>
+            <td class="fn-note">CALCULATE argument only. More explicit than ALL when intent is to clear filters</td>
+          </tr>
+          <tr>
+            <td class="fn-name">ALLEXCEPT(table, col1, col2…)</td>
+            <td class="fn-use">All rows with filters removed — except on specified columns</td>
+            <td class="fn-note">Keep some filters, remove the rest. CALCULATE argument</td>
+          </tr>
+          <tr>
+            <td class="fn-name">FILTER(table, condition)</td>
+            <td class="fn-use">Rows from table where condition is true</td>
+            <td class="fn-note">Add conditions to context — especially for &gt;, &lt;, &lt;&gt; comparisons</td>
+          </tr>
+          <tr>
+            <td class="fn-name">SUMMARIZE(table, col1, col2…)</td>
+            <td class="fn-use">Unique combinations of specified columns — like SQL GROUP BY</td>
+            <td class="fn-note">Grouping and aggregation; follows relationships across tables</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout ci"><strong>ALL inside vs outside CALCULATE behaves differently.</strong> Used as a CALCULATE argument, ALL removes filters — it tells the engine "ignore whatever filter is on this table." Used standalone (outside CALCULATE), ALL returns all rows of a table as a physical result. This dual behaviour is one of the most common points of confusion for new DAX writers. When you see ALL in a CALCULATE argument, always read it as "remove filter on this."</div>
+
+  <!-- ═══ PART 6 ═══ -->
+  <div id="p6" class="ph"><span class="pn">06</span><h2 class="pt">ALL, REMOVEFILTERS and ALLEXCEPT</h2></div>
+
+  <h3>ALL — seeing the full picture</h3>
+  <p>The most common use of ALL is computing a percentage against a grand total. The challenge: when a report filters to one category, every measure in that visual automatically sees only that category's rows. The denominator of a percentage must ignore that filter — otherwise every row shows 100%.</p>
+
+  <p>Start with two measures. The first simply sums revenue — it responds to any active filter. The second uses ALL to always return the grand total regardless of what is selected:</p>
+
+  <div class="ds-badge">Contoso dataset</div>
+  <div class="code-block">
+<pre>Total Revenue = <span class="fn">SUM</span>(Sales[SalesAmount])
+
+All Revenue = <span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(ProductCategory))</pre>
+  </div>
+
+  <p>Here is what both measures show when placed in a report sliced by product category. Notice that All Revenue shows the same number — $8.34B — on every row, completely ignoring the category filter:</p>
+
+  <div class="dw">
+    <div class="dc">Total Revenue vs All Revenue — how ALL ignores the category filter</div>
+    <div class="db">
+      <table class="mini-table">
+        <thead><tr><th>ProductCategory[ProductCategory]</th><th style="text-align:right">Total Revenue</th><th style="text-align:right">All Revenue</th></tr></thead>
+        <tbody>
+          <tr><td>Computers</td><td style="text-align:right">3,209,427,141</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+          <tr><td>Cameras and camcorders</td><td style="text-align:right">2,562,023,774</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+          <tr><td>TV and Video</td><td style="text-align:right">1,360,121,115</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+          <tr><td>Cell phones</td><td style="text-align:right">892,233,264</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+          <tr><td>Music, Movies and Audio Books</td><td style="text-align:right">165,804,706</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+          <tr><td>Audio</td><td style="text-align:right">151,614,364</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+          <tr style="font-weight:600"><td>Total</td><td style="text-align:right">8,341,224,365</td><td style="text-align:right;color:var(--acc)">8,341,224,365</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p>ALL removes the category filter so the denominator always reflects the full dataset. Now a simple DIVIDE gives the correct percentage share for each row:</p>
+
+  <div class="code-block">
+<pre>Revenue % of Total = <span class="fn">DIVIDE</span>([Total Revenue], <span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(ProductCategory)))</pre>
+  </div>
+
+  <div class="dw">
+    <div class="dc">Revenue % of Total — what the report looks like</div>
+    <div class="db">
+      <table class="mini-table">
+        <thead><tr><th>ProductCategory[ProductCategory]</th><th style="text-align:right">Total Revenue</th><th style="text-align:right">Revenue % of Total</th></tr></thead>
+        <tbody>
+          <tr><td>Computers</td><td style="text-align:right">3,209,427,141</td><td style="text-align:right" class="hl">38.48%</td></tr>
+          <tr><td>Cameras and camcorders</td><td style="text-align:right">2,562,023,774</td><td style="text-align:right" class="hl">30.72%</td></tr>
+          <tr><td>TV and Video</td><td style="text-align:right">1,360,121,115</td><td style="text-align:right" class="hl">16.31%</td></tr>
+          <tr><td>Cell phones</td><td style="text-align:right">892,233,264</td><td style="text-align:right" class="hl">10.70%</td></tr>
+          <tr><td>Music, Movies and Audio Books</td><td style="text-align:right">165,804,706</td><td style="text-align:right" class="hl">1.99%</td></tr>
+          <tr><td>Audio</td><td style="text-align:right">151,614,364</td><td style="text-align:right" class="hl">1.82%</td></tr>
+          <tr style="font-weight:600"><td>Total</td><td style="text-align:right">8,341,224,365</td><td style="text-align:right" class="hl">100.00%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="callout ci"><strong>The % of Total column sums to 100% — that is the verification.</strong> If it doesn't, the ALL argument is wrong: either pointing at the wrong table, or not covering all the columns that the visual is filtering on.</div>
+
+  <h3>ALL on a column — % of parent category</h3>
+  <p>When you pass a column (not a full table) to ALL, it removes the filter on that column only, leaving all other filters intact. This enables the "% of parent" pattern — each subcategory shows its share within its own category, not across the entire company.</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- ALL on the full table: removes ALL product filters → % of grand total</span>
+Revenue % of Total = <span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(ProductCategory, ProductSubcategory))
+)
+
+<span class="cm">-- ALL on one column: removes only subcategory filter → % of parent category</span>
+Revenue % of Category = <span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(ProductSubcategory))
+)</pre>
+  </div>
+
+  <div class="dw">
+    <div class="dc">The difference — same data, different ALL scope (Cameras category shown)</div>
+    <div class="db">
+      <table class="mini-table">
+        <thead><tr><th>Category → Subcategory</th><th style="text-align:right">Revenue</th><th style="text-align:right">% of Category</th><th style="text-align:right">% of Total</th></tr></thead>
+        <tbody>
+          <tr style="background:var(--acc-l)"><td style="color:var(--acc);font-weight:500">Cameras and camcorders</td><td style="text-align:right">2,562,023,774</td><td style="text-align:right" class="hl">100.00%</td><td style="text-align:right" class="hl">30.72%</td></tr>
+          <tr><td style="padding-left:1.5rem">Digital Cameras</td><td style="text-align:right">~1,100,000,000</td><td style="text-align:right">~42.9%</td><td style="text-align:right">~13.2%</td></tr>
+          <tr><td style="padding-left:1.5rem">Camcorders</td><td style="text-align:right">~850,000,000</td><td style="text-align:right">~33.2%</td><td style="text-align:right">~10.2%</td></tr>
+          <tr><td style="padding-left:1.5rem">Digital SLR Cameras</td><td style="text-align:right">~612,023,774</td><td style="text-align:right">~23.9%</td><td style="text-align:right">~7.3%</td></tr>
+          <tr style="font-style:italic;color:var(--ink3)"><td style="padding-left:1.5rem">% of Category sums to:</td><td></td><td style="text-align:right;color:var(--ok);font-style:normal;font-weight:600">100%</td><td style="text-align:right;color:var(--ok);font-style:normal;font-weight:600">~30.7%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.82rem;color:var(--ink3);margin-top:.75rem">Within each category, % of Category always sums to 100%. The % of Total reflects each subcategory's share of the whole company. Note that subcategory revenue figures are approximate — exact values depend on your Contoso file.</p>
+    </div>
+  </div>
+
+  <h3>REMOVEFILTERS — same as ALL, clearer intent</h3>
+  <p>REMOVEFILTERS is technically identical to ALL when used as a CALCULATE argument. It exists purely for readability. Compare these two lines — they produce the same result, but the second makes the intent immediately obvious to anyone reading the code:</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- Works, but the intent is ambiguous — is ALL here to return a table or remove a filter?</span>
+<span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(Channel))
+
+<span class="cm">-- Intent is unambiguous: this is explicitly removing the Channel filter</span>
+<span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">REMOVEFILTERS</span>(Channel))</pre>
+  </div>
+
+  <p>Both produce the same number. Use REMOVEFILTERS when writing code that others will maintain — it makes the purpose of the filter argument self-documenting.</p>
+
+  <h3>ALLEXCEPT — remove most filters, keep a few</h3>
+  <p>ALLEXCEPT is the inverse of ALL. Instead of listing the filters you want to <em>remove</em>, you list the ones you want to <em>keep</em>. Every other filter on the table is removed.</p>
+
+  <p>A typical use case: you want the denominator to be the total for the current channel, regardless of any product category filter. Keeping the channel filter while removing the product filter is exactly what ALLEXCEPT does:</p>
+
+  <div class="code-block">
+<pre><span class="cm">-- % of channel total — ignores category filter, keeps channel filter</span>
+Revenue % of Channel = <span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>(
+        [Total Revenue],
+        <span class="fn">ALLEXCEPT</span>(Channel, Channel[ChannelName])
+    )
+)</pre>
+  </div>
+
+  <div class="dw">
+    <div class="dc">ALLEXCEPT — each category's share within its own channel</div>
+    <div class="db">
+      <table class="mini-table">
+        <thead><tr><th>Channel → Category</th><th style="text-align:right">Revenue</th><th style="text-align:right">% of Channel</th></tr></thead>
+        <tbody>
+          <tr style="background:var(--acc-l)"><td style="color:var(--acc);font-weight:500">Store (total)</td><td style="text-align:right">4,854,699,598</td><td style="text-align:right" class="hl">100.00%</td></tr>
+          <tr><td style="padding-left:1.5rem">Computers</td><td style="text-align:right">~1,867,000,000</td><td style="text-align:right">~38.5%</td></tr>
+          <tr><td style="padding-left:1.5rem">Cameras and camcorders</td><td style="text-align:right">~1,487,000,000</td><td style="text-align:right">~30.6%</td></tr>
+          <tr><td style="padding-left:1.5rem">TV and Video</td><td style="text-align:right">~789,000,000</td><td style="text-align:right">~16.3%</td></tr>
+          <tr style="background:#EEF2FD"><td style="color:var(--acc);font-weight:500">Online (total)</td><td style="text-align:right">1,686,071,110</td><td style="text-align:right" class="hl">100.00%</td></tr>
+          <tr><td style="padding-left:1.5rem">Computers</td><td style="text-align:right">~649,000,000</td><td style="text-align:right">~38.5%</td></tr>
+          <tr><td style="padding-left:1.5rem">Cameras and camcorders</td><td style="text-align:right">~518,000,000</td><td style="text-align:right">~30.7%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.82rem;color:var(--ink3);margin-top:.75rem">Each channel's subcategory percentages sum to 100% independently. The ALLEXCEPT keeps the Channel filter intact while removing the product category filter from the denominator.</p>
+    </div>
+  </div>
+
+  <div class="rb">
+    <div class="rbh">Choosing between ALL and ALLEXCEPT — decision guide</div>
+    <div class="rbb">
+      <p><strong>Use ALL(Table)</strong> when the denominator should be completely independent of a dimension. "% of grand total" always uses ALL on all product tables.</p>
+      <p><strong>Use ALL(Table[Column])</strong> when you want to remove the filter from one column only, while other columns in the same table remain filtered. Classic "% of parent" pattern.</p>
+      <p><strong>Use ALLEXCEPT(Table, col1, col2…)</strong> when you have many columns and it is cleaner to declare what to <em>keep</em> rather than what to remove. If you need to remove 5 out of 6 columns, ALLEXCEPT(Table, kept_col) is simpler than ALL(col1, col2, col3, col4, col5).</p>
+      <p><strong>Use REMOVEFILTERS</strong> instead of ALL when the intent of your code is to remove a filter — not to return a table. Identical result, clearer code.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PART 7 ═══ -->
+  <div id="p7" class="ph"><span class="pn">07</span><h2 class="pt">FILTER — adding conditions to the context</h2></div>
+
+  <p>Unlike ALL and REMOVEFILTERS which remove filters, FILTER <strong>adds</strong> a condition. It evaluates a table row by row, returns only the rows satisfying a condition, and that restricted table becomes the new context inside CALCULATE.</p>
+
+  <div class="callout"><strong>FILTER for comparisons, direct equality for simple matches.</strong> For <code>ChannelName = "Online"</code>, use the direct syntax — it is significantly faster because Power BI can optimise it without physically scanning rows. Reserve FILTER for conditions that require comparison operators (<code>&gt;</code>, <code>&lt;</code>, <code>&lt;&gt;</code>, <code>IN</code>) or filtering on a calculated value. Using FILTER where a direct equality would work is a common performance antipattern.</div>
+
+  <div class="ds-badge">Contoso dataset</div>
+  <div class="code-block">
+<pre><span class="cm">-- FILTER needed: comparison operator (&gt;)</span>
+Premium Product Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    <span class="fn">FILTER</span>(DimProduct, DimProduct[UnitPrice] > <span class="num">500</span>)
+)
+
+<span class="cm">-- FILTER needed: filtering on a calculated value</span>
+High Value Customer Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    <span class="fn">FILTER</span>(DimCustomer, DimCustomer[YearlyIncome] > <span class="num">80000</span>)
+)
+
+<span class="cm">-- No FILTER needed: simple equality — use direct syntax instead</span>
+Online Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimChannel[ChannelName] = <span class="str">"Online"</span>   <span class="cm">-- faster than FILTER</span>
+)</pre>
+  </div>
+
+  <p>A practical FILTER pattern from real models — the "good customers" count. This requires counting customers who made 2 or more purchases. Without FILTER + CALCULATE, the count is wrong:</p>
+
+  <div class="cmp-grid">
+    <div class="cmp-card bad">
+      <h4>Wrong — same number on every row</h4>
+      <p><code>FILTER(DimCustomer, COUNTROWS(FactSales) &gt;= 2)</code></p>
+      <p>FILTER iterates DimCustomer row by row, but COUNTROWS(FactSales) has no connection to the current customer — it returns the full FactSales row count (e.g. 10,000) for every customer, so all customers appear to qualify.</p>
+    </div>
+    <div class="cmp-card good">
+      <h4>Correct — CALCULATE creates the link</h4>
+      <p><code>FILTER(DimCustomer, CALCULATE(COUNTROWS(FactSales)) &gt;= 2)</code></p>
+      <p>CALCULATE triggers context transition (see Part 10): the current DimCustomer row becomes a filter on FactSales. Now COUNTROWS counts only that customer's transactions. The condition works correctly.</p>
+    </div>
+  </div>
+
+  <!-- ═══ PART 8 ═══ -->
+  <div id="p8" class="ph"><span class="pn">08</span><h2 class="pt">SUMMARIZE, VALUES, DISTINCT — and the blank row</h2></div>
+
+  <p>SUMMARIZE is the DAX equivalent of SQL's GROUP BY. It takes a table, returns only the unique combinations of the specified columns, and can follow relationships to group by columns from related tables.</p>
+
+  <div class="ds-badge">Contoso dataset</div>
+  <div class="code-block">
+<pre><span class="cm">-- Group Sales by Product Category — follows the relationship Sales → ProductCategory</span>
+<span class="fn">SUMMARIZE</span>(Sales, ProductCategory[ProductCategory])
+
+<span class="cm">-- Correct pattern: ADDCOLUMNS wraps SUMMARIZE to add measures safely</span>
+<span class="fn">ADDCOLUMNS</span>(
+    <span class="fn">SUMMARIZE</span>(Sales, ProductCategory[ProductCategory]),
+    <span class="str">"@Revenue"</span>, [Total Revenue]
+)</pre>
+  </div>
+
+  <div class="callout ce"><strong>Golden rule: never add measures inside SUMMARIZE.</strong> The safe and correct pattern is always ADDCOLUMNS wrapping SUMMARIZE. ADDCOLUMNS adds the measure evaluation outside of SUMMARIZE's internal grouping logic, giving correct results every time.</div>
+
+  <h3>ALL, VALUES and DISTINCT — three ways to see a column</h3>
+  <p>These three functions all return a table of column values, but they differ in one crucial way: how they respond to filter context and whether they include the blank row. Understanding the difference is essential for writing measures that produce correct totals.</p>
+
+  <div class="code-block">
+<pre>Num All Colors    = <span class="fn">COUNTROWS</span>(<span class="fn">ALL</span>(Product[Color]))
+Num Value Colors  = <span class="fn">COUNTROWS</span>(<span class="fn">VALUES</span>(Product[Color]))
+Num Distinct Colors = <span class="fn">COUNTROWS</span>(<span class="fn">DISTINCT</span>(Product[Color]))</pre>
+  </div>
+
+  <p>When all relationships in the model are valid, VALUES and DISTINCT return identical results. The difference only appears when the model has an invalid relationship — which triggers creation of the blank row. Here is what the report looks like when all relationships are intact:</p>
+
+  <div class="dw">
+    <div class="dc">All relationships valid — VALUES and DISTINCT behave identically</div>
+    <div class="db">
+      <table class="mini-table">
+        <thead><tr><th>Category</th><th style="text-align:right">Sales Amount</th><th style="text-align:right">Num All Colors</th><th style="text-align:right">Num Value Colors</th><th style="text-align:right">Num Distinct Colors</th></tr></thead>
+        <tbody>
+          <tr><td>Audio</td><td style="text-align:right">238,356.06</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">10</td><td style="text-align:right">10</td></tr>
+          <tr><td>TV and Video</td><td style="text-align:right">1,554,379.92</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">4</td><td style="text-align:right">4</td></tr>
+          <tr><td>Computers</td><td style="text-align:right">4,773,083.99</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">12</td><td style="text-align:right">12</td></tr>
+          <tr><td>Cameras and camcorders</td><td style="text-align:right">702,883.41</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">14</td><td style="text-align:right">14</td></tr>
+          <tr><td>Cell phones</td><td style="text-align:right">2,239,863.67</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">8</td><td style="text-align:right">8</td></tr>
+          <tr><td>Music, Movies and Audio Books</td><td style="text-align:right">844,851.77</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">8</td><td style="text-align:right">8</td></tr>
+          <tr><td>Games and Toys</td><td style="text-align:right">88,449.68</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">11</td><td style="text-align:right">11</td></tr>
+          <tr><td>Home Appliances</td><td style="text-align:right">1,895,771.88</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">13</td><td style="text-align:right">13</td></tr>
+          <tr style="font-weight:600"><td>Total</td><td style="text-align:right">12,337,640.39</td><td style="text-align:right;color:var(--acc)">16</td><td style="text-align:right">16</td><td style="text-align:right">16</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.82rem;color:var(--ink3);margin-top:.75rem"><strong>ALL</strong> ignores all filters — always returns 16 (total colours in the model). <strong>VALUES</strong> and <strong>DISTINCT</strong> respect the filter context — each category shows only the colours actually used by its products.</p>
+    </div>
+  </div>
+
+  <h3>Where the blank row comes from</h3>
+  <p>DAX enforces referential integrity. When a row in a fact table references a key that does not exist in the dimension — for example, Sales rows with a ProductKey that no longer exists in Product — those orphaned rows cannot disappear (their revenue would vanish from totals). DAX's solution: it automatically adds one <strong>blank row</strong> to the dimension table and assigns all orphaned fact rows to it.</p>
+
+  <div class="dw">
+    <div class="dc">Invalid relationship — DAX creates one blank row in the dimension</div>
+    <div class="db">
+      <table class="mini-table" style="max-width:560px;margin:0 auto">
+        <thead><tr><th>Sales</th><th></th><th>Product</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 1 → Coffee</td><td style="text-align:center;color:var(--ok)">✓</td><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 1 → Coffee</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 2 → Pasta</td><td style="text-align:center;color:var(--ok)">✓</td><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 2 → Pasta</td></tr>
+          <tr><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 3 → Tomato</td><td style="text-align:center;color:var(--ok)">✓</td><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 3 → Tomato</td></tr>
+          <tr class="blank-row"><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 4 → ???</td><td style="text-align:center">- - -</td><td style="font-family:var(--mono);font-size:.8rem">(blank) ← added by DAX</td></tr>
+          <tr class="blank-row"><td style="font-family:var(--mono);font-size:.8rem">ProductKey = 5 → ???</td><td style="text-align:center">- - -</td><td style="font-family:var(--mono);font-size:.8rem">assigned to same blank row</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.82rem;color:var(--warn-tx);text-align:center;margin-top:.75rem">Only one blank row is ever created, regardless of how many orphaned keys exist. All invalid Sales rows are assigned to it.</p>
+    </div>
+  </div>
+
+  <h3>How VALUES and DISTINCT differ on the blank row</h3>
+  <p>Once the blank row exists, the three functions behave differently. Here is the same report after two product colours were deleted from the Product table, breaking the relationship:</p>
+
+  <div class="dw">
+    <div class="dc">Invalid relationship present — VALUES sees the blank row, DISTINCT does not</div>
+    <div class="db">
+      <table class="mini-table">
+        <thead><tr><th>Category</th><th style="text-align:right">Sales Amount</th><th style="text-align:right">Num All Colors</th><th style="text-align:right">Num Value Colors</th><th style="text-align:right">Num Distinct Colors</th></tr></thead>
+        <tbody>
+          <tr class="blank-row"><td>(blank) ← orphaned sales</td><td style="text-align:right">2,932,345.40</td><td style="text-align:right">15</td><td style="text-align:right;color:var(--warn-tx);font-weight:600">1</td><td style="text-align:right;color:var(--ok);font-weight:600">—</td></tr>
+          <tr><td>Audio</td><td style="text-align:right">176,572.12</td><td style="text-align:right">15</td><td style="text-align:right">8</td><td style="text-align:right">8</td></tr>
+          <tr><td>TV and Video</td><td style="text-align:right">1,182,759.92</td><td style="text-align:right">15</td><td style="text-align:right">3</td><td style="text-align:right">3</td></tr>
+          <tr><td>Computers</td><td style="text-align:right">3,682,573.44</td><td style="text-align:right">15</td><td style="text-align:right">10</td><td style="text-align:right">10</td></tr>
+          <tr><td>Cameras and camcorders</td><td style="text-align:right">563,638.41</td><td style="text-align:right">15</td><td style="text-align:right">12</td><td style="text-align:right">12</td></tr>
+          <tr style="font-weight:600"><td>Total</td><td style="text-align:right">12,337,640.39</td><td style="text-align:right">15</td><td style="text-align:right;color:var(--warn-tx)">15</td><td style="text-align:right;color:var(--ok)">14</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.82rem;color:var(--ink3);margin-top:.75rem">The Total row shows the key difference: <strong>Num Value Colors = 15</strong> (includes the blank row), <strong>Num Distinct Colors = 14</strong> (ignores it). The blank row also appears as a separate "(blank)" category row carrying $2.9M in orphaned sales.</p>
+    </div>
+  </div>
+
+  <div class="rb">
+    <div class="rbh">VALUES vs DISTINCT — when to use which</div>
+    <div class="rbb">
+      <p><strong>VALUES</strong> includes the blank row. Use VALUES when iterating over a dimension table with SUMX or FILTER — this ensures orphaned fact rows contribute to the result and your totals remain consistent.</p>
+      <p><strong>DISTINCT</strong> ignores the blank row. Use DISTINCT when you explicitly want to exclude unmatched data from a count or iteration.</p>
+      <p><strong>In a clean model</strong> (all relationships valid, no orphaned keys) VALUES and DISTINCT return identical results. The difference only surfaces with bad data.</p>
+      <p><em>Rule: always use VALUES when iterating over dimension tables in SUMX. If your totals are inexplicably smaller than expected, a blank row is the first thing to investigate.</em></p>
+    </div>
+  </div>
+
+  <h3>The blank row in SUMX — a concrete example</h3>
+  <p>Here is the most common way the blank row causes incorrect results in production models. Suppose you want to calculate revenue with tax added per product, using a Tax Rate column stored in the Product table:</p>
+
+  <div class="cmp-grid">
+    <div class="cmp-card bad">
+      <h4>Wrong — orphaned sales disappear</h4>
+      <p><code>Sales Plus Tax = SUMX('Product', [Total Revenue] * (1 + Product[TaxRate]))</code></p>
+      <p>Iterates the physical table. The blank row is excluded — orphaned sales (e.g. $2.9M) do not contribute. Total can be <em>lower</em> than Total Revenue — mathematically impossible since tax is always positive. This is a silent error: no warning, no message.</p>
+    </div>
+    <div class="cmp-card good">
+      <h4>Correct — VALUES includes orphaned sales</h4>
+      <p><code>Sales Plus Tax = SUMX(VALUES('Product'), [Total Revenue] * (1 + Product[TaxRate]))</code></p>
+      <p>VALUES includes the blank row. For that row, TaxRate is blank (treated as 0), so the calculation returns Sales Amount × 1 = Sales Amount. Orphaned sales are added at their base value. Total is now larger than Total Revenue — which is correct.</p>
+    </div>
+  </div>
+
+  <div class="callout"><strong>The root cause is always the model, not the DAX.</strong> A blank row means your data has referential integrity issues — Sales rows with keys that don't exist in the dimension. The permanent fix is to clean the source data. VALUES is the workaround that keeps your calculations correct while the data issue exists.</div>
+
+  <!-- ═══ PART 9 ═══ -->
+  <div id="p9" class="ph"><span class="pn">09</span><h2 class="pt">Practical CALCULATE patterns</h2></div>
+
+  <p>These patterns cover the majority of what CALCULATE is used for in production models. Each one solves a recurring business requirement.</p>
+
+  <div class="ds-badge">Contoso dataset</div>
+  <div class="code-block">
+<pre><span class="cm">── PATTERN 1: Fixed filter — always show a specific segment ──</span>
+Reseller Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimChannel[ChannelName] = <span class="str">"Reseller"</span>
+)
+<span class="cm">-- Use: compare current selection against a fixed benchmark channel</span>
+
+
+<span class="cm">── PATTERN 2: % of total ──</span>
+% of Total Revenue = <span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(DimProductCategory, DimProductSubcategory))
+)
+<span class="cm">-- Use: contribution analysis — what share of revenue is this product?</span>
+
+
+<span class="cm">── PATTERN 3: % of parent (ALLEXCEPT) ──</span>
+% of Category Revenue = <span class="fn">DIVIDE</span>(
+    [Total Revenue],
+    <span class="fn">CALCULATE</span>([Total Revenue], <span class="fn">ALL</span>(DimProductSubcategory))
+)
+<span class="cm">-- Use: sub-category contribution within its parent category</span>
+
+
+<span class="cm">── PATTERN 4: Conditional aggregation ──</span>
+Sales Above $500 Unit Price = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    <span class="fn">FILTER</span>(DimProduct, DimProduct[UnitPrice] > <span class="num">500</span>)
+)
+<span class="cm">-- Use: revenue from premium products regardless of active product filters</span>
+
+
+<span class="cm">── PATTERN 5: Exclude a value ──</span>
+Non-Promo Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimPromotion[PromotionType] = <span class="str">"No Discount"</span>
+)
+<span class="cm">-- Use: full-price revenue baseline for promo uplift calculations</span>
+
+
+<span class="cm">── PATTERN 6: Promotion uplift ──</span>
+Promo Revenue = <span class="fn">CALCULATE</span>(
+    [Total Revenue],
+    DimPromotion[PromotionType] &lt;&gt; <span class="str">"No Discount"</span>
+)
+Promo Uplift % = <span class="fn">DIVIDE</span>(
+    [Promo Revenue] - [Non-Promo Revenue],
+    [Non-Promo Revenue]
+)
+<span class="cm">-- Use: how much more revenue do promotions generate vs full price?</span></pre>
+  </div>
+
+  <!-- ═══ PART 10 ═══ -->
+  <div id="p10" class="ph"><span class="pn">10</span><h2 class="pt">Context transition — the advanced concept</h2></div>
+
+  <div class="callout"><strong>Read this section twice.</strong> Context transition is the most conceptually difficult topic in this lesson. If it does not fully click on the first read, that is normal. The exercise will make it concrete. What matters right now is knowing it exists and recognising it when you see it — the full implications emerge in Week 6.</div>
+
+  <p>Context transition is a specific behaviour that happens when CALCULATE is used inside a row context — inside a calculated column or inside an iterator function like SUMX or FILTER. When CALCULATE is called in this situation, it performs a transformation: it takes every column value of the current row and converts them into filter context.</p>
+
+  <p>In plain terms: CALCULATE looks at the current row, sees all its column values, and creates a filter that shows only rows matching every one of those values throughout the entire data model. The filter then propagates through relationships — so other connected tables also become filtered to match that row.</p>
+
+  <div class="dw">
+    <div class="dc">Context transition — step by step</div>
+    <div class="db">
+      <div class="step-flow">
+        <div class="step-item">
+          <div class="step-circle">1</div>
+          <div class="step-content">
+            <div class="step-name">Iterator is active</div>
+            <div class="step-desc">SUMX or FILTER is iterating DimProduct. It is currently on the row for ProductKey = 1707 (Flight Simulator, Brand: Tailspin, Color: Black). Row context is active.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">2</div>
+          <div class="step-content">
+            <div class="step-name">CALCULATE is called</div>
+            <div class="step-desc">Inside the iterator, CALCULATE is encountered. This triggers context transition.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">3</div>
+          <div class="step-content">
+            <div class="step-name">Row context → filter context</div>
+            <div class="step-desc">CALCULATE converts the current row into a set of filters: ProductKey = 1707 AND Brand = "Tailspin" AND Color = "Black" AND … (all columns of the current row).</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">4</div>
+          <div class="step-content">
+            <div class="step-name">Filter propagates through relationships</div>
+            <div class="step-desc">The filter flows from DimProduct to FactSales through the model relationship. FactSales now shows only sales rows for this specific product.</div>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-circle">5</div>
+          <div class="step-content">
+            <div class="step-name">Expression evaluates on filtered rows</div>
+            <div class="step-desc">The expression inside CALCULATE — for example, SUM(FactSales[SalesAmount]) — now sees only this product's sales. The next iteration moves to the next DimProduct row, and the process repeats.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+<pre><span class="cm">-- Calculated column in DimProduct</span>
+<span class="cm">-- For each product row: how much total revenue did this product generate?</span>
+
+<span class="cm">-- WRONG: SUM ignores row context — returns the same grand total on every row</span>
+Product Revenue Wrong =
+    <span class="fn">SUMX</span>(FactSales, FactSales[SalesAmount])
+
+<span class="cm">-- CORRECT: CALCULATE triggers context transition</span>
+<span class="cm">-- current DimProduct row → filter on FactSales → only this product's rows</span>
+Product Revenue =
+    <span class="fn">CALCULATE</span>(<span class="fn">SUM</span>(FactSales[SalesAmount]))
+
+<span class="cm">-- Important: referencing a measure triggers implicit context transition</span>
+<span class="cm">-- [Total Revenue] inside an iterator = CALCULATE([Total Revenue])</span>
+<span class="cm">-- The CALCULATE is invisible but always present when you reference a measure</span></pre>
+  </div>
+
+  <div class="callout cg"><strong>Measure reference = implicit CALCULATE.</strong> Every time you reference a measure by name — <code>[Total Revenue]</code> — inside a row context (iterator or calculated column), DAX automatically wraps it in CALCULATE. This means context transition happens implicitly whenever you use a measure inside SUMX or FILTER. You do not need to write CALCULATE explicitly unless you also need to pass filter arguments.</div>
+
+  <!-- ═══ QUIZ ═══ -->
+  <div id="quiz" class="qs">
+    <div class="qh"><span class="qt">After reading</span><h2 class="qtl">Check your understanding</h2></div>
+    <p class="qi">5 multiple choice scored automatically. 2 open-ended: write your answer, then reveal the model answer. All examples use Contoso dataset columns.</p>
+    <div class="qpb"><div class="qpf" id="qpf"></div></div>
+
+    <!-- Q1 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">01 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">A slicer is set to <code>ChannelName = "Store"</code>. Your measure contains <code>CALCULATE([Total Revenue], DimChannel[ChannelName] = "Online")</code>. What does the measure return?</div>
+      <div class="opts" id="o1">
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">A</span>Store AND Online sales combined — CALCULATE adds to the existing filter.</button>
+        <button class="opt" onclick="pick(this,'o1','c')"><span class="ol">B</span>Online sales only — CALCULATE replaces the "Store" filter with "Online".</button>
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">C</span>Nothing — the slicer and CALCULATE conflict, so the result is blank.</button>
+        <button class="opt" onclick="pick(this,'o1','w')"><span class="ol">D</span>Store sales only — the slicer always overrides CALCULATE.</button>
+      </div>
+      <div class="fb fbok" id="fb1c"><strong>Correct.</strong> CALCULATE replaces the filter on ChannelName. The incoming "Store" filter is overridden by the "Online" argument. The result is Online sales only — regardless of the slicer. This is the most important behaviour to internalise about CALCULATE: it replaces filters on specified columns, it does not add to them. Filters on all other columns (year, geography, product) remain unchanged.</div>
+      <div class="fb fberr" id="fb1w"><strong>Not quite.</strong> The answer is B. CALCULATE replaces, not adds. The slicer's "Store" filter is overridden inside CALCULATE. Result: Online sales only.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">02 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">You want total Contoso sales for the current product category that always ignores any active year filter. Which is correct?</div>
+      <div class="opts" id="o2">
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">A</span><code>CALCULATE([Total Revenue], ALL(DimProductCategory))</code></button>
+        <button class="opt" onclick="pick(this,'o2','c')"><span class="ol">B</span><code>CALCULATE([Total Revenue], ALL(DimDate))</code></button>
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">C</span><code>CALCULATE([Total Revenue], ALLEXCEPT(DimDate, DimDate[CalendarYear]))</code></button>
+        <button class="opt" onclick="pick(this,'o2','w')"><span class="ol">D</span><code>CALCULATE([Total Revenue], REMOVEFILTERS())</code></button>
+      </div>
+      <div class="fb fbok" id="fb2c"><strong>Correct.</strong> ALL(DimDate) removes all filters from the date dimension — including CalendarYear — so the measure evaluates across all time periods. The product category filter from the visual axis is untouched, so the measure remains contextual by category. Option A removes the category filter (wrong direction). Option C keeps the year filter rather than removing it. Option D removes all filters including category, giving a grand total.</div>
+      <div class="fb fberr" id="fb2w"><strong>Not quite.</strong> The answer is B. ALL(DimDate) removes all date filters. The product category context from the visual remains intact. Option A removes category (wrong), C keeps year (wrong), D removes everything (wrong).</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">03 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">When should you use FILTER inside CALCULATE rather than a direct column equality argument?</div>
+      <div class="opts" id="o3">
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">A</span>Always — FILTER is more precise than direct equality.</button>
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">B</span>Never — CALCULATE only accepts column = value syntax.</button>
+        <button class="opt" onclick="pick(this,'o3','c')"><span class="ol">C</span>When the condition requires a comparison operator (&gt;, &lt;, &lt;&gt;) or filters on a calculated value — not for simple equality.</button>
+        <button class="opt" onclick="pick(this,'o3','w')"><span class="ol">D</span>Only when filtering dimension tables, not fact tables.</button>
+      </div>
+      <div class="fb fbok" id="fb3c"><strong>Correct.</strong> For simple equality (ChannelName = "Online"), the direct syntax is faster — Power BI can optimise it without iterating the table row by row. Use FILTER when you need comparison operators (&gt;, &lt;, &lt;&gt;), IN, or a calculated condition. For example, FILTER(DimProduct, DimProduct[UnitPrice] &gt; 500) cannot be expressed as a direct equality argument.</div>
+      <div class="fb fberr" id="fb3w"><strong>Not quite.</strong> The answer is C. FILTER is needed for comparison operators and calculated conditions. For simple equality, the direct Column = Value syntax is faster and should be preferred.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">04 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">You want to show each product sub-category's contribution to its parent category's total revenue. Which measure is correct?</div>
+      <div class="opts" id="o4">
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">A</span><code>DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL()))</code></button>
+        <button class="opt" onclick="pick(this,'o4','c')"><span class="ol">B</span><code>DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL(DimProductSubcategory)))</code></button>
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">C</span><code>DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL(DimProductCategory)))</code></button>
+        <button class="opt" onclick="pick(this,'o4','w')"><span class="ol">D</span><code>DIVIDE([Total Revenue], CALCULATE([Total Revenue], REMOVEFILTERS()))</code></button>
+      </div>
+      <div class="fb fbok" id="fb4c"><strong>Correct.</strong> The numerator is revenue in the current sub-category context. The denominator needs revenue for the whole parent category — meaning the sub-category filter must be removed while the category filter stays intact. ALL(DimProductSubcategory) removes only the sub-category filter. Options A and D remove all filters, giving % of grand total. Option C removes the category filter, which loses the parent category context entirely.</div>
+      <div class="fb fberr" id="fb4w"><strong>Not quite.</strong> The answer is B. To get % of parent category, remove the sub-category filter (ALL(DimProductSubcategory)) while keeping the category filter. A and D remove everything. C removes the category filter.</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="qc">
+      <div class="qm"><span class="qn">05 / 07</span><span class="qb bmc">Multiple choice</span></div>
+      <div class="qtxt">You write a calculated column in DimProduct: <code>Product Revenue = SUM(FactSales[SalesAmount])</code>. What is wrong?</div>
+      <div class="opts" id="o5">
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">A</span>Nothing — SUM in a calculated column automatically uses the current row's ProductKey to filter FactSales.</button>
+        <button class="opt" onclick="pick(this,'o5','c')"><span class="ol">B</span>SUM ignores row context — every row of DimProduct gets the same grand total instead of that product's revenue. Use CALCULATE(SUM(FactSales[SalesAmount])) to trigger context transition.</button>
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">C</span>SUM cannot be used in a calculated column — only in measures.</button>
+        <button class="opt" onclick="pick(this,'o5','w')"><span class="ol">D</span>The column reference should be FactSales[SalesAmount] only, without SUM.</button>
+      </div>
+      <div class="fb fbok" id="fb5c"><strong>Correct.</strong> SUM creates an implicit filter context that aggregates the entire table — it does not use the row context of the current DimProduct row. Every row gets the same company-wide total (e.g. $12.3M). Wrapping in CALCULATE triggers context transition: the current DimProduct row's values become filters, which propagate to FactSales through the relationship. Now SUM sees only that product's rows and returns a different, correct value for each product.</div>
+      <div class="fb fberr" id="fb5w"><strong>Not quite.</strong> The answer is B. SUM ignores row context and aggregates the entire table. CALCULATE(SUM(...)) in a calculated column triggers context transition — the current row becomes a filter, and SUM evaluates only the matching fact rows.</div>
+    </div>
+
+    <!-- Q6 open -->
+    <div class="qc">
+      <div class="qm"><span class="qn">06 / 07</span><span class="qb bop">Open-ended</span></div>
+      <div class="qtxt">Using the Contoso dataset, write a measure called <strong>"Promotion Uplift %"</strong> — the percentage difference between revenue during any promotion versus full-price revenue (PromotionType = "No Discount"). Show the intermediate measures too.</div>
+      <textarea class="ota" id="ta6" placeholder="Promo Revenue = CALCULATE(...)&#10;Full Price Revenue = CALCULATE(...)&#10;Promotion Uplift % = DIVIDE(...)"></textarea>
+      <button class="cbtn" id="btn6" onclick="showModel('ta6','m6','btn6')">See model answer</button>
+      <div class="mans" id="m6">
+        <strong>Model answer</strong>
+        <code style="display:block;font-family:DM Mono,monospace;font-size:.8rem;background:#1A1917;color:#E2E0DB;padding:.75rem 1rem;border-radius:6px;margin:.5rem 0;line-height:1.9;white-space:pre">Promo Revenue = CALCULATE(
+    [Total Revenue],
+    DimPromotion[PromotionType] &lt;&gt; "No Discount"
+)
+
+Full Price Revenue = CALCULATE(
+    [Total Revenue],
+    DimPromotion[PromotionType] = "No Discount"
+)
+
+Promotion Uplift % = DIVIDE(
+    [Promo Revenue] - [Full Price Revenue],
+    [Full Price Revenue]
+)</code>
+        The numerator is the absolute revenue difference (promo minus full-price). The denominator is the full-price baseline. DIVIDE handles the case where full-price revenue is zero in a given context. Note: &lt;&gt; "No Discount" requires the direct syntax, not FILTER, because it is a simple inequality comparison on a single value.
+      </div>
+    </div>
+
+    <!-- Q7 open -->
+    <div class="qc">
+      <div class="qm"><span class="qn">07 / 07</span><span class="qb bop">Open-ended</span></div>
+      <div class="qtxt">Explain in your own words what this measure does and why ALL is necessary:<br><br><code>% of Geography = DIVIDE([Total Revenue], CALCULATE([Total Revenue], ALL(DimGeography)))</code></div>
+      <textarea class="ota" id="ta7" placeholder="This measure calculates...&#10;The ALL(DimGeography) is necessary because...&#10;Without it, the denominator would..."></textarea>
+      <button class="cbtn" id="btn7" onclick="showModel('ta7','m7','btn7')">See model answer</button>
+      <div class="mans" id="m7">
+        <strong>Model answer</strong>
+        This measure shows what percentage each geographic entity (country, state, city) contributes to total worldwide revenue. The numerator is the filtered total — if the visual is showing the United States row, the numerator is US revenue. The denominator must be worldwide revenue regardless of what geographic filter is active, so ALL(DimGeography) removes all filters from the geography dimension. Without ALL, the denominator would equal the numerator — the same geographic filter applies to both — and every row would show 100%, which is meaningless. The ALL ensures the denominator always represents the true worldwide baseline against which each geography is compared.
+      </div>
+    </div>
+
+    <div class="scorecard" id="sc">
+      <div class="snum" id="snum"></div>
+      <div class="slbl">multiple choice correct</div>
+      <div class="smsg" id="smsg"></div>
+    </div>
+    <a class="next" href="week04-exercise.html">
+      <div><div class="nlbl">Next up</div><div class="ntitle">Week 4 Exercise → CALCULATE patterns in Contoso</div></div>
+      <div class="narr">→</div>
+    </a>
+  </div>
+</main>
+</div>
+
+<script>
+const sc={};let mcD=0,opD=0;const MCT=5;
+function pick(btn,gid,res){const g=document.getElementById(gid);if(g.querySelector('.r,.w'))return;g.querySelectorAll('.opt').forEach(b=>b.disabled=true);const n=gid.replace('o','');if(res==='c'){btn.classList.add('r');btn.querySelector('.ol').textContent='✓';document.getElementById('fb'+n+'c').classList.add('show');sc[gid]=1;}else{btn.classList.add('w');btn.querySelector('.ol').textContent='✗';document.getElementById('fb'+n+'w').classList.add('show');sc[gid]=0;g.querySelectorAll('.opt').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'c'")){b.classList.add('h');b.querySelector('.ol').textContent='✓';}});}mcD++;upBar();if(mcD===MCT)showScore();}
+function showModel(ta,mid,bid){document.getElementById(ta).disabled=true;document.getElementById(bid).disabled=true;document.getElementById(mid).classList.add('show');opD++;upBar();}
+function upBar(){document.getElementById('qpf').style.width=((mcD+opD)/7*100)+'%'}
+function showScore(){const n=Object.values(sc).reduce((a,b)=>a+b,0);document.getElementById('snum').textContent=n+' / '+MCT;const msgs=['Review Parts 1–4 before the exercise.','Review the questions you missed.','Good. Move to the exercise.','Strong. On to the exercise.','Perfect. On to the exercise.'];document.getElementById('smsg').textContent=msgs[n];const c=document.getElementById('sc');c.style.display='block';c.scrollIntoView({behavior:'smooth',block:'center'});}
+function nv(id,btn){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));btn.classList.add('on');}
+window.addEventListener('scroll',()=>{const ids=['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10','quiz'];const navs=document.querySelectorAll('.ni');let cur=0;ids.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<130)cur=i;});navs.forEach(n=>n.classList.remove('on'));if(navs[cur])navs[cur].classList.add('on');});
+</script>
+</body>
+</html>
